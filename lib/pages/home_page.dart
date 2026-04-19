@@ -19,6 +19,7 @@ class _HomePageState extends State<HomePage> {
   final curiosityId = 2;
   late final CuriosityController curiosityController;
   List<CuriosityDbModel> selectCuriosity = [];
+  bool isLoading = true;
   String text = "";
   String title = "";
   String error = "";
@@ -54,25 +55,33 @@ class _HomePageState extends State<HomePage> {
       text = cleanText(curiosityController.getCuriosityModel!.shortAnswer);      
       title = curiosityController.getCuriosityModel!.title;
 
-    action == DbActions.add ? addCuriosityToDatabase() : updateCuriosityInDatabase();
+      action == DbActions.add ? addCuriosityToDatabase() : updateCuriosityInDatabase();
   } else {
     error = curiosityController.getErrorCuriosity!;
   }
 }
 
   Future<void> controlCuriosity() async {
+    if (!mounted) return;
+    setState(() {
+      isLoading = true;
+    });
+
     bool checkDatabase = await checkDatabaseIsNull();
 
     if (checkDatabase) {
       await getCuriosity(curiosityId, DbActions.add);
     } else if (DateTime.now().difference(DateTime.parse(selectCuriosity[0].time)).inHours >= 24) {
-      await getCuriosity(curiosityId, DbActions.update);
+      await getCuriosity(selectCuriosity[0].curiosityId+1, DbActions.update);
     } else {
       text = cleanText(selectCuriosity[0].shortAnswer);
       title = selectCuriosity[0].title;
     }
 
-    setState(() {});
+    if (!mounted) return;
+    setState(() {
+      isLoading = false;
+    });
   }
 
   Future<void> addCuriosityToDatabase() async {
@@ -133,14 +142,16 @@ class _HomePageState extends State<HomePage> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
-                      color: Colors.white.withValues(alpha: 0.1)
+                      color: Colors.white.withValues(alpha: 0.15)
                     ),
                     child: SingleChildScrollView(
                       child: Column(
                         spacing: 15,
                         children: <Widget>[
-                          if (curiosityController.getIsLoading)...[
-                            CircularProgressIndicator()
+                          if (isLoading)...[
+                            CircularProgressIndicator(
+                              color: const Color.fromARGB(255, 206, 206, 207)
+                            )
                           ] else if (curiosityController.getErrorCuriosity == null)...[
                             Text(
                               title, 

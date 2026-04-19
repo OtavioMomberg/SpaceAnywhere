@@ -10,17 +10,12 @@ class CuriosityController {
 
   String? get getErrorCuriosity => _errorGetCuriosity;
 
-  bool _isLoading = true;
-
-  bool get getIsLoading => _isLoading;
-
   CuriosityModel? _curiosityModel;
 
   CuriosityModel? get getCuriosityModel => _curiosityModel;
 
   Future<void> onGetCuriosity(int id) async {
     _errorGetCuriosity = null;
-    _isLoading = true;
     try {
       final response = await curiosityRepositoryHttp.getCuriosity(id);
 
@@ -30,6 +25,5 @@ class CuriosityController {
       List<String> split = error.toString().split('"');
       _errorGetCuriosity = split[split.length-2];
     }
-    _isLoading = false;
   }
 }
