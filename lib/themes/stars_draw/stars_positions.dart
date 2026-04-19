@@ -5,7 +5,7 @@ class StarsPositions {
   final List<Offset> stars;
   const StarsPositions({required this.stars});
 
-  static const int starQuantity = 200;
+  static const int starQuantity = 150;
   static final random = Random();
 
   List<Offset> getStarPositions(Size size) {

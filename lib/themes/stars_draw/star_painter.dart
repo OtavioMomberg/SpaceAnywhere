@@ -10,7 +10,7 @@ class StarPainter extends CustomPainter {
     final paintMethod = Paint(); 
     paintMethod.strokeWidth = 3;
     paintMethod.strokeCap = StrokeCap.round;
-    paintMethod.color = Colors.white.withValues(alpha: 0.5);
+    paintMethod.color = const Color.fromARGB(255, 255, 255, 255).withValues(alpha: 0.3);
 
     canvas.drawPoints(PointMode.points, positions, paintMethod);
   }
