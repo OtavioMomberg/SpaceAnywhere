@@ -52,6 +52,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> getCuriosity(int curiosityId, DbActions action) async {
+    await verifyInternet();
+
+    if (!checkInternet) return;
+
     await curiosityController.onGetCuriosity(curiosityId);
 
     if (curiosityController.getErrorCuriosity == null) {
@@ -69,29 +73,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> controlCuriosity() async {
-    if (!mounted) return;
-    setState(() {
-      isLoading = true;
-    });
+    bool checkDatabaseEmpty = await checkDatabaseIsNull();
 
-    bool checkDatabase = await checkDatabaseIsNull();
-    await verifyInternet();
-
-    if (!checkInternet) {
-      if (!checkDatabase) {
-        if (!mounted) return;
-        setState(() {
-          isLoading = false;
-        });
-        return;
-      }
-      setState(() {
-        isLoading = false;
-      });
-      return;
-    }
-
-    if (checkDatabase) {
+    if (checkDatabaseEmpty) {
       await getCuriosity(curiosityId, DbActions.add);
     } else if (DateTime.now().difference(DateTime.parse(selectCuriosity[0].time)).inHours >= 24) {
       await getCuriosity(selectCuriosity[0].curiosityId+1, DbActions.update);
@@ -173,11 +157,11 @@ class _HomePageState extends State<HomePage> {
                         children: <Widget>[
                           if (isLoading)...[
                             CircularProgressIndicator(
-                              color: const Color.fromARGB(255, 206, 206, 207)
+                              color: Colors.white.withValues(alpha: 0.5)
                             )
                           ] else if (!checkInternet)...[
                             Text(
-                              "Erro. Sem conexão com a internet!", 
+                              "Erro. Sem conexão com a internet", 
                               style: const TextStyle(
                                 color: Color.fromARGB(255, 206, 206, 207), 
                                 fontWeight: FontWeight.bold,
@@ -186,7 +170,7 @@ class _HomePageState extends State<HomePage> {
                               maxLines: 2,
                               textAlign: TextAlign.center
                             ),
-                            Icon(Icons.wifi_off, color: Color.fromARGB(255, 206, 206, 207), size: 40)
+                            const Icon(Icons.wifi_off, color: Color.fromARGB(255, 206, 206, 207), size: 40)
                           ] else if (curiosityController.getErrorCuriosity == null)...[
                             Text(
                               title, 
