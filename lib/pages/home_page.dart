@@ -3,6 +3,7 @@ import 'package:http/http.dart';
 import 'dart:ui';
 import 'package:space_anywhere/controllers/curiosity_controller.dart';
 import 'package:space_anywhere/database/db_services.dart';
+import 'package:space_anywhere/internet/check_internet.dart';
 import 'package:space_anywhere/models/database_models/curiosity_db_model.dart';
 import 'package:space_anywhere/repositories/implementations/curiosity_implementation_http.dart';
 import 'package:space_anywhere/themes/app_theme.dart';
@@ -20,6 +21,8 @@ class _HomePageState extends State<HomePage> {
   late final CuriosityController curiosityController;
   List<CuriosityDbModel> selectCuriosity = [];
   bool isLoading = true;
+  bool showInternetError = false;
+  bool checkInternet = false;
   String text = "";
   String title = "";
   String error = "";
@@ -56,10 +59,14 @@ class _HomePageState extends State<HomePage> {
       title = curiosityController.getCuriosityModel!.title;
 
       action == DbActions.add ? addCuriosityToDatabase() : updateCuriosityInDatabase();
-  } else {
-    error = curiosityController.getErrorCuriosity!;
+    } else {
+      error = curiosityController.getErrorCuriosity!;
+    }
   }
-}
+
+  Future<void> verifyInternet() async {
+    checkInternet = await Internet.hasInternet();
+  }
 
   Future<void> controlCuriosity() async {
     if (!mounted) return;
@@ -68,12 +75,28 @@ class _HomePageState extends State<HomePage> {
     });
 
     bool checkDatabase = await checkDatabaseIsNull();
+    await verifyInternet();
+
+    if (!checkInternet) {
+      if (!checkDatabase) {
+        if (!mounted) return;
+        setState(() {
+          isLoading = false;
+        });
+        return;
+      }
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
 
     if (checkDatabase) {
       await getCuriosity(curiosityId, DbActions.add);
     } else if (DateTime.now().difference(DateTime.parse(selectCuriosity[0].time)).inHours >= 24) {
       await getCuriosity(selectCuriosity[0].curiosityId+1, DbActions.update);
     } else {
+      checkInternet = true;
       text = cleanText(selectCuriosity[0].shortAnswer);
       title = selectCuriosity[0].title;
     }
@@ -152,6 +175,18 @@ class _HomePageState extends State<HomePage> {
                             CircularProgressIndicator(
                               color: const Color.fromARGB(255, 206, 206, 207)
                             )
+                          ] else if (!checkInternet)...[
+                            Text(
+                              "Erro. Sem conexão com a internet!", 
+                              style: const TextStyle(
+                                color: Color.fromARGB(255, 206, 206, 207), 
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16
+                              ), 
+                              maxLines: 2,
+                              textAlign: TextAlign.center
+                            ),
+                            Icon(Icons.wifi_off, color: Color.fromARGB(255, 206, 206, 207), size: 40)
                           ] else if (curiosityController.getErrorCuriosity == null)...[
                             Text(
                               title, 
