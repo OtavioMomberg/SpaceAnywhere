@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'dart:ui';
 import 'package:space_anywhere/controllers/curiosity_controller.dart';
 import 'package:space_anywhere/database/db_services.dart';
 import 'package:space_anywhere/internet/check_internet.dart';
 import 'package:space_anywhere/models/database_models/curiosity_db_model.dart';
 import 'package:space_anywhere/pages/extra_text_page.dart';
 import 'package:space_anywhere/repositories/implementations/curiosity_implementation_http.dart';
-import 'package:space_anywhere/themes/app_theme.dart';
 import 'package:space_anywhere/widgets/button.dart';
+import 'package:space_anywhere/widgets/stylized_container.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -127,101 +126,83 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    return Scaffold(
-      body: Container(
-        height: size.height,
-        width: size.width,
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(gradient: AppTheme.mainGradient),
-        child: Column(
-          spacing: 20,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              "Curiosidade do Dia", 
-              style: const TextStyle(
-                color: Color.fromARGB(255, 206, 206, 207), 
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ), 
-              textAlign: TextAlign.center
-            ),
-            Center(
-              child: ClipRRect(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                  child: Container(
-                    height: size.height * 0.70,
-                    width: size.width * 0.85,
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
-                      color: Colors.white.withValues(alpha: 0.15)
-                    ),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        spacing: 15,
-                        children: <Widget>[
-                          if (isLoading)...[
-                            CircularProgressIndicator(
-                              color: Colors.white.withValues(alpha: 0.5)
-                            )
-                          ] else if (!checkInternet)...[
-                            Text(
-                              "Erro. Sem conexão com a internet", 
-                              style: const TextStyle(
-                                color: Color.fromARGB(255, 206, 206, 207), 
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16
-                              ), 
-                              maxLines: 2,
-                              textAlign: TextAlign.center
-                            ),
-                            const Icon(Icons.wifi_off, color: Color.fromARGB(255, 206, 206, 207), size: 40)
-                          ] else if (curiosityController.getErrorCuriosity == null)...[
-                            Text(
-                              title, 
-                              style: const TextStyle(
-                                color: Color.fromARGB(255, 206, 206, 207), 
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16
-                              ), 
-                              maxLines: 2,
-                              textAlign: TextAlign.center
-                            ),
-                            Text(
-                              text, 
-                              style: const TextStyle(
-                                color: Color.fromARGB(255, 206, 206, 207),
-                                height: 1.7
-                              ), 
-                              textAlign: TextAlign.justify
-                            )
-                          ] else...[
-                            Text(
-                              error, 
-                              style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207)), 
-                              textAlign: TextAlign.center
-                            )
-                          ]
-                        ]
+  Widget build(BuildContext context) {    
+    return Column(
+      spacing: 20,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          "Curiosidade do Dia", 
+          style: const TextStyle(
+            color: Color.fromARGB(255, 206, 206, 207), 
+            fontWeight: FontWeight.bold,
+            fontSize: 20
+          ), 
+          textAlign: TextAlign.center
+        ),
+        Flexible(
+          child: FractionallySizedBox(
+            heightFactor: 0.9,
+            child: StylizedContainer(
+              widthFactor: 0.95,
+              child: SingleChildScrollView(
+                child: Column(
+                  spacing: 15,
+                  children: <Widget>[
+                    if (isLoading)...[
+                      CircularProgressIndicator(
+                        color: Colors.white.withValues(alpha: 0.5)
                       )
-                    )
-                  )
+                    ] else if (!checkInternet)...[
+                      Text(
+                        "Erro. Sem conexão com a internet", 
+                        style: const TextStyle(
+                          color: Color.fromARGB(255, 206, 206, 207), 
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16
+                        ), 
+                        maxLines: 2,
+                        textAlign: TextAlign.center
+                      ),
+                      const Icon(Icons.wifi_off, color: Color.fromARGB(255, 206, 206, 207), size: 40)
+                    ] else if (curiosityController.getErrorCuriosity == null)...[
+                      Text(
+                        title, 
+                        style: const TextStyle(
+                          color: Color.fromARGB(255, 206, 206, 207), 
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16
+                        ), 
+                        maxLines: 2,
+                        textAlign: TextAlign.center
+                      ),
+                      Text(
+                        text, 
+                        style: const TextStyle(
+                          color: Color.fromARGB(255, 206, 206, 207),
+                          height: 1.7
+                        ), 
+                        textAlign: TextAlign.justify
+                      )
+                    ] else...[
+                      Text(
+                        error, 
+                        style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207)), 
+                        textAlign: TextAlign.center
+                      )
+                    ]
+                  ]
                 )
               )
-            ),
-            if (showKnowMoreButton)
-              FractionallySizedBox(
-                widthFactor: 0.5,
-                child: Button(label: "Saiba Mais", goExtraTextPage: goExtraTextPage)
-              )
-          ]
-        )
-      )
+            )
+          )
+        ),
+        if (showKnowMoreButton)
+          FractionallySizedBox(
+            widthFactor: 0.5,
+            child: Button(label: "Saiba Mais", goExtraTextPage: goExtraTextPage)
+          )
+      ]
     );
   }
 

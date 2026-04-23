@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:space_anywhere/page_routes/app_routes.dart';
+import 'package:space_anywhere/themes/app_theme.dart';
 import 'package:space_anywhere/themes/stars_draw/stars_positions.dart';
 import 'package:space_anywhere/widgets/star_painter_widget.dart';
 
@@ -38,7 +39,7 @@ class _DrawerPageState extends State<DrawerPage> {
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
         backgroundColor: const Color.fromARGB(255, 38, 46, 139),
-        foregroundColor: const Color.fromARGB(255, 206, 206, 207)
+        foregroundColor: const Color.fromARGB(255, 206, 206, 207),
       ),
       drawer: Drawer(
         backgroundColor: const Color.fromARGB(255, 38, 46, 139),
@@ -85,9 +86,16 @@ class _DrawerPageState extends State<DrawerPage> {
           ]
         )
       ),
-      body: StarPainterWidget(
-        stars: _starsPositions.getStarPositions(size),
-        child: AppRoutes.pages[selectedPage]
+      body: SafeArea(
+        top: false,
+        child: StarPainterWidget(
+          stars: _starsPositions.getStarPositions(size),
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(gradient: AppTheme.mainGradient),
+            child: AppRoutes.pages[selectedPage]
+          )
+        ),
       )
     );
   }

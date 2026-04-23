@@ -24,7 +24,7 @@ class Button extends StatelessWidget {
               color: Colors.white.withValues(alpha: 0.5)
             )
           ),
-          height: 60,
+          height: 50,
           child: Center(
             child: Text(
               label,
