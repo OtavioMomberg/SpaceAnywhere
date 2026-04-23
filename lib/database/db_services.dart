@@ -69,7 +69,7 @@ class DbServices {
         title: e["title"] as String, 
         shortAnswer: e["short_answer"] as String, 
         longAnswer: e["long_answer"] as String, 
-        time: e["time"] as String,
+        time: e["time"] as String
       )
     ).toList();
 
@@ -87,7 +87,7 @@ class DbServices {
           _title : curiosityModel.title,
           _shortAnswer : curiosityModel.shortAnswer,
           _longAnswer : curiosityModel.longAnswer,
-          _time : curiosityModel.time,
+          _time : curiosityModel.time
         }
       );
     } catch (e) {
@@ -109,7 +109,7 @@ class DbServices {
           _time : curiosityModel.time,
         },
         where: "table_id = ?",
-        whereArgs: [curiosityModel.id],
+        whereArgs: [curiosityModel.id]
       );
     } catch (e) {
       log(e.toString());

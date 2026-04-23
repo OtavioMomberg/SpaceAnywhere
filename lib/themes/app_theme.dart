@@ -8,8 +8,6 @@ class AppTheme {
       Color.fromARGB(255, 38, 46, 139),
       Color.fromARGB(255, 7, 13, 72),
       Color.fromARGB(255, 15, 6, 65)
-    ],
+    ]
   );
 }
-//Color.fromARGB(255, 15, 6, 65)
-//Color.fromARGB(255, 7, 2, 34)

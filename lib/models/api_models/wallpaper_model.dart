@@ -8,14 +8,14 @@ class WallpaperModel {
   WallpaperModel({
     required this.id,
     required this.fullImageUrl,
-    required this.thumbnailImageUrl,
+    required this.thumbnailImageUrl
   });
 
   factory WallpaperModel.fromMap(Map<String, dynamic> map) {
     return WallpaperModel(
       id: map["id"], 
       fullImageUrl: map["fullImageUrl"], 
-      thumbnailImageUrl: map["thumbnailImageUrl"],
+      thumbnailImageUrl: map["thumbnailImageUrl"]
     );
   }
 

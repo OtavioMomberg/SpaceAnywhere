@@ -20,7 +20,7 @@ class _QuizPageState extends State<QuizPage> {
           height: size.height,
           width: size.width,
           decoration: BoxDecoration(gradient: AppTheme.mainGradient),
-          child: Center(child: const Text("QUIZ", style: TextStyle(color: Color.fromARGB(255, 206, 206, 207)))),
+          child: Center(child: const Text("QUIZ", style: TextStyle(color: Color.fromARGB(255, 206, 206, 207))))
         )
       )
     );

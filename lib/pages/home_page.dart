@@ -5,8 +5,10 @@ import 'package:space_anywhere/controllers/curiosity_controller.dart';
 import 'package:space_anywhere/database/db_services.dart';
 import 'package:space_anywhere/internet/check_internet.dart';
 import 'package:space_anywhere/models/database_models/curiosity_db_model.dart';
+import 'package:space_anywhere/pages/extra_text_page.dart';
 import 'package:space_anywhere/repositories/implementations/curiosity_implementation_http.dart';
 import 'package:space_anywhere/themes/app_theme.dart';
+import 'package:space_anywhere/widgets/button.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,7 +25,9 @@ class _HomePageState extends State<HomePage> {
   bool isLoading = true;
   bool showInternetError = false;
   bool checkInternet = false;
+  bool showKnowMoreButton = false;
   String text = "";
+  String extraText = "";
   String title = "";
   String error = "";
 
@@ -59,8 +63,11 @@ class _HomePageState extends State<HomePage> {
     await curiosityController.onGetCuriosity(curiosityId);
 
     if (curiosityController.getErrorCuriosity == null) {
-      text = cleanText(curiosityController.getCuriosityModel!.shortAnswer);      
+      text = cleanText(curiosityController.getCuriosityModel!.shortAnswer); 
+      extraText = cleanText(curiosityController.getCuriosityModel!.longAnswer);    
       title = curiosityController.getCuriosityModel!.title;
+
+      showKnowMoreButton = true;
 
       action == DbActions.add ? addCuriosityToDatabase() : updateCuriosityInDatabase();
     } else {
@@ -81,7 +88,9 @@ class _HomePageState extends State<HomePage> {
       await getCuriosity(selectCuriosity[0].curiosityId+1, DbActions.update);
     } else {
       checkInternet = true;
+      showKnowMoreButton = true;
       text = cleanText(selectCuriosity[0].shortAnswer);
+      extraText = cleanText(selectCuriosity[0].longAnswer); 
       title = selectCuriosity[0].title;
     }
 
@@ -124,6 +133,7 @@ class _HomePageState extends State<HomePage> {
       body: Container(
         height: size.height,
         width: size.width,
+        padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(gradient: AppTheme.mainGradient),
         child: Column(
           spacing: 20,
@@ -134,7 +144,7 @@ class _HomePageState extends State<HomePage> {
               style: const TextStyle(
                 color: Color.fromARGB(255, 206, 206, 207), 
                 fontWeight: FontWeight.bold,
-                fontSize: 20
+                fontSize: 20,
               ), 
               textAlign: TextAlign.center
             ),
@@ -143,7 +153,7 @@ class _HomePageState extends State<HomePage> {
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
                   child: Container(
-                    height: size.height * 0.75,
+                    height: size.height * 0.70,
                     width: size.width * 0.85,
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
@@ -186,7 +196,7 @@ class _HomePageState extends State<HomePage> {
                               text, 
                               style: const TextStyle(
                                 color: Color.fromARGB(255, 206, 206, 207),
-                                height: 1.7,
+                                height: 1.7
                               ), 
                               textAlign: TextAlign.justify
                             )
@@ -203,9 +213,35 @@ class _HomePageState extends State<HomePage> {
                   )
                 )
               )
-            )
+            ),
+            if (showKnowMoreButton)
+              FractionallySizedBox(
+                widthFactor: 0.5,
+                child: Button(label: "Saiba Mais", goExtraTextPage: goExtraTextPage)
+              )
           ]
         )
+      )
+    );
+  }
+
+  void goExtraTextPage() {
+    Navigator.push(
+      context, 
+      PageRouteBuilder(
+        pageBuilder: (_, _, _) => ExtraTextPage(title: title, text: extraText),
+        transitionsBuilder: (_, animation, _, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset.zero;
+          const curve = Curves.easeInOut;
+
+          final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child
+          );
+        }
       )
     );
   }

@@ -10,7 +10,7 @@ class QuestionModel {
     required this.id,
     required this.question,
     required this.alternatives,
-    required this.rightAnswerIndex,
+    required this.rightAnswerIndex
   });
 
   factory QuestionModel.fromMap(Map<String, dynamic> map) {
