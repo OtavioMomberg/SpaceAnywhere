@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     curiosityController = CuriosityController(
-      CuriosityImplementationHttp(client:  Client())
+      CuriosityImplementationHttp(client: Client()),
     );
 
     controlCuriosity();
@@ -49,9 +49,9 @@ class _HomePageState extends State<HomePage> {
 
   String cleanText(String text) {
     return text
-      .replaceAll('\\n', '\n')
-      .replaceAll('\\r', '')
-      .replaceAll('\\"', '"');
+        .replaceAll('\\n', '\n')
+        .replaceAll('\\r', '')
+        .replaceAll('\\"', '"');
   }
 
   Future<void> getCuriosity(int curiosityId, DbActions action) async {
@@ -62,13 +62,15 @@ class _HomePageState extends State<HomePage> {
     await curiosityController.onGetCuriosity(curiosityId);
 
     if (curiosityController.getErrorCuriosity == null) {
-      text = cleanText(curiosityController.getCuriosityModel!.shortAnswer); 
-      extraText = cleanText(curiosityController.getCuriosityModel!.longAnswer);    
+      text = cleanText(curiosityController.getCuriosityModel!.shortAnswer);
+      extraText = cleanText(curiosityController.getCuriosityModel!.longAnswer);
       title = curiosityController.getCuriosityModel!.title;
 
       showKnowMoreButton = true;
 
-      action == DbActions.add ? addCuriosityToDatabase() : updateCuriosityInDatabase();
+      action == DbActions.add
+          ? addCuriosityToDatabase()
+          : updateCuriosityInDatabase();
     } else {
       error = curiosityController.getErrorCuriosity!;
     }
@@ -83,13 +85,16 @@ class _HomePageState extends State<HomePage> {
 
     if (checkDatabaseEmpty) {
       await getCuriosity(curiosityId, DbActions.add);
-    } else if (DateTime.now().difference(DateTime.parse(selectCuriosity[0].time)).inHours >= 24) {
-      await getCuriosity(selectCuriosity[0].curiosityId+1, DbActions.update);
+    } else if (DateTime.now()
+            .difference(DateTime.parse(selectCuriosity[0].time))
+            .inHours >=
+        24) {
+      await getCuriosity(selectCuriosity[0].curiosityId + 1, DbActions.update);
     } else {
       checkInternet = true;
       showKnowMoreButton = true;
       text = cleanText(selectCuriosity[0].shortAnswer);
-      extraText = cleanText(selectCuriosity[0].longAnswer); 
+      extraText = cleanText(selectCuriosity[0].longAnswer);
       title = selectCuriosity[0].title;
     }
 
@@ -101,12 +106,14 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> addCuriosityToDatabase() async {
     final curiosityModel = CuriosityDbModel(
-      id: 0, 
-      curiosityId: curiosityController.getCuriosityModel!.id, 
-      shortAnswer: cleanText(curiosityController.getCuriosityModel!.shortAnswer), 
-      longAnswer: cleanText(curiosityController.getCuriosityModel!.longAnswer), 
-      title: curiosityController.getCuriosityModel!.title, 
-      time: DateTime.now().toIso8601String()
+      id: 0,
+      curiosityId: curiosityController.getCuriosityModel!.id,
+      shortAnswer: cleanText(
+        curiosityController.getCuriosityModel!.shortAnswer,
+      ),
+      longAnswer: cleanText(curiosityController.getCuriosityModel!.longAnswer),
+      title: curiosityController.getCuriosityModel!.title,
+      time: DateTime.now().toIso8601String(),
     );
 
     await dbInstance.add(curiosityModel);
@@ -114,101 +121,124 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> updateCuriosityInDatabase() async {
     final curiosityModel = CuriosityDbModel(
-      id: selectCuriosity[0].id, 
-      curiosityId: curiosityController.getCuriosityModel!.id, 
-      shortAnswer: cleanText(curiosityController.getCuriosityModel!.shortAnswer), 
-      longAnswer: cleanText(curiosityController.getCuriosityModel!.longAnswer), 
-      title: curiosityController.getCuriosityModel!.title, 
-      time: DateTime.now().toIso8601String()
+      id: selectCuriosity[0].id,
+      curiosityId: curiosityController.getCuriosityModel!.id,
+      shortAnswer: cleanText(
+        curiosityController.getCuriosityModel!.shortAnswer,
+      ),
+      longAnswer: cleanText(curiosityController.getCuriosityModel!.longAnswer),
+      title: curiosityController.getCuriosityModel!.title,
+      time: DateTime.now().toIso8601String(),
     );
 
     await dbInstance.update(curiosityModel);
   }
 
   @override
-  Widget build(BuildContext context) {    
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Column(
       spacing: 20,
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
         Text(
-          "Curiosidade do Dia", 
+          "Curiosidade do Dia",
           style: const TextStyle(
-            color: Color.fromARGB(255, 206, 206, 207), 
+            color: Color.fromARGB(255, 206, 206, 207),
             fontWeight: FontWeight.bold,
-            fontSize: 20
-          ), 
-          textAlign: TextAlign.center
+            fontSize: 20,
+          ),
+          textAlign: TextAlign.center,
         ),
-        Flexible(
-          child: FractionallySizedBox(
-            heightFactor: 0.9,
-            child: StylizedContainer(
-              widthFactor: 0.95,
-              child: SingleChildScrollView(
-                child: Column(
-                  spacing: 15,
-                  children: <Widget>[
-                    if (isLoading)...[
-                      CircularProgressIndicator(
-                        color: Colors.white.withValues(alpha: 0.5)
-                      )
-                    ] else if (!checkInternet)...[
-                      Text(
-                        "Erro. Sem conexão com a internet", 
-                        style: const TextStyle(
-                          color: Color.fromARGB(255, 206, 206, 207), 
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16
-                        ), 
-                        maxLines: 2,
-                        textAlign: TextAlign.center
-                      ),
-                      const Icon(Icons.wifi_off, color: Color.fromARGB(255, 206, 206, 207), size: 40)
-                    ] else if (curiosityController.getErrorCuriosity == null)...[
-                      Text(
-                        title, 
-                        style: const TextStyle(
-                          color: Color.fromARGB(255, 206, 206, 207), 
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16
-                        ), 
-                        maxLines: 2,
-                        textAlign: TextAlign.center
-                      ),
-                      Text(
-                        text, 
-                        style: const TextStyle(
-                          color: Color.fromARGB(255, 206, 206, 207),
-                          height: 1.7
-                        ), 
-                        textAlign: TextAlign.justify
-                      )
-                    ] else...[
-                      Text(
-                        error, 
-                        style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207)), 
-                        textAlign: TextAlign.center
-                      )
-                    ]
-                  ]
-                )
-              )
-            )
-          )
-        ),
+        if (isLoading) ...[
+          StylizedContainer(
+            widthFactor: 0.95,
+            height: size.height * 0.6,
+            child: CircularProgressIndicator(
+              color: Colors.white.withValues(alpha: 0.5),
+            ),
+          ),
+        ] else if (!checkInternet) ...[
+          StylizedContainer(
+            widthFactor: 0.95,
+            height: size.height * 0.6,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  "Erro. Sem conexão com a internet",
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 206, 206, 207),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
+                ),
+                const Icon(
+                  Icons.wifi_off,
+                  color: Color.fromARGB(255, 206, 206, 207),
+                  size: 40,
+                ),
+              ],
+            ),
+          ),
+        ] else if (curiosityController.getErrorCuriosity == null) ...[
+          Flexible(
+            child: FractionallySizedBox(
+              heightFactor: 0.9,
+              child: StylizedContainer(
+                widthFactor: 0.95,
+                child: SingleChildScrollView(
+                  child: Column(
+                    spacing: 15,
+                    children: <Widget>[
+                      if (curiosityController.getErrorCuriosity == null) ...[
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            color: Color.fromARGB(255, 206, 206, 207),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                          maxLines: 2,
+                          textAlign: TextAlign.center,
+                        ),
+                        Text(
+                          text,
+                          style: const TextStyle(
+                            color: Color.fromARGB(255, 206, 206, 207),
+                            height: 1.7,
+                          ),
+                          textAlign: TextAlign.justify,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ] else ...[
+          Text(
+            error,
+            style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207)),
+            textAlign: TextAlign.center,
+          ),
+        ],
         if (showKnowMoreButton)
           FractionallySizedBox(
             widthFactor: 0.5,
-            child: Button(label: "Saiba Mais", goExtraTextPage: goExtraTextPage)
-          )
-      ]
+            child: Button(label: "Saiba Mais", function: goExtraTextPage),
+          ),
+      ],
     );
   }
 
   void goExtraTextPage() {
     Navigator.push(
-      context, 
+      context,
       PageRouteBuilder(
         pageBuilder: (_, _, _) => ExtraTextPage(title: title, text: extraText),
         transitionsBuilder: (_, animation, _, child) {
@@ -216,14 +246,17 @@ class _HomePageState extends State<HomePage> {
           const end = Offset.zero;
           const curve = Curves.easeInOut;
 
-          final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          final tween = Tween(
+            begin: begin,
+            end: end,
+          ).chain(CurveTween(curve: curve));
 
           return SlideTransition(
             position: animation.drive(tween),
-            child: child
+            child: child,
           );
-        }
-      )
+        },
+      ),
     );
   }
 }

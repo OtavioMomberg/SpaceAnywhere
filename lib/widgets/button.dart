@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 
 class Button extends StatelessWidget {
   final String label;
-  final VoidCallback goExtraTextPage; 
+  //final VoidCallback function;
+  final VoidCallback? function;
+  final void Function()? awaitFunction;
   const Button({
-    required this.label,
-    required this.goExtraTextPage,
+    required this.label, 
+    //required this.function, 
+    this.function,
+    this.awaitFunction,
     super.key
   });
 
@@ -16,21 +20,17 @@ class Button extends StatelessWidget {
       color: Colors.white.withValues(alpha: 0.2),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: goExtraTextPage,
+        onTap: /*function,*/ function ?? awaitFunction,
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.5)
-            )
+            border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
           ),
           height: 50,
           child: Center(
             child: Text(
               label,
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.8)
-              )
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.8)),
             )
           )
         )

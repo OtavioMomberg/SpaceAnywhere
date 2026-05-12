@@ -26,8 +26,9 @@ class QuestionController {
 
       if (response != null) _questionModel = response;
     } catch(error) {
-      List<String> split = error.toString().split('"');
-      _errorGetQuestion = split[split.length-2];
+      //List<String> split = error.toString().split('"');
+      //_errorGetQuestion = split[split.length-2];
+      _errorGetQuestion = error.toString();
     }
     _isLoading = false;
   }

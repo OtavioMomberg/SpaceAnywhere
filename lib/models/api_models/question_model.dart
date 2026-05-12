@@ -14,10 +14,11 @@ class QuestionModel {
   });
 
   factory QuestionModel.fromMap(Map<String, dynamic> map) {
+    List<dynamic> alternatives = map["alternatives"];
     return QuestionModel(
       id: map["id"], 
       question: map["question"], 
-      alternatives: map["alternatives"], 
+      alternatives: alternatives.map((item) => item.toString()).toList(), 
       rightAnswerIndex: map["right_answer_index"]
     );
   }

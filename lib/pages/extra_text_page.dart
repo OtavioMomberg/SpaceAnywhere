@@ -21,9 +21,7 @@ class ExtraTextPage extends StatelessWidget {
       ),
       body: Container(
         padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          gradient: AppTheme.mainGradient
-        ),
+        decoration: BoxDecoration(gradient: AppTheme.mainGradient),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           spacing: 20,

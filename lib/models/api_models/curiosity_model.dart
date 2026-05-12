@@ -16,12 +16,13 @@ class CuriosityModel {
   });
 
   factory CuriosityModel.fromMap(Map<String, dynamic> map) {
+    List<dynamic> fonts = map["content_font"];
     return CuriosityModel(
       id: map["id"], 
       title: map["title"], 
       shortAnswer: map["short_answer"], 
       longAnswer: map["long_answer"], 
-      contentFont: List<String>.from(map["content_font"] ?? []),
+      contentFont: fonts.map((item) => item.toString()).toList(),
     );
   }
 
