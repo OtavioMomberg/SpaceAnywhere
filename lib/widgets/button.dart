@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class Button extends StatelessWidget {
   final String label;
-  //final VoidCallback function;
-  final VoidCallback? function;
+  final int? pageIndex;
+  final void Function(int?)? function;
   final void Function()? awaitFunction;
   const Button({
     required this.label, 
-    //required this.function, 
+    this.pageIndex,
     this.function,
     this.awaitFunction,
     super.key
@@ -20,7 +20,7 @@ class Button extends StatelessWidget {
       color: Colors.white.withValues(alpha: 0.2),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: /*function,*/ function ?? awaitFunction,
+        onTap: () => awaitFunction ?? function!(pageIndex),
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),

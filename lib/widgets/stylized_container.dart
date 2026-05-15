@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 
 class StylizedContainer extends StatelessWidget {
-  final double widthFactor;
   final BorderRadius? borderRadius;
   final Color? borderColor;
   final Color? backgroundColor;
@@ -10,7 +9,6 @@ class StylizedContainer extends StatelessWidget {
   final double? height;
 
   const StylizedContainer({
-    required this.widthFactor,
     this.borderRadius,
     this.borderColor,
     this.backgroundColor,
@@ -24,9 +22,7 @@ class StylizedContainer extends StatelessWidget {
     return SizedBox(
       height: height,
       width: double.infinity,
-      child: FractionallySizedBox(
-        widthFactor: widthFactor,
-        child: Center(
+      child: Center(
           child: ClipRRect(
             borderRadius: borderRadius == null
                 ? BorderRadius.circular(12)
@@ -59,7 +55,7 @@ class StylizedContainer extends StatelessWidget {
             )
           )
         )
-      )
+
     );
   }
 }

@@ -26,3 +26,11 @@ class CuriosityDbModel {
     };
   }
 }
+
+class FontModel {
+  String font;
+
+  FontModel({
+    required this.font
+  });
+}

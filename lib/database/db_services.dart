@@ -26,6 +26,9 @@ class DbServices {
   final String _longAnswer = "long_answer";
   final String _time = "time";
 
+  final String _fontsId = "font_id";
+  final String _font = "font";
+
   Future<Database> get database async {
     if (_db != null) return _db!;
     _db = await createDatabase();
@@ -34,7 +37,7 @@ class DbServices {
 
   Future<Database> createDatabase() async {
     final databaseDirPath = await getDatabasesPath();
-    final databasePath = join(databaseDirPath, "local_storage.db");
+    final databasePath = join(databaseDirPath, "database.db");
     final database = await openDatabase(
       databasePath,
       version: 1,
@@ -51,12 +54,99 @@ class DbServices {
           )
           '''
         );
+        db.execute(
+          '''
+          CREATE TABLE CURIOSITY_FONTS (
+            $_fontsId INTEGER PRIMARY KEY AUTOINCREMENT,
+            $_font TEXT NOT NULL
+          )
+          '''
+        );
       }
     );
     return database;
   }
 
-  Future<List<CuriosityDbModel>> select() async {
+  Future<List<dynamic>> select(bool getCuriosity) async {
+    final db = await database;
+    final List<Map> data;
+
+    data = getCuriosity 
+      ? await db.query("CURIOSITY")
+      : await db.query("CURIOSITY_FONTS");
+
+    final List<dynamic> formatedData = data.map(
+      (e) => getCuriosity 
+        ? CuriosityDbModel(
+            id: e["table_id"] as int,
+            curiosityId: e["curiosity_id"] as int, 
+            title: e["title"] as String, 
+            shortAnswer: e["short_answer"] as String, 
+            longAnswer: e["long_answer"] as String, 
+            time: e["time"] as String
+          )
+        : FontModel( 
+            font: e["font"] as String
+          )
+    ).toList();
+    return formatedData;
+  }
+
+  Future<void> add(bool getCuriosity, [CuriosityDbModel? curiosityModel, FontModel? fontModel]) async {
+    final db = await database;
+
+    try {
+      await db.insert(
+        getCuriosity ? "CURIOSITY" : "CURIOSITY_FONTS",
+        getCuriosity 
+          ? {
+              _curiosityId : curiosityModel!.curiosityId,
+              _title : curiosityModel.title,
+              _shortAnswer : curiosityModel.shortAnswer,
+              _longAnswer : curiosityModel.longAnswer,
+              _time : curiosityModel.time
+            }
+          : {
+              _font : fontModel!.font
+            }
+      );
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  Future<void> update(CuriosityDbModel curiosityModel) async {
+    final db = await database;
+
+    try {
+      await db.update(
+        "CURIOSITY", 
+        {
+          _curiosityId : curiosityModel.curiosityId,
+          _title : curiosityModel.title,
+          _shortAnswer : curiosityModel.shortAnswer,
+          _longAnswer : curiosityModel.longAnswer,
+          _time : curiosityModel.time,
+        },
+        where: "table_id = ?",
+        whereArgs: [curiosityModel.id]
+      );
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  Future<void> delete() async {
+    final db = await database;
+
+    try {
+      await db.delete("CURIOSITY_FONTS");
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  /*Future<List<CuriosityDbModel>> select() async {
     final db = await database;
     final List<Map> data;
 
@@ -114,5 +204,5 @@ class DbServices {
     } catch (e) {
       log(e.toString());
     }
-  }
+  }*/
 }

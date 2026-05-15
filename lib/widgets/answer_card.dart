@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 
 class AnswerCard extends StatelessWidget {
+  final int index;
   final String option;
   final Color color;
-  final void Function(int) onTap;
+  final Future<void> Function(int) onTap;
 
   const AnswerCard({
+    required this.index,
     required this.option,
     required this.color,
     required this.onTap,
@@ -19,7 +21,7 @@ class AnswerCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       color: Colors.white.withValues(alpha: 0.01),
       child: InkWell(
-        onTap: () => onTap(1),
+        onTap: () => onTap(index),
         borderRadius: BorderRadius.circular(12),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(12),

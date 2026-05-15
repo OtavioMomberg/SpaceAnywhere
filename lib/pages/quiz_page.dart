@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'dart:ui';
+import 'package:space_anywhere/audio_services/audio_services.dart';
 import 'package:space_anywhere/controllers/question_controller.dart';
 import 'package:space_anywhere/internet/check_internet.dart';
 import 'package:space_anywhere/repositories/implementations/question_inplementation_http.dart';
-import 'dart:ui';
 import 'package:space_anywhere/widgets/answer_card.dart';
 import 'package:space_anywhere/widgets/button.dart';
 import 'package:space_anywhere/widgets/question_card.dart';
@@ -43,11 +44,25 @@ class _QuizPageState extends State<QuizPage> {
 
     await verifyInternet();
     
-    if (!checkInternet) return;
+    if (!checkInternet) {
+      if (!mounted) return;
+      setState(() => isLoading = false);
+      return;
+    }
 
     await questionController.onGetQuestion(questionId ?? id);
 
+    if (!mounted) return;
+    if (questionId != null) {
+      showStylizedSnackBar(context, "Próxima pergunta!", Colors.white);
+      await Future.delayed(Duration(milliseconds: 500));
+    }
+
+    if (!mounted) return;
     setState(() => isLoading = false);
+
+    if (questionId == null) showStylizedSnackBar(context, "Acesso Liberado!", Colors.lightBlueAccent);
+
     if (questionController.getErrorQuestion != null) error = questionController.getErrorQuestion!;
   }
 
@@ -88,15 +103,12 @@ class _QuizPageState extends State<QuizPage> {
             )
           ),
           const SizedBox(height: 40),
-          IgnorePointer(
-            ignoring: !isLoading ? false : true,
-            child: FractionallySizedBox(
-              widthFactor: 0.5,
-              child: Button(
-                label: "Iniciar", 
-                function: startQuiz
-              )
-            ),
+          FractionallySizedBox(
+            widthFactor: 0.5,
+            child: Button(
+              label: "Iniciar", 
+              function: startQuiz
+            )
           ),
         ] else...[
           Expanded(
@@ -117,9 +129,10 @@ class _QuizPageState extends State<QuizPage> {
                 children: <Widget>[
                   ...List.generate(5, (index) {
                     return AnswerCard(
+                      index: index,
                       option: questionController.getQuestionModel!.alternatives[index],
                       color: Colors.white, 
-                      onTap: onTap
+                      onTap: onTapAnswer
                     );
                   })
                 ]
@@ -131,7 +144,11 @@ class _QuizPageState extends State<QuizPage> {
     );
   }
 
-  Future<void> startQuiz() async {
+  Future<void> startQuiz([int? n]) async {
+    if (isLoading) {
+      showStylizedSnackBar(context, "Aguarde um instante!", Colors.red);
+      return;
+    }
     bool retryCheck = false;
     if (!checkInternet) {
       retryCheck = await openRetryDialog();
@@ -158,12 +175,16 @@ class _QuizPageState extends State<QuizPage> {
         WidgetsBinding.instance.addPostFrameCallback((_) async {
           closeDialog(await retryInternetConnection());
         });
-        return AlertDialog(
-          title: const Center(child: Text("Tentando Conexão...")),
+        return const AlertDialog(
+          title: Center(child: Text("Tentando Conexão...")),
           content: SizedBox(
             height: 300,
             width: 300,
-            child: Center(child: CircularProgressIndicator())
+            child: Center(
+              child: CircularProgressIndicator(
+                color: Color.fromARGB(255, 38, 46, 139)
+              )
+            )
           )
         );
       }
@@ -182,21 +203,94 @@ class _QuizPageState extends State<QuizPage> {
     return checkInternet ? true : false;
   }
 
-  void closeDialog(bool retry) {
+  Future<void> onTapAnswer(int index) async {
+    AudioServices.play("audios/button_click2.mp3", 1);
+
+    if (questionController.getQuestionModel!.rightAnswerIndex == index) {
+      await showResponseMessage(true);
+    } else {
+      await showResponseMessage(false);
+    }
+  }
+
+  Future<void> closeDialog([bool? retry]) async {
+    if (retry == null) {
+      getQuestion(questionController.getQuestionModel!.id);
+      await Future.delayed(Duration(seconds: 3));
+    }
+
     if (!mounted) return;
-    Navigator.pop<bool>(context, retry);
+    Navigator.pop<bool?>(context, retry);
+  }
+
+  Future<void> showResponseMessage(bool isAnswerCorrect) async {
+    await showDialog(
+      context: context,
+      builder: (context) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          closeDialog();
+        });
+        return AlertDialog(
+          title: Center(
+            child: Text(isAnswerCorrect ? "Parabéns!" : "Quase lá!"),
+          ),
+          content: SizedBox(
+            height: 200,
+            width: 300,
+            child: Column(
+              spacing: 15,
+              mainAxisAlignment: isAnswerCorrect ? MainAxisAlignment.center : MainAxisAlignment.start,
+              children: <Widget>[
+                const SizedBox(height: 20),
+                Text(
+                  isAnswerCorrect 
+                    ? "Certa Resposta!" 
+                    : "Resposta Incorreta. Alternativa correta:",
+                    style: const TextStyle(
+                      fontSize: 18
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                Text(
+                  isAnswerCorrect 
+                    ? "" 
+                    : "${questionController.getQuestionModel!.alternatives[questionController.getQuestionModel!.rightAnswerIndex]} ",
+                  style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold
+                    ),
+                    textAlign: TextAlign.justify
+                )
+              ]
+            )
+          )
+        );
+      }
+    );
+  }
+
+  void showStylizedSnackBar(BuildContext context, String msm, Color txtColor) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        padding: const EdgeInsets.all(10),
+        content: Center(
+          child: Text(
+            msm, 
+            style: const TextStyle(
+              color: Colors.white
+            )
+          )
+        ),
+        backgroundColor: txtColor.withValues(alpha: 0.15),
+        shape: StadiumBorder(
+          side: BorderSide(
+            color: txtColor.withValues(alpha: 0.5)
+          )
+        ),
+        duration: const Duration(seconds: 1)
+      )
+    );
   }
 
   void showError() {}
-
-  void onTap(int index) {
-    // VERIFY THE CORRECT ANSWER 
-    if (questionController.getQuestionModel!.rightAnswerIndex == index) {
-      print("CERTA RESPOSTA");
-    } else {
-      print("RESPOSTA ERRADA");
-    }
-    // GET THE NEXT QUESTION
-    getQuestion(questionController.getQuestionModel!.id);
-  }
 }

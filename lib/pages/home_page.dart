@@ -5,6 +5,7 @@ import 'package:space_anywhere/database/db_services.dart';
 import 'package:space_anywhere/internet/check_internet.dart';
 import 'package:space_anywhere/models/database_models/curiosity_db_model.dart';
 import 'package:space_anywhere/pages/extra_text_page.dart';
+import 'package:space_anywhere/pages/fonts_page.dart';
 import 'package:space_anywhere/repositories/implementations/curiosity_implementation_http.dart';
 import 'package:space_anywhere/widgets/button.dart';
 import 'package:space_anywhere/widgets/stylized_container.dart';
@@ -20,7 +21,8 @@ class _HomePageState extends State<HomePage> {
   final dbInstance = DbServices.instance();
   final curiosityId = 2;
   late final CuriosityController curiosityController;
-  List<CuriosityDbModel> selectCuriosity = [];
+  List<dynamic> selectCuriosity = [];
+  List<dynamic> selectFonts = [];
   bool isLoading = true;
   bool showInternetError = false;
   bool checkInternet = false;
@@ -28,6 +30,7 @@ class _HomePageState extends State<HomePage> {
   String text = "";
   String extraText = "";
   String title = "";
+  List<String> fonts = [];
   String error = "";
 
   @override
@@ -42,7 +45,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<bool> checkDatabaseIsNull() async {
-    selectCuriosity = await dbInstance.select();
+    selectCuriosity = await dbInstance.select(true);
+    selectCuriosity.map((item) => item as CuriosityDbModel);
+
+    selectFonts = await dbInstance.select(false);
+    selectFonts.map((item) => item as FontModel);
 
     return selectCuriosity.isEmpty ? true : false;
   }
@@ -65,12 +72,12 @@ class _HomePageState extends State<HomePage> {
       text = cleanText(curiosityController.getCuriosityModel!.shortAnswer);
       extraText = cleanText(curiosityController.getCuriosityModel!.longAnswer);
       title = curiosityController.getCuriosityModel!.title;
+      fonts = curiosityController.getCuriosityModel!.contentFont;
 
       showKnowMoreButton = true;
-
       action == DbActions.add
-          ? addCuriosityToDatabase()
-          : updateCuriosityInDatabase();
+          ? addToDatabase()
+          : updateInDatabase();
     } else {
       error = curiosityController.getErrorCuriosity!;
     }
@@ -85,10 +92,7 @@ class _HomePageState extends State<HomePage> {
 
     if (checkDatabaseEmpty) {
       await getCuriosity(curiosityId, DbActions.add);
-    } else if (DateTime.now()
-            .difference(DateTime.parse(selectCuriosity[0].time))
-            .inHours >=
-        24) {
+    } else if (DateTime.now().difference(DateTime.parse(selectCuriosity[0].time)).inHours >= 24) {
       await getCuriosity(selectCuriosity[0].curiosityId + 1, DbActions.update);
     } else {
       checkInternet = true;
@@ -96,15 +100,17 @@ class _HomePageState extends State<HomePage> {
       text = cleanText(selectCuriosity[0].shortAnswer);
       extraText = cleanText(selectCuriosity[0].longAnswer);
       title = selectCuriosity[0].title;
+      for (int i=0; i<selectFonts.length; i++) {
+        fonts.add(selectFonts[i].font);
+      }
     }
-
     if (!mounted) return;
     setState(() {
       isLoading = false;
     });
   }
 
-  Future<void> addCuriosityToDatabase() async {
+  Future<void> addToDatabase() async {
     final curiosityModel = CuriosityDbModel(
       id: 0,
       curiosityId: curiosityController.getCuriosityModel!.id,
@@ -116,10 +122,23 @@ class _HomePageState extends State<HomePage> {
       time: DateTime.now().toIso8601String(),
     );
 
-    await dbInstance.add(curiosityModel);
+    await dbInstance.add(true, curiosityModel);
+
+    await addFonts();
   }
 
-  Future<void> updateCuriosityInDatabase() async {
+  Future<void> addFonts() async {
+    final List<FontModel> fontModel = List.generate(
+      curiosityController.getCuriosityModel!.contentFont.length, 
+      (index) => FontModel(font: curiosityController.getCuriosityModel!.contentFont[index])
+    );
+
+    for (int i=0; i<curiosityController.getCuriosityModel!.contentFont.length; i++) {
+      await dbInstance.add(false, null, fontModel[i]);
+    }
+  }
+
+  Future<void> updateInDatabase() async {
     final curiosityModel = CuriosityDbModel(
       id: selectCuriosity[0].id,
       curiosityId: curiosityController.getCuriosityModel!.id,
@@ -132,6 +151,10 @@ class _HomePageState extends State<HomePage> {
     );
 
     await dbInstance.update(curiosityModel);
+
+    await dbInstance.delete();
+
+    await addFonts();
   }
 
   @override
@@ -153,7 +176,6 @@ class _HomePageState extends State<HomePage> {
         ),
         if (isLoading) ...[
           StylizedContainer(
-            widthFactor: 0.95,
             height: size.height * 0.6,
             child: CircularProgressIndicator(
               color: Colors.white.withValues(alpha: 0.5),
@@ -161,7 +183,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ] else if (!checkInternet) ...[
           StylizedContainer(
-            widthFactor: 0.95,
             height: size.height * 0.6,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -174,22 +195,21 @@ class _HomePageState extends State<HomePage> {
                     fontSize: 16,
                   ),
                   maxLines: 2,
-                  textAlign: TextAlign.center,
+                  textAlign: TextAlign.center
                 ),
                 const Icon(
                   Icons.wifi_off,
                   color: Color.fromARGB(255, 206, 206, 207),
-                  size: 40,
-                ),
-              ],
-            ),
-          ),
+                  size: 40
+                )
+              ]
+            )
+          )
         ] else if (curiosityController.getErrorCuriosity == null) ...[
           Flexible(
             child: FractionallySizedBox(
               heightFactor: 0.9,
               child: StylizedContainer(
-                widthFactor: 0.95,
                 child: SingleChildScrollView(
                   child: Column(
                     spacing: 15,
@@ -211,36 +231,45 @@ class _HomePageState extends State<HomePage> {
                             color: Color.fromARGB(255, 206, 206, 207),
                             height: 1.7,
                           ),
-                          textAlign: TextAlign.justify,
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
+                          textAlign: TextAlign.justify
+                        )
+                      ]
+                    ]
+                  )
+                )
+              )
+            )
+          )
         ] else ...[
           Text(
             error,
             style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207)),
-            textAlign: TextAlign.center,
-          ),
+            textAlign: TextAlign.center
+          )
         ],
-        if (showKnowMoreButton)
-          FractionallySizedBox(
-            widthFactor: 0.5,
-            child: Button(label: "Saiba Mais", function: goExtraTextPage),
-          ),
-      ],
+        if (showKnowMoreButton)...[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 10,
+            children: <Widget>[
+              Expanded(child: Button(label: "Saiba Mais", function: goNextPage, pageIndex: 0)),
+              Expanded(child: Button(label: "Fontes", function: goNextPage, pageIndex: 1))
+            ]
+          )
+        ]
+      ]
     );
   }
 
-  void goExtraTextPage() {
+  void goNextPage([int? pageIndex]) {
+    if (pageIndex == null) return;
+
     Navigator.push(
       context,
       PageRouteBuilder(
-        pageBuilder: (_, _, _) => ExtraTextPage(title: title, text: extraText),
+        pageBuilder: (_, _, _) => pageIndex == 0 
+          ? ExtraTextPage(title: title, text: extraText)
+          : FontsPage(fonts: fonts),
         transitionsBuilder: (_, animation, _, child) {
           const begin = Offset(1.0, 0.0);
           const end = Offset.zero;
@@ -255,8 +284,8 @@ class _HomePageState extends State<HomePage> {
             position: animation.drive(tween),
             child: child,
           );
-        },
-      ),
+        }
+      )
     );
   }
 }

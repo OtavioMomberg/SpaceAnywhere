@@ -14,7 +14,7 @@ class DrawerPage extends StatefulWidget {
 class _DrawerPageState extends State<DrawerPage> {
   late final StarsPositions _starsPositions;
   final List<Offset> stars = [];
-  int selectedPage = 1;
+  int selectedPage = 0;
 
   @override
     void initState() {
@@ -92,7 +92,7 @@ class _DrawerPageState extends State<DrawerPage> {
           stars: _starsPositions.getStarPositions(size),
           child: Container(
             width: double.infinity,
-            padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+            padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10),
             decoration: BoxDecoration(gradient: AppTheme.mainGradient),
             child: AppRoutes.pages[selectedPage]
           )

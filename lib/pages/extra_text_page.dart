@@ -40,7 +40,6 @@ class ExtraTextPage extends StatelessWidget {
               child: FractionallySizedBox(
                 heightFactor: 0.9,
                 child: StylizedContainer(
-                  widthFactor: 0.95,
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
