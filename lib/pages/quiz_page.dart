@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:ui';
-import 'package:space_anywhere/audio_services/audio_services.dart';
 import 'package:space_anywhere/controllers/question_controller.dart';
 import 'package:space_anywhere/internet/check_internet.dart';
 import 'package:space_anywhere/repositories/implementations/question_inplementation_http.dart';
@@ -78,7 +77,7 @@ class _QuizPageState extends State<QuizPage> {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
               child: Container(
-                height: 300,
+                height: 350,
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
@@ -94,7 +93,7 @@ class _QuizPageState extends State<QuizPage> {
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18
-                      ),
+                      )
                     ),
                     Icon(Icons.rocket_launch, color: Colors.white, size: 30)
                   ]
@@ -106,7 +105,7 @@ class _QuizPageState extends State<QuizPage> {
           FractionallySizedBox(
             widthFactor: 0.5,
             child: Button(
-              label: "Iniciar", 
+              label: "Jogar", 
               function: startQuiz
             )
           ),
@@ -117,7 +116,7 @@ class _QuizPageState extends State<QuizPage> {
               child: QuestionCard(
                 question: questionController.getQuestionModel!.question,
                 color: Colors.white
-              ),
+              )
             )
           ),
           const SizedBox(height: 20),
@@ -204,8 +203,6 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   Future<void> onTapAnswer(int index) async {
-    AudioServices.play("audios/button_click2.mp3", 1);
-
     if (questionController.getQuestionModel!.rightAnswerIndex == index) {
       await showResponseMessage(true);
     } else {

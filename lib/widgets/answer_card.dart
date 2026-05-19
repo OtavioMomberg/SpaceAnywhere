@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'package:space_anywhere/audio_services/audio_services.dart';
 
 class AnswerCard extends StatelessWidget {
   final int index;
@@ -21,7 +22,10 @@ class AnswerCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       color: Colors.white.withValues(alpha: 0.01),
       child: InkWell(
-        onTap: () => onTap(index),
+        onTap: () {
+          AudioServices.play("audios/button_click2.mp3", 1);
+          onTap(index);
+        },
         borderRadius: BorderRadius.circular(12),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(12),

@@ -5,9 +5,9 @@ class OpenLinks {
     final Uri uri = Uri.parse(url);
 
     if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+      await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
     } else {
-      throw Exception("Não foi possível abrir o link");
+      throw Exception("Erro ao acessar o link.");
     }
   }
 }
