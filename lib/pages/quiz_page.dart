@@ -289,5 +289,7 @@ class _QuizPageState extends State<QuizPage> {
     );
   }
 
-  void showError() {}
+  void showError() {
+    showStylizedSnackBar(context, "Não foi possível se conectar ao servidor.", Colors.red);
+  }
 }

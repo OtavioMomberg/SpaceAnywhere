@@ -137,7 +137,7 @@ class _HomePageState extends State<HomePage> {
       await dbInstance.add(false, null, fontModel[i]);
     }
   }
-
+ 
   Future<void> updateInDatabase() async {
     final curiosityModel = CuriosityDbModel(
       id: selectCuriosity[0].id,

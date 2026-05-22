@@ -14,6 +14,13 @@ class DrawerPage extends StatefulWidget {
 class _DrawerPageState extends State<DrawerPage> {
   late final StarsPositions _starsPositions;
   final List<Offset> stars = [];
+  final List<IconData> drawerIcons = [
+    Icons.home,
+    Icons.quiz,
+    Icons.analytics,
+    Icons.wallpaper,
+    Icons.info
+  ];
   int selectedPage = 0;
 
   @override
@@ -70,14 +77,24 @@ class _DrawerPageState extends State<DrawerPage> {
                 padding: const EdgeInsets.only(bottom: 10),
                 child: ListTile(
                   selected: selectedPage == index,
-                  selectedTileColor: Colors.white.withValues(alpha: 0.1),
-                  title: Text(AppRoutes.pageNames[index], style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207))),
-                  splashColor: const Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.8),
+                  selectedTileColor: Colors.white.withValues(alpha: 0.15),
+                  leading: Icon(
+                    drawerIcons[index],
+                    color: selectedPage == index 
+                      ? const Color.fromARGB(255, 250, 221, 134).withValues(alpha: 0.8) 
+                      : const Color.fromARGB(255, 206, 206, 207)
+                  ),
+                  title: Text(
+                    AppRoutes.pageNames[index], 
+                    style: TextStyle(
+                      color: selectedPage == index 
+                        ? const Color.fromARGB(255, 250, 221, 134).withValues(alpha: 0.8)  
+                        : Color.fromARGB(255, 206, 206, 207)
+                    )
+                  ),
                   shape: StadiumBorder(),
                   onTap: () {
-                    setState(() {
-                      selectedPage = index;
-                    });
+                    setState(() => selectedPage = index);
                     Navigator.pop(context);
                   }
                 )
@@ -92,7 +109,9 @@ class _DrawerPageState extends State<DrawerPage> {
           stars: _starsPositions.getStarPositions(size),
           child: Container(
             width: double.infinity,
-            padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10),
+            padding: selectedPage == 2 
+              ? const EdgeInsets.only(bottom: 15)
+              : const EdgeInsets.only(left: 15, right: 15, bottom: 10),
             decoration: BoxDecoration(gradient: AppTheme.mainGradient),
             child: AppRoutes.pages[selectedPage]
           )
