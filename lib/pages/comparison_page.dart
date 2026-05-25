@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-//import 'package:space_anywhere/models/comparison_models/comparison_model.dart';
+import 'package:space_anywhere/models/comparison_models/comparison_model.dart';
 import 'package:space_anywhere/widgets/comparison_widget.dart';
 
 class ComparisonPage extends StatefulWidget {
@@ -22,11 +22,11 @@ class _ComparisonPageState extends State<ComparisonPage> {
           child: ListView.builder(
             controller: _scrollController,
             scrollDirection: Axis.horizontal,
-            itemCount: 100, //ComparisonModel.objectList.lenght,
+            itemCount: ComparisonModel.objectList.length,
             itemExtent: size.width,
             itemBuilder: (context, index) {
               return Container(
-                margin: EdgeInsets.symmetric(horizontal: 15),
+                margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
@@ -41,9 +41,7 @@ class _ComparisonPageState extends State<ComparisonPage> {
                     ),
                     Expanded(
                       child: ComparisonWidget(
-                        imagePath: "",
-                        objectName: "",
-                        //objectData: ComparisonModel.objectList[index]
+                        objectData: ComparisonModel.objectList[index]
                       )
                     ),
                     IconButton(

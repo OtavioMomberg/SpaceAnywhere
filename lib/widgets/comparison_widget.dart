@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-//import 'package:space_anywhere/models/comparison_models/info_object.dart';
+import 'package:space_anywhere/widgets/image_widget.dart';
+import 'package:space_anywhere/models/comparison_models/info_object.dart';
 
 class ComparisonWidget extends StatelessWidget {
-  final String imagePath;
-  final String objectName;
-  //final InfoObject objectData;
+  final InfoObject objectData;
 
   const ComparisonWidget({
-    required this.imagePath,
-    required this.objectName,
-    //required this.objectData,
+    required this.objectData,
     super.key
   });
 
@@ -18,39 +15,38 @@ class ComparisonWidget extends StatelessWidget {
     final size = MediaQuery.of(context).size;
 
     return Container(
+      height: double.infinity,
       margin: const EdgeInsets.symmetric(vertical: 10),
       padding: const EdgeInsets.all(10),
-      color: Colors.red,
-      child: Column(
-        spacing: 10,
-        children: <Widget>[
-          Container(
-            height: size.height * 0.3,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: Colors.white
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 10,
+          children: <Widget>[
+            SizedBox(
+              height: size.height * 0.3,
+              width: double.infinity,
+              child: Center(
+                child: ImageWidget(imagePath: objectData.imagePath)
+              )
             ),
-            child: Center(
-              child: FlutterLogo(size: 70, style: FlutterLogoStyle.stacked)
-            )
-          ),
-          Divider(),
-          Text("NOME", style: TextStyle(color: Colors.white)),
-          Divider(),
-          const SizedBox(height: 10),
-          ...List.generate(5, (index) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  "DADOS: $index --- AAAAAAAAAAA",
-                  style: TextStyle(color: Colors.white),
-                )
-              ]
-            );
-          })
-        ]
+            Text(
+              "*Imagem gerada por Inteligência Artificial",
+              style: TextStyle(color: Colors.white)
+            ),
+        
+            const SizedBox(height: 10),
+            Divider(),
+            Center(child: Text(objectData.name, style: TextStyle(color: Colors.white))),
+            Divider(),
+            const SizedBox(height: 10),
+        
+            Text("Diâmetro: ${objectData.diameter}", style: const TextStyle(color: Colors.white)),
+            Text("Massa: ${objectData.mass}", style: const TextStyle(color: Colors.white)),
+            Text("Distância para Terra: ${objectData.earthDistance}", style: const TextStyle(color: Colors.white)),
+            Text("Tipo de objeto: ${objectData.objectType}", style: const TextStyle(color: Colors.white)),
+          ]
+        )
       )
     );
   }
