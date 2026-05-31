@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 import 'package:space_anywhere/models/comparison_models/comparison_model.dart';
+import 'package:space_anywhere/models/comparison_models/info_object.dart';
 import 'package:space_anywhere/widgets/comparison_widget.dart';
 
 class ComparisonPage extends StatefulWidget {
@@ -11,6 +13,26 @@ class ComparisonPage extends StatefulWidget {
 
 class _ComparisonPageState extends State<ComparisonPage> {
   final ScrollController _scrollController = ScrollController();
+  final List<InfoObject> finalList = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    randomizeList();
+  }
+
+  void randomizeList() {
+    Random rand = Random();
+
+    while(finalList.length < ComparisonModel.objectList.length) {
+      int index = rand.nextInt(ComparisonModel.objectList.length);
+
+      if (!finalList.contains(ComparisonModel.objectList[index])) {
+        finalList.add(ComparisonModel.objectList[index]);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +48,7 @@ class _ComparisonPageState extends State<ComparisonPage> {
             itemExtent: size.width,
             itemBuilder: (context, index) {
               return Container(
-                margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                margin: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
@@ -37,16 +59,14 @@ class _ComparisonPageState extends State<ComparisonPage> {
                   children: <Widget>[
                     IconButton(
                       onPressed: () => moveScroll(-size.width), 
-                      icon: Icon(Icons.arrow_back, color: Colors.white)
+                      icon: Icon(Icons.arrow_back, color: Color.fromARGB(255, 206, 206, 207))
                     ),
                     Expanded(
-                      child: ComparisonWidget(
-                        objectData: ComparisonModel.objectList[index]
-                      )
+                      child: ComparisonWidget(objectData: finalList[index])
                     ),
                     IconButton(
                       onPressed: () => moveScroll(size.width), 
-                      icon: Icon(Icons.arrow_forward, color: Colors.white)
+                      icon: Icon(Icons.arrow_forward, color: Color.fromARGB(255, 206, 206, 207))
                     )
                   ]
                 )

@@ -4,7 +4,7 @@ class Button extends StatelessWidget {
   final String label;
   final int? pageIndex;
   final void Function(int?)? function;
-  final void Function()? awaitFunction;
+  final Future<void> Function()? awaitFunction;
   const Button({
     required this.label, 
     this.pageIndex,
@@ -20,7 +20,10 @@ class Button extends StatelessWidget {
       color: Colors.white.withValues(alpha: 0.2),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () => awaitFunction ?? function!(pageIndex),
+        onTap: () {
+          if (awaitFunction?.call() != null) return;
+          function!(pageIndex);
+        },
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),

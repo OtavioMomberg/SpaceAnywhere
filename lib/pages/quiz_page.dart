@@ -20,6 +20,7 @@ class _QuizPageState extends State<QuizPage> {
   int id = 0;
   bool quizStarted = false;
   bool checkInternet = false;
+  bool checkAPI = false;
   bool isLoading = true;
   String error = "";
 
@@ -49,6 +50,14 @@ class _QuizPageState extends State<QuizPage> {
       return;
     }
 
+    checkAPI = await Internet.isApiAwake();
+
+    if (!checkAPI) {
+      if (!mounted) return;
+      setState(() => isLoading = false);
+      return;
+    }
+
     await questionController.onGetQuestion(questionId ?? id);
 
     if (!mounted) return;
@@ -70,7 +79,7 @@ class _QuizPageState extends State<QuizPage> {
     return Column(
       children: <Widget>[
         if (!quizStarted)...[
-          Text("Quiz", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30)),
+          Text("Quiz", style: TextStyle(color: Color.fromARGB(255, 206, 206, 207), fontWeight: FontWeight.bold, fontSize: 30)),
           const SizedBox(height: 20),
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
@@ -91,11 +100,11 @@ class _QuizPageState extends State<QuizPage> {
                     const Text(
                       "Quiz de Astronômia",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Color.fromARGB(255, 206, 206, 207),
                         fontSize: 18
                       )
                     ),
-                    Icon(Icons.rocket_launch, color: Colors.white, size: 30)
+                    Icon(Icons.rocket_launch, color: Color.fromARGB(255, 206, 206, 207), size: 30)
                   ]
                 )
               )
@@ -103,12 +112,12 @@ class _QuizPageState extends State<QuizPage> {
           ),
           const SizedBox(height: 40),
           FractionallySizedBox(
-            widthFactor: 0.5,
+            widthFactor: 0.8,
             child: Button(
               label: "Jogar", 
               function: startQuiz
             )
-          ),
+          )
         ] else...[
           Expanded(
             child: Padding(
@@ -145,7 +154,7 @@ class _QuizPageState extends State<QuizPage> {
 
   Future<void> startQuiz([int? n]) async {
     if (isLoading) {
-      showStylizedSnackBar(context, "Aguarde um instante!", Colors.red);
+      showStylizedSnackBar(context, "Aguardando o servidor!", Colors.red);
       return;
     }
     bool retryCheck = false;
@@ -191,15 +200,9 @@ class _QuizPageState extends State<QuizPage> {
     return retry ?? false;
   }
 
-  Future<bool> retryInternetConnection() async {
-    int retry = 0;
-    while(retry < 5 && !checkInternet) {
-      await getQuestion();
-      retry+=1;
-      await Future.delayed(Duration(seconds: 1));
-    }
-
-    return checkInternet ? true : false;
+  Future<bool> retryInternetConnection() async {  
+    await getQuestion();
+    return checkAPI ? true : false;
   }
 
   Future<void> onTapAnswer(int index) async {
@@ -212,8 +215,8 @@ class _QuizPageState extends State<QuizPage> {
 
   Future<void> closeDialog([bool? retry]) async {
     if (retry == null) {
-      getQuestion(questionController.getQuestionModel!.id);
-      await Future.delayed(Duration(seconds: 3));
+      await getQuestion(questionController.getQuestionModel!.id);
+      //await Future.delayed(Duration(seconds: 3));
     }
 
     if (!mounted) return;
@@ -223,6 +226,7 @@ class _QuizPageState extends State<QuizPage> {
   Future<void> showResponseMessage(bool isAnswerCorrect) async {
     await showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           closeDialog();
@@ -243,20 +247,20 @@ class _QuizPageState extends State<QuizPage> {
                   isAnswerCorrect 
                     ? "Certa Resposta!" 
                     : "Resposta Incorreta. Alternativa correta:",
-                    style: const TextStyle(
-                      fontSize: 18
-                    ),
-                    textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 18
                   ),
+                  textAlign: TextAlign.center
+                ),
                 Text(
                   isAnswerCorrect 
                     ? "" 
                     : "${questionController.getQuestionModel!.alternatives[questionController.getQuestionModel!.rightAnswerIndex]} ",
                   style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold
-                    ),
-                    textAlign: TextAlign.justify
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold
+                  ),
+                  textAlign: TextAlign.justify
                 )
               ]
             )

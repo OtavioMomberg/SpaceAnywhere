@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:space_anywhere/page_routes/app_routes.dart';
 import 'package:space_anywhere/themes/app_theme.dart';
-import 'package:space_anywhere/themes/stars_draw/stars_positions.dart';
-import 'package:space_anywhere/widgets/star_painter_widget.dart';
 
 class DrawerPage extends StatefulWidget {
   const DrawerPage({super.key});
@@ -12,8 +10,6 @@ class DrawerPage extends StatefulWidget {
 }
 
 class _DrawerPageState extends State<DrawerPage> {
-  late final StarsPositions _starsPositions;
-  final List<Offset> stars = [];
   final List<IconData> drawerIcons = [
     Icons.home,
     Icons.quiz,
@@ -22,21 +18,6 @@ class _DrawerPageState extends State<DrawerPage> {
     Icons.info
   ];
   int selectedPage = 0;
-
-  @override
-    void initState() {
-      super.initState();
-
-      for (int i = 0; i < StarsPositions.starQuantity; i++) {
-        stars.add(
-          Offset(
-            StarsPositions.random.nextDouble(),
-            StarsPositions.random.nextDouble(),
-          ),
-        );
-      }
-      _starsPositions = StarsPositions(stars: stars);
-    }
   
   @override
   Widget build(BuildContext context) {
@@ -105,16 +86,13 @@ class _DrawerPageState extends State<DrawerPage> {
       ),
       body: SafeArea(
         top: false,
-        child: StarPainterWidget(
-          stars: _starsPositions.getStarPositions(size),
-          child: Container(
-            width: double.infinity,
-            padding: selectedPage == 2 
-              ? const EdgeInsets.only(bottom: 15)
-              : const EdgeInsets.only(left: 15, right: 15, bottom: 10),
-            decoration: BoxDecoration(gradient: AppTheme.mainGradient),
-            child: AppRoutes.pages[selectedPage]
-          )
+        child: Container(
+          width: double.infinity,
+          padding: selectedPage == 2 
+            ? const EdgeInsets.only(bottom: 15)
+            : const EdgeInsets.only(left: 15, right: 15, bottom: 10),
+          decoration: BoxDecoration(gradient: AppTheme.mainGradient),
+          child: AppRoutes.pages[selectedPage]
         )
       )
     );

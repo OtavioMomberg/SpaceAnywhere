@@ -8,6 +8,7 @@ import 'package:space_anywhere/pages/extra_text_page.dart';
 import 'package:space_anywhere/pages/fonts_page.dart';
 import 'package:space_anywhere/repositories/implementations/curiosity_implementation_http.dart';
 import 'package:space_anywhere/widgets/button.dart';
+import 'package:space_anywhere/widgets/info_error_home.dart';
 import 'package:space_anywhere/widgets/stylized_container.dart';
 
 class HomePage extends StatefulWidget {
@@ -26,6 +27,7 @@ class _HomePageState extends State<HomePage> {
   bool isLoading = true;
   bool showInternetError = false;
   bool checkInternet = false;
+  bool checkAPI = false;
   bool showKnowMoreButton = false;
   String text = "";
   String extraText = "";
@@ -61,10 +63,18 @@ class _HomePageState extends State<HomePage> {
         .replaceAll('\\"', '"');
   }
 
+  Future<void> verifyInternet() async {
+    checkInternet = await Internet.hasInternet();
+  }
+
   Future<void> getCuriosity(int curiosityId, DbActions action) async {
     await verifyInternet();
 
     if (!checkInternet) return;
+
+    checkAPI = await Internet.isApiAwake();
+
+    if (!checkAPI) return;
 
     await curiosityController.onGetCuriosity(curiosityId);
 
@@ -83,10 +93,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> verifyInternet() async {
-    checkInternet = await Internet.hasInternet();
-  }
-
   Future<void> controlCuriosity() async {
     bool checkDatabaseEmpty = await checkDatabaseIsNull();
 
@@ -96,6 +102,7 @@ class _HomePageState extends State<HomePage> {
       await getCuriosity(selectCuriosity[0].curiosityId + 1, DbActions.update);
     } else {
       checkInternet = true;
+      checkAPI = true;
       showKnowMoreButton = true;
       text = cleanText(selectCuriosity[0].shortAnswer);
       extraText = cleanText(selectCuriosity[0].longAnswer);
@@ -174,38 +181,18 @@ class _HomePageState extends State<HomePage> {
           ),
           textAlign: TextAlign.center,
         ),
-        if (isLoading) ...[
+        if (isLoading)...[
           StylizedContainer(
             height: size.height * 0.6,
             child: CircularProgressIndicator(
               color: Colors.white.withValues(alpha: 0.5),
-            ),
-          ),
-        ] else if (!checkInternet) ...[
-          StylizedContainer(
-            height: size.height * 0.6,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  "Erro. Sem conexão com a internet",
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 206, 206, 207),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                  maxLines: 2,
-                  textAlign: TextAlign.center
-                ),
-                const Icon(
-                  Icons.wifi_off,
-                  color: Color.fromARGB(255, 206, 206, 207),
-                  size: 40
-                )
-              ]
             )
           )
-        ] else if (curiosityController.getErrorCuriosity == null) ...[
+        ] else if (!checkInternet)...[
+          InfoErrorHome(message: "Erro. Sem conexão com a internet", icon: Icons.wifi_off, height: size.height * 0.6)
+        ] else if (!checkAPI)...[
+          InfoErrorHome(message: "Erro. Não foi possível se conectar ao servidor", icon: Icons.dns, height: size.height * 0.6)
+        ] else if (curiosityController.getErrorCuriosity == null)...[
           Flexible(
             child: FractionallySizedBox(
               heightFactor: 0.9,
@@ -240,7 +227,7 @@ class _HomePageState extends State<HomePage> {
               )
             )
           )
-        ] else ...[
+        ] else...[
           Text(
             error,
             style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207)),
@@ -275,14 +262,11 @@ class _HomePageState extends State<HomePage> {
           const end = Offset.zero;
           const curve = Curves.easeInOut;
 
-          final tween = Tween(
-            begin: begin,
-            end: end,
-          ).chain(CurveTween(curve: curve));
+          final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
 
           return SlideTransition(
             position: animation.drive(tween),
-            child: child,
+            child: child
           );
         }
       )

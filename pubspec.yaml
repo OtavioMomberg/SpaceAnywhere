@@ -35,6 +35,8 @@ dependencies:
   path: 
   audioplayers: 
   url_launcher:
+  gallery_saver_plus: 
+  path_provider: 
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

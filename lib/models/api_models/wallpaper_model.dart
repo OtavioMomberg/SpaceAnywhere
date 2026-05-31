@@ -14,10 +14,13 @@ class WallpaperModel {
   factory WallpaperModel.fromMap(Map<String, dynamic> map) {
     return WallpaperModel(
       id: map["id"], 
-      fullImageUrl: map["fullImageUrl"], 
-      thumbnailImageUrl: map["thumbnailImageUrl"]
+      fullImageUrl: map["full_image_url"], 
+      thumbnailImageUrl: map["thumbnail_image_url"]
     );
   }
 
-  factory WallpaperModel.fromJson(String source) => WallpaperModel.fromMap(jsonDecode(source));
+  static List<WallpaperModel> listFromJson(String source) {
+    final List decoded = jsonDecode(source);
+    return decoded.map((item) => WallpaperModel.fromMap(item)).toList();
+  }
 }

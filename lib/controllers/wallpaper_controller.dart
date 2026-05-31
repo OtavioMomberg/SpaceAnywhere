@@ -14,9 +14,9 @@ class WallpaperController {
 
   bool get getIsLoading => _isLoading;
 
-  WallpaperModel? _wallpaperModel;
+  List<WallpaperModel?> _wallpaperModel = [];
 
-  WallpaperModel? get getWallpaperModel => _wallpaperModel;
+  List<WallpaperModel?> get getWallpaperModel => _wallpaperModel;
 
   Future<void> onGetWallpaper(int offset) async {
     _errorGetWallpaper = null;
@@ -24,11 +24,12 @@ class WallpaperController {
     try {
       final response = await wallpaperRepositoryHttp.getWallpaper(offset);
 
-      if (response != null) _wallpaperModel = response;
+      if (response.isNotEmpty) _wallpaperModel = response;
       
     } catch(error) {
-      List<String> split = error.toString().split('"');
-      _errorGetWallpaper = split[split.length-2];
+      /*List<String> split = error.toString().split('"');
+      _errorGetWallpaper = split[split.length-2];*/
+      _errorGetWallpaper = error.toString();
     }
     _isLoading = false;
   }

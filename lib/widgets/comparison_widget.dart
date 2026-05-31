@@ -26,25 +26,23 @@ class ComparisonWidget extends StatelessWidget {
             SizedBox(
               height: size.height * 0.3,
               width: double.infinity,
-              child: Center(
-                child: ImageWidget(imagePath: objectData.imagePath)
-              )
+              child: Center(child: ImageWidget(imagePath: objectData.imagePath, option: "asset"))
             ),
             Text(
               "*Imagem gerada por Inteligência Artificial",
-              style: TextStyle(color: Colors.white)
+              style: TextStyle(color: Color.fromARGB(255, 206, 206, 207))
             ),
         
             const SizedBox(height: 10),
             Divider(),
-            Center(child: Text(objectData.name, style: TextStyle(color: Colors.white))),
+            Center(child: Text(objectData.name, style: TextStyle(color: Color.fromARGB(255, 206, 206, 207)))),
             Divider(),
             const SizedBox(height: 10),
         
-            Text("Diâmetro: ${objectData.diameter}", style: const TextStyle(color: Colors.white)),
-            Text("Massa: ${objectData.mass}", style: const TextStyle(color: Colors.white)),
-            Text("Distância para Terra: ${objectData.earthDistance}", style: const TextStyle(color: Colors.white)),
-            Text("Tipo de objeto: ${objectData.objectType}", style: const TextStyle(color: Colors.white)),
+            Text("Diâmetro: ${objectData.diameter}", style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207))),
+            Text("Massa: ${objectData.mass}", style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207))),
+            Text("Distância para Terra: ${objectData.earthDistance}", style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207))),
+            Text("Tipo de objeto: ${objectData.objectType}", style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207))),
           ]
         )
       )
