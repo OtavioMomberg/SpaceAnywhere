@@ -9,7 +9,7 @@ class CuriosityImplementationHttp implements CuriosityRepositoryHttp {
   CuriosityImplementationHttp({required Client client}) : _client = client;
 
   @override
-  Future<CuriosityModel?> getCuriosity(int id) async {
+  Future<CuriosityModel?> getCuriosity({required int id}) async {
     try {
       final url = "$URL/api/v1/curiosity/$id";
       final response = await _client.get(
@@ -18,7 +18,7 @@ class CuriosityImplementationHttp implements CuriosityRepositoryHttp {
       );
 
       if (response.statusCode == 200) {
-        return CuriosityModel.fromJson(response.body);
+        return CuriosityModel.fromJson(source: response.body);
       } else {
         throw Exception(response.body);
       }

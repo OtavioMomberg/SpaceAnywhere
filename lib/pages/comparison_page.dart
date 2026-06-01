@@ -58,14 +58,14 @@ class _ComparisonPageState extends State<ComparisonPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     IconButton(
-                      onPressed: () => moveScroll(-size.width), 
+                      onPressed: () => moveScroll(value: -size.width), 
                       icon: Icon(Icons.arrow_back, color: Color.fromARGB(255, 206, 206, 207))
                     ),
                     Expanded(
                       child: ComparisonWidget(objectData: finalList[index])
                     ),
                     IconButton(
-                      onPressed: () => moveScroll(size.width), 
+                      onPressed: () => moveScroll(value: size.width), 
                       icon: Icon(Icons.arrow_forward, color: Color.fromARGB(255, 206, 206, 207))
                     )
                   ]
@@ -78,7 +78,7 @@ class _ComparisonPageState extends State<ComparisonPage> {
     );
   }
 
-  void moveScroll(double value) {
+  void moveScroll({required double value}) {
     _scrollController.animateTo(
       _scrollController.offset + value, 
       duration: Duration(milliseconds: 500), 

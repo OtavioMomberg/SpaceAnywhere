@@ -1,7 +1,7 @@
 import 'package:url_launcher/url_launcher.dart';
 
 class OpenLinks {
-  static Future<void> openLink(String url) async {
+  static Future<void> openLink({required String url}) async {
     final Uri uri = Uri.parse(url);
 
     if (await canLaunchUrl(uri)) {

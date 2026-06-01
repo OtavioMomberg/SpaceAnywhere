@@ -11,7 +11,7 @@ class WallpaperModel {
     required this.thumbnailImageUrl
   });
 
-  factory WallpaperModel.fromMap(Map<String, dynamic> map) {
+  factory WallpaperModel.fromMap({required Map<String, dynamic> map}) {
     return WallpaperModel(
       id: map["id"], 
       fullImageUrl: map["full_image_url"], 
@@ -19,8 +19,8 @@ class WallpaperModel {
     );
   }
 
-  static List<WallpaperModel> listFromJson(String source) {
+  static List<WallpaperModel> listFromJson({required String source}) {
     final List decoded = jsonDecode(source);
-    return decoded.map((item) => WallpaperModel.fromMap(item)).toList();
+    return decoded.map((item) => WallpaperModel.fromMap(map: item)).toList();
   }
 }

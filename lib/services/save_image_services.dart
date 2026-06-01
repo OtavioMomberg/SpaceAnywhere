@@ -5,22 +5,21 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 class SaveImageServices {
-
-  static Future<bool> saveImageFromAsset(String imagePath) async {
+  static Future<bool> saveImageFromAsset({required String imagePath}) async {
     final ByteData byteData = await rootBundle.load(imagePath);
     final Uint8List imageBytes = byteData.buffer.asUint8List();
 
-    return _saveToGallery(imageBytes);
+    return _saveToGallery(imageBytes: imageBytes);
   }
 
-  static Future<bool> saveImageFromUrl(String imageUrl) async {
+  static Future<bool> saveImageFromUrl({required String imageUrl}) async {
     final http.Response response = await http.get(Uri.parse(imageUrl));
     final Uint8List imageBytes = response.bodyBytes;
 
-    return _saveToGallery(imageBytes);
+    return _saveToGallery(imageBytes: imageBytes);
   }
 
-  static Future<bool> _saveToGallery(Uint8List imageBytes) async {
+  static Future<bool> _saveToGallery({required Uint8List imageBytes}) async {
     final Directory tempDir = await getTemporaryDirectory();
     final String tempPath = "${tempDir.path}/image_temp_${DateTime.now().millisecondsSinceEpoch}.png";
     final File tempFile = File(tempPath);

@@ -67,7 +67,7 @@ class DbServices {
     return database;
   }
 
-  Future<List<dynamic>> select(bool getCuriosity) async {
+  Future<List<dynamic>> select({required bool getCuriosity}) async {
     final db = await database;
     final List<Map> data;
 
@@ -92,7 +92,7 @@ class DbServices {
     return formatedData;
   }
 
-  Future<void> add(bool getCuriosity, [CuriosityDbModel? curiosityModel, FontModel? fontModel]) async {
+  Future<void> add({CuriosityDbModel? curiosityModel, FontModel? fontModel, required bool getCuriosity}) async {
     final db = await database;
 
     try {
@@ -115,7 +115,7 @@ class DbServices {
     }
   }
 
-  Future<void> update(CuriosityDbModel curiosityModel) async {
+  Future<void> update({required CuriosityDbModel curiosityModel}) async {
     final db = await database;
 
     try {
@@ -145,64 +145,4 @@ class DbServices {
       log(e.toString());
     }
   }
-
-  /*Future<List<CuriosityDbModel>> select() async {
-    final db = await database;
-    final List<Map> data;
-
-    data = await db.query("CURIOSITY");
-
-    final List<CuriosityDbModel> formatedData = data.map(
-      (e) => CuriosityDbModel(
-        id: e["table_id"] as int,
-        curiosityId: e["curiosity_id"] as int, 
-        title: e["title"] as String, 
-        shortAnswer: e["short_answer"] as String, 
-        longAnswer: e["long_answer"] as String, 
-        time: e["time"] as String
-      )
-    ).toList();
-
-    return formatedData;
-  }
-
-  Future<void> add(CuriosityDbModel curiosityModel) async {
-    final db = await database;
-
-    try {
-      await db.insert(
-        "CURIOSITY", 
-        {
-          _curiosityId : curiosityModel.curiosityId,
-          _title : curiosityModel.title,
-          _shortAnswer : curiosityModel.shortAnswer,
-          _longAnswer : curiosityModel.longAnswer,
-          _time : curiosityModel.time
-        }
-      );
-    } catch (e) {
-      log(e.toString());
-    }
-  }
-
-  Future<void> update(CuriosityDbModel curiosityModel) async {
-    final db = await database;
-
-    try {
-      await db.update(
-        "CURIOSITY", 
-        {
-          _curiosityId : curiosityModel.curiosityId,
-          _title : curiosityModel.title,
-          _shortAnswer : curiosityModel.shortAnswer,
-          _longAnswer : curiosityModel.longAnswer,
-          _time : curiosityModel.time,
-        },
-        where: "table_id = ?",
-        whereArgs: [curiosityModel.id]
-      );
-    } catch (e) {
-      log(e.toString());
-    }
-  }*/
 }

@@ -47,16 +47,16 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<bool> checkDatabaseIsNull() async {
-    selectCuriosity = await dbInstance.select(true);
+    selectCuriosity = await dbInstance.select(getCuriosity: true);
     selectCuriosity.map((item) => item as CuriosityDbModel);
 
-    selectFonts = await dbInstance.select(false);
+    selectFonts = await dbInstance.select(getCuriosity: false);
     selectFonts.map((item) => item as FontModel);
 
     return selectCuriosity.isEmpty ? true : false;
   }
 
-  String cleanText(String text) {
+  String cleanText({required String text}) {
     return text
         .replaceAll('\\n', '\n')
         .replaceAll('\\r', '')
@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> {
     checkInternet = await Internet.hasInternet();
   }
 
-  Future<void> getCuriosity(int curiosityId, DbActions action) async {
+  Future<void> getCuriosity({required int curiosityId, required DbActions action}) async {
     await verifyInternet();
 
     if (!checkInternet) return;
@@ -76,11 +76,11 @@ class _HomePageState extends State<HomePage> {
 
     if (!checkAPI) return;
 
-    await curiosityController.onGetCuriosity(curiosityId);
+    await curiosityController.onGetCuriosity(id: curiosityId);
 
     if (curiosityController.getErrorCuriosity == null) {
-      text = cleanText(curiosityController.getCuriosityModel!.shortAnswer);
-      extraText = cleanText(curiosityController.getCuriosityModel!.longAnswer);
+      text = cleanText(text: curiosityController.getCuriosityModel!.shortAnswer);
+      extraText = cleanText(text: curiosityController.getCuriosityModel!.longAnswer);
       title = curiosityController.getCuriosityModel!.title;
       fonts = curiosityController.getCuriosityModel!.contentFont;
 
@@ -97,15 +97,15 @@ class _HomePageState extends State<HomePage> {
     bool checkDatabaseEmpty = await checkDatabaseIsNull();
 
     if (checkDatabaseEmpty) {
-      await getCuriosity(curiosityId, DbActions.add);
+      await getCuriosity(curiosityId: curiosityId, action: DbActions.add);
     } else if (DateTime.now().difference(DateTime.parse(selectCuriosity[0].time)).inHours >= 24) {
-      await getCuriosity(selectCuriosity[0].curiosityId + 1, DbActions.update);
+      await getCuriosity(curiosityId: selectCuriosity[0].curiosityId + 1, action: DbActions.update);
     } else {
       checkInternet = true;
       checkAPI = true;
       showKnowMoreButton = true;
-      text = cleanText(selectCuriosity[0].shortAnswer);
-      extraText = cleanText(selectCuriosity[0].longAnswer);
+      text = cleanText(text: selectCuriosity[0].shortAnswer);
+      extraText = cleanText(text: selectCuriosity[0].longAnswer);
       title = selectCuriosity[0].title;
       for (int i=0; i<selectFonts.length; i++) {
         fonts.add(selectFonts[i].font);
@@ -121,15 +121,13 @@ class _HomePageState extends State<HomePage> {
     final curiosityModel = CuriosityDbModel(
       id: 0,
       curiosityId: curiosityController.getCuriosityModel!.id,
-      shortAnswer: cleanText(
-        curiosityController.getCuriosityModel!.shortAnswer,
-      ),
-      longAnswer: cleanText(curiosityController.getCuriosityModel!.longAnswer),
+      shortAnswer: cleanText(text: curiosityController.getCuriosityModel!.shortAnswer),
+      longAnswer: cleanText(text: curiosityController.getCuriosityModel!.longAnswer),
       title: curiosityController.getCuriosityModel!.title,
       time: DateTime.now().toIso8601String(),
     );
 
-    await dbInstance.add(true, curiosityModel);
+    await dbInstance.add(curiosityModel: curiosityModel, fontModel: null, getCuriosity: true);
 
     await addFonts();
   }
@@ -141,7 +139,7 @@ class _HomePageState extends State<HomePage> {
     );
 
     for (int i=0; i<curiosityController.getCuriosityModel!.contentFont.length; i++) {
-      await dbInstance.add(false, null, fontModel[i]);
+      await dbInstance.add(curiosityModel: null, fontModel: fontModel[i], getCuriosity: false);
     }
   }
  
@@ -149,15 +147,13 @@ class _HomePageState extends State<HomePage> {
     final curiosityModel = CuriosityDbModel(
       id: selectCuriosity[0].id,
       curiosityId: curiosityController.getCuriosityModel!.id,
-      shortAnswer: cleanText(
-        curiosityController.getCuriosityModel!.shortAnswer,
-      ),
-      longAnswer: cleanText(curiosityController.getCuriosityModel!.longAnswer),
+      shortAnswer: cleanText(text: curiosityController.getCuriosityModel!.shortAnswer),
+      longAnswer: cleanText(text: curiosityController.getCuriosityModel!.longAnswer),
       title: curiosityController.getCuriosityModel!.title,
       time: DateTime.now().toIso8601String(),
     );
 
-    await dbInstance.update(curiosityModel);
+    await dbInstance.update(curiosityModel: curiosityModel);
 
     await dbInstance.delete();
 
@@ -179,7 +175,7 @@ class _HomePageState extends State<HomePage> {
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
-          textAlign: TextAlign.center,
+          textAlign: TextAlign.center
         ),
         if (isLoading)...[
           StylizedContainer(

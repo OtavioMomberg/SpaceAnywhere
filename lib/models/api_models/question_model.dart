@@ -13,7 +13,7 @@ class QuestionModel {
     required this.rightAnswerIndex
   });
 
-  factory QuestionModel.fromMap(Map<String, dynamic> map) {
+  factory QuestionModel.fromMap({required Map<String, dynamic> map}) {
     List<dynamic> alternatives = map["alternatives"];
     return QuestionModel(
       id: map["id"], 
@@ -23,5 +23,5 @@ class QuestionModel {
     );
   }
 
-  factory QuestionModel.fromJson(String source) => QuestionModel.fromMap(jsonDecode(source));
+  factory QuestionModel.fromJson({required String source}) => QuestionModel.fromMap(map: jsonDecode(source));
 }

@@ -6,7 +6,9 @@ import 'package:space_anywhere/internet/check_internet.dart';
 import 'package:space_anywhere/repositories/implementations/question_inplementation_http.dart';
 import 'package:space_anywhere/widgets/answer_card.dart';
 import 'package:space_anywhere/widgets/button.dart';
+import 'package:space_anywhere/widgets/info_error_home.dart';
 import 'package:space_anywhere/widgets/question_card.dart';
+import 'package:space_anywhere/widgets/stylized_container.dart';
 
 class QuizPage extends StatefulWidget {
   const QuizPage({super.key});
@@ -58,24 +60,26 @@ class _QuizPageState extends State<QuizPage> {
       return;
     }
 
-    await questionController.onGetQuestion(questionId ?? id);
+    await questionController.onGetQuestion(id: questionId ?? id);
 
     if (!mounted) return;
     if (questionId != null) {
-      showStylizedSnackBar(context, "Próxima pergunta!", Colors.white);
+      showStylizedSnackBar(context:  context, msm:  "Próxima pergunta!", txtColor: Colors.white);
       await Future.delayed(Duration(milliseconds: 500));
     }
 
     if (!mounted) return;
     setState(() => isLoading = false);
 
-    if (questionId == null) showStylizedSnackBar(context, "Acesso Liberado!", Colors.lightBlueAccent);
+    if (questionId == null) showStylizedSnackBar(context: context, msm: "Acesso Liberado!", txtColor: Colors.lightBlueAccent);
 
     if (questionController.getErrorQuestion != null) error = questionController.getErrorQuestion!;
   }
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Column(
       children: <Widget>[
         if (!quizStarted)...[
@@ -111,20 +115,33 @@ class _QuizPageState extends State<QuizPage> {
             )
           ),
           const SizedBox(height: 40),
-          FractionallySizedBox(
-            widthFactor: 0.8,
-            child: Button(
-              label: "Jogar", 
-              function: startQuiz
+          if (isLoading)...[
+            StylizedContainer(
+              height: size.height * 0.6,
+              child: CircularProgressIndicator(
+                color: Colors.white.withValues(alpha: 0.5),
+              )
             )
-          )
+          ] else...[
+            FractionallySizedBox(
+              widthFactor: 0.8,
+              child: Button(
+                label: "Jogar", 
+                awaitFunction: startQuiz
+              )
+            )
+          ]
+        ] else if (!checkInternet)...[
+          InfoErrorHome(message: "Erro. Sem conexão com a internet", icon: Icons.wifi_off, height: size.height * 0.6)
+        ] else if (!checkAPI)...[
+          InfoErrorHome(message: "Erro. Não foi possível se conectar ao servidor", icon: Icons.dns, height: size.height * 0.6)
         ] else...[
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(top: 8),
               child: QuestionCard(
                 question: questionController.getQuestionModel!.question,
-                color: Colors.white
+                color: Color.fromARGB(255, 206, 206, 207)
               )
             )
           ),
@@ -139,7 +156,7 @@ class _QuizPageState extends State<QuizPage> {
                     return AnswerCard(
                       index: index,
                       option: questionController.getQuestionModel!.alternatives[index],
-                      color: Colors.white, 
+                      color: Color.fromARGB(255, 206, 206, 207), 
                       onTap: onTapAnswer
                     );
                   })
@@ -152,11 +169,7 @@ class _QuizPageState extends State<QuizPage> {
     );
   }
 
-  Future<void> startQuiz([int? n]) async {
-    if (isLoading) {
-      showStylizedSnackBar(context, "Aguardando o servidor!", Colors.red);
-      return;
-    }
+  Future<void> startQuiz() async {
     bool retryCheck = false;
     if (!checkInternet) {
       retryCheck = await openRetryDialog();
@@ -173,6 +186,15 @@ class _QuizPageState extends State<QuizPage> {
     }
 
     setState(() => quizStarted = !quizStarted);
+  }
+
+  Future<void> closeDialog([bool? retry]) async {
+    if (retry == null) {
+      await getQuestion(questionController.getQuestionModel!.id);
+    }
+
+    if (!mounted) return;
+    Navigator.pop<bool?>(context, retry);
   }
 
   Future<bool> openRetryDialog() async {
@@ -205,25 +227,15 @@ class _QuizPageState extends State<QuizPage> {
     return checkAPI ? true : false;
   }
 
-  Future<void> onTapAnswer(int index) async {
+  Future<void> onTapAnswer({required int index}) async {
     if (questionController.getQuestionModel!.rightAnswerIndex == index) {
-      await showResponseMessage(true);
+      await showResponseMessage(isAnswerCorrect: true);
     } else {
-      await showResponseMessage(false);
+      await showResponseMessage(isAnswerCorrect: false);
     }
   }
 
-  Future<void> closeDialog([bool? retry]) async {
-    if (retry == null) {
-      await getQuestion(questionController.getQuestionModel!.id);
-      //await Future.delayed(Duration(seconds: 3));
-    }
-
-    if (!mounted) return;
-    Navigator.pop<bool?>(context, retry);
-  }
-
-  Future<void> showResponseMessage(bool isAnswerCorrect) async {
+  Future<void> showResponseMessage({required bool isAnswerCorrect}) async {
     await showDialog(
       context: context,
       barrierDismissible: false,
@@ -270,7 +282,7 @@ class _QuizPageState extends State<QuizPage> {
     );
   }
 
-  void showStylizedSnackBar(BuildContext context, String msm, Color txtColor) {
+  void showStylizedSnackBar({required BuildContext context, required String msm, required Color txtColor}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         padding: const EdgeInsets.all(10),
@@ -294,6 +306,6 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   void showError() {
-    showStylizedSnackBar(context, "Não foi possível se conectar ao servidor.", Colors.red);
+    showStylizedSnackBar(context: context, msm: "Não foi possível se conectar ao servidor.", txtColor: Colors.red);
   }
 }

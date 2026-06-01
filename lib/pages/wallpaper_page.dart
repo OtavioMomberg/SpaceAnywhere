@@ -5,6 +5,8 @@ import 'package:space_anywhere/internet/check_internet.dart';
 import 'package:space_anywhere/pages/expanded_image_page.dart';
 import 'package:space_anywhere/repositories/implementations/wallpaper_implementation_http.dart';
 import 'package:space_anywhere/widgets/image_widget.dart';
+import 'package:space_anywhere/widgets/info_error_home.dart';
+import 'package:space_anywhere/widgets/stylized_container.dart';
 
 class WallpaperPage extends StatefulWidget {
   const WallpaperPage({super.key});
@@ -45,15 +47,16 @@ class _WallpaperPageState extends State<WallpaperPage> {
 
       if (!checkAPI) return;
 
-      await wallpaperController.onGetWallpaper(offset);
+      await wallpaperController.onGetWallpaper(offset: offset);
 
-      print(wallpaperController.getErrorWallpaper);
       setState(() => isLoading = false);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Column(
       spacing: 20,
       children: <Widget>[
@@ -62,11 +65,16 @@ class _WallpaperPageState extends State<WallpaperPage> {
           style: TextStyle(color: Color.fromARGB(255, 206, 206, 207), fontWeight: FontWeight.bold, fontSize: 20)
         ),
         if (isLoading)...[
-          Center(
+          StylizedContainer(
+            height: size.height * 0.6,
             child: CircularProgressIndicator(
-              color: Colors.white.withValues(alpha: 0.5)
+              color: Colors.white.withValues(alpha: 0.5),
             )
           )
+        ] else if (!checkInternet)...[
+          InfoErrorHome(message: "Erro. Sem conexão com a internet", icon: Icons.wifi_off, height: size.height * 0.6)
+        ] else if (!checkAPI)...[
+          InfoErrorHome(message: "Erro. Não foi possível se conectar ao servidor", icon: Icons.dns, height: size.height * 0.6)
         ] else if (wallpaperController.getErrorWallpaper == null)...[
           Expanded(
             child: GridView.builder(
@@ -75,17 +83,15 @@ class _WallpaperPageState extends State<WallpaperPage> {
               itemBuilder: (context, index) {
                 return InkWell(
                   onTap: () {
-                    seeImageExpanded(wallpaperController.getWallpaperModel[index]!.fullImageUrl, context);
+                    seeImageExpanded(imagePath: wallpaperController.getWallpaperModel[index]!.fullImageUrl, context: context);
                   },
                   child: Container(
-                    //height: 200,
-                    //width: 200,
                     padding: index % 2 == 0 
                       ? const EdgeInsets.only(right: 5, bottom: 10)
                       : const EdgeInsets.only(left: 5, bottom: 10),
                     child: ImageWidget(
                       imagePath: wallpaperController.getWallpaperModel[index]!.fullImageUrl,
-                      option: "network",
+                      option: "network"
                     )
                   )
                 );
@@ -98,7 +104,7 @@ class _WallpaperPageState extends State<WallpaperPage> {
   }
 }
 
-void seeImageExpanded(String imagePath, BuildContext context) {
+void seeImageExpanded({required String imagePath, required BuildContext context}) {
     Navigator.push(
       context,
       PageRouteBuilder(

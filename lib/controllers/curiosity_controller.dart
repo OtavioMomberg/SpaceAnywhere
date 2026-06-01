@@ -14,16 +14,15 @@ class CuriosityController {
 
   CuriosityModel? get getCuriosityModel => _curiosityModel;
 
-  Future<void> onGetCuriosity(int id) async {
+  Future<void> onGetCuriosity({required int id}) async {
     _errorGetCuriosity = null;
     try {
-      final response = await curiosityRepositoryHttp.getCuriosity(id);
+      final response = await curiosityRepositoryHttp.getCuriosity(id: id);
 
       if (response != null) _curiosityModel = response;
 
     } catch(error) {
-      List<String> split = error.toString().split('"');
-      _errorGetCuriosity = split[split.length-2];
+      _errorGetCuriosity = error.toString();
     }
   }
 }

@@ -9,7 +9,7 @@ class QuestionInplementationHttp implements QuestionRepositoryHttp {
   QuestionInplementationHttp({required Client client}) : _client = client;
 
   @override
-  Future<QuestionModel?> getQuestion(int id) async {
+  Future<QuestionModel?> getQuestion({required int id}) async {
     try {
       final url = "$URL/api/v1/quiz/$id";
       final response = await _client.get(
@@ -18,7 +18,7 @@ class QuestionInplementationHttp implements QuestionRepositoryHttp {
       );
 
       if (response.statusCode == 200) {
-        return QuestionModel.fromJson(response.body);
+        return QuestionModel.fromJson(source: response.body);
       } else {
         throw Exception(response.body);
       }

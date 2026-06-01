@@ -15,7 +15,7 @@ class CuriosityModel {
     required this.contentFont,
   });
 
-  factory CuriosityModel.fromMap(Map<String, dynamic> map) {
+  factory CuriosityModel.fromMap({required Map<String, dynamic> map}) {
     List<dynamic> fonts = map["content_font"];
     return CuriosityModel(
       id: map["id"], 
@@ -26,5 +26,5 @@ class CuriosityModel {
     );
   }
 
-  factory CuriosityModel.fromJson(String source) => CuriosityModel.fromMap(jsonDecode(source));
+  factory CuriosityModel.fromJson({required String source}) => CuriosityModel.fromMap(map: jsonDecode(source));
 }

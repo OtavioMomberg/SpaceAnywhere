@@ -6,7 +6,7 @@ class AnswerCard extends StatelessWidget {
   final int index;
   final String option;
   final Color color;
-  final Future<void> Function(int) onTap;
+  final Future<void> Function({required int index}) onTap;
 
   const AnswerCard({
     required this.index,
@@ -23,8 +23,8 @@ class AnswerCard extends StatelessWidget {
       color: Colors.white.withValues(alpha: 0.01),
       child: InkWell(
         onTap: () {
-          AudioServices.play("audios/button_click2.mp3", 1);
-          onTap(index);
+          AudioServices.play(path: "audios/button_click2.mp3", volume: 1);
+          onTap(index: index);
         },
         borderRadius: BorderRadius.circular(12),
         child: ClipRRect(

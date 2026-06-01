@@ -9,7 +9,7 @@ class WallpaperImplementationHttp implements WallpaperRepositoryHttp {
   WallpaperImplementationHttp(Client client) : _client = client;
 
   @override
-  Future<List<WallpaperModel?>> getWallpaper(int offset) async {
+  Future<List<WallpaperModel?>> getWallpaper({required int offset}) async {
     try {
       final url = "$URL/api/v1/wallpapers/$offset";
       final response = await _client.get(
@@ -18,11 +18,8 @@ class WallpaperImplementationHttp implements WallpaperRepositoryHttp {
       );
 
       if (response.statusCode == 200) {
-        print("DEU BOM");
-        print(response.body);
-        return WallpaperModel.listFromJson(response.body);
+        return WallpaperModel.listFromJson(source: response.body);
       } else {
-        print("DEU RUIM");
         throw Exception(response.body);
       }
     } catch(error) {

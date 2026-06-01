@@ -7,7 +7,7 @@ void main() async {
 
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,   
+    DeviceOrientation.portraitDown
   ]);
 
   runApp(const MyApp());
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: .fromSeed(seedColor: const Color.fromARGB(255, 7, 13, 72)),
       ),
-      home: const DrawerPage(),
+      home: const DrawerPage()
     );
   }
 }

@@ -51,11 +51,11 @@ class _ExpandedImagePageState extends State<ExpandedImagePage> {
   }
 
   Future<void> saveImage() async {
-    final response = await SaveImageServices.saveImageFromUrl(widget.imagePath);
-    showResponse(response);
+    final response = await SaveImageServices.saveImageFromUrl(imageUrl: widget.imagePath);
+    showResponse(response: response);
   }
 
-  void showResponse(bool response) {
+  void showResponse({required bool response}) {
     showDialog(
       context: context,
       builder: (_) {

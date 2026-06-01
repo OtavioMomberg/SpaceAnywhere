@@ -18,17 +18,15 @@ class WallpaperController {
 
   List<WallpaperModel?> get getWallpaperModel => _wallpaperModel;
 
-  Future<void> onGetWallpaper(int offset) async {
+  Future<void> onGetWallpaper({required int offset}) async {
     _errorGetWallpaper = null;
     _isLoading = true;
     try {
-      final response = await wallpaperRepositoryHttp.getWallpaper(offset);
+      final response = await wallpaperRepositoryHttp.getWallpaper(offset: offset);
 
       if (response.isNotEmpty) _wallpaperModel = response;
       
     } catch(error) {
-      /*List<String> split = error.toString().split('"');
-      _errorGetWallpaper = split[split.length-2];*/
       _errorGetWallpaper = error.toString();
     }
     _isLoading = false;

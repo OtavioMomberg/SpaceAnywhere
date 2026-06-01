@@ -1,7 +1,7 @@
 import 'package:audioplayers/audioplayers.dart';
 
 class AudioServices {
-  static Future<void> play(String path, [double? volume = 1.0]) async {
+  static Future<void> play({required String path, double? volume = 1.0}) async {
     final player = AudioPlayer();
 
     await player.setPlayerMode(PlayerMode.lowLatency);

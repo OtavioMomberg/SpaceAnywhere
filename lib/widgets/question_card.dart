@@ -29,7 +29,7 @@ class QuestionCard extends StatelessWidget {
             child: Text(
               question, 
               style: TextStyle(color: Colors.white),
-              textAlign: TextAlign.justify,
+              textAlign: TextAlign.justify
             )
           )
         )

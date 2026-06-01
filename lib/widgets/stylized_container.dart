@@ -23,39 +23,30 @@ class StylizedContainer extends StatelessWidget {
       height: height,
       width: double.infinity,
       child: Center(
-          child: ClipRRect(
-            borderRadius: borderRadius == null
-                ? BorderRadius.circular(12)
-                : borderRadius!,
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-              child: Container(
-                height: height,
-                width: double.infinity,
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  borderRadius: borderRadius == null
-                      ? BorderRadius.circular(12)
-                      : borderRadius!,
-                  border: Border.all(
-                    color: borderColor == null
-                        ? Colors.white.withValues(alpha: 0.5)
-                        : borderColor!.withValues(alpha: 0.5),
-                  ),
+        child: ClipRRect(
+          borderRadius: borderRadius == null ? BorderRadius.circular(12) : borderRadius!,
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+            child: Container(
+              height: height,
+              width: double.infinity,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                borderRadius: borderRadius == null ? BorderRadius.circular(12) : borderRadius!,
+                border: Border.all(
                   color: borderColor == null
-                      ? Colors.white.withValues(alpha: 0.15)
-                      : borderColor!.withValues(alpha: 0.15),
+                    ? Colors.white.withValues(alpha: 0.5)
+                    : borderColor!.withValues(alpha: 0.5),
                 ),
-                child: height != null 
-                  ? Center(
-                    child: child,
-                  )
-                  : child
-              )
+                color: borderColor == null
+                  ? Colors.white.withValues(alpha: 0.15)
+                  : borderColor!.withValues(alpha: 0.15),
+              ),
+              child: height != null ? Center(child: child) : child
             )
           )
         )
-
+      )
     );
   }
 }

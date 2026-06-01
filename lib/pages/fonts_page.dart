@@ -45,7 +45,7 @@ class FontsPage extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.1),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(12),
-                        onTap: () => OpenLinks.openLink(fonts[index]),
+                        onTap: () => OpenLinks.openLink(url: fonts[index]),
                         child: Padding(
                           padding: const EdgeInsets.all(10),
                           child: Text(
