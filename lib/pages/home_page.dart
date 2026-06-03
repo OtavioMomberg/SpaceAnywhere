@@ -163,10 +163,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
+ 
     return Column(
       spacing: 20,
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: .start,
       children: <Widget>[
         Text(
           "Curiosidade do Dia",
@@ -180,14 +180,20 @@ class _HomePageState extends State<HomePage> {
         if (isLoading)...[
           StylizedContainer(
             height: size.height * 0.6,
-            child: CircularProgressIndicator(
-              color: Colors.white.withValues(alpha: 0.5),
+            child: CircularProgressIndicator.adaptive(
+              backgroundColor: Color.fromARGB(255, 206, 206, 207)
             )
           )
         ] else if (!checkInternet)...[
-          InfoErrorHome(message: "Erro. Sem conexão com a internet", icon: Icons.wifi_off, height: size.height * 0.6)
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: InfoErrorHome(message: "Erro. Sem conexão com a internet", icon: Icons.wifi_off, height: size.height * 0.6),
+          )
         ] else if (!checkAPI)...[
-          InfoErrorHome(message: "Erro. Não foi possível se conectar ao servidor", icon: Icons.dns, height: size.height * 0.6)
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: InfoErrorHome(message: "Erro. Não foi possível se conectar ao servidor", icon: Icons.dns, height: size.height * 0.6),
+          )
         ] else if (curiosityController.getErrorCuriosity == null)...[
           Flexible(
             child: FractionallySizedBox(
@@ -232,7 +238,7 @@ class _HomePageState extends State<HomePage> {
         ],
         if (showKnowMoreButton)...[
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: .center,
             spacing: 10,
             children: <Widget>[
               Expanded(child: Button(label: "Saiba Mais", function: goNextPage, pageIndex: 0)),
@@ -244,7 +250,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void goNextPage([int? pageIndex]) {
+  void goNextPage({int? n}) {
+    final int? pageIndex = n;
     if (pageIndex == null) return;
 
     Navigator.push(

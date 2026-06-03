@@ -55,7 +55,7 @@ class _ComparisonPageState extends State<ComparisonPage> {
                   color: Colors.white.withValues(alpha: 0.15)
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: .spaceBetween,
                   children: <Widget>[
                     IconButton(
                       onPressed: () => moveScroll(value: -size.width), 

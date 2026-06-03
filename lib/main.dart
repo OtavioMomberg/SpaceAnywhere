@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:space_anywhere/pages/drawer_page.dart';
+import 'package:space_anywhere/services/audio_services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -9,6 +10,8 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown
   ]);
+
+  await AudioServices.init();
 
   runApp(const MyApp());
 }

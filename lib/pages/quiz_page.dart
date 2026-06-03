@@ -3,12 +3,12 @@ import 'package:http/http.dart';
 import 'dart:ui';
 import 'package:space_anywhere/controllers/question_controller.dart';
 import 'package:space_anywhere/internet/check_internet.dart';
+import 'package:space_anywhere/pages/result_page.dart';
 import 'package:space_anywhere/repositories/implementations/question_inplementation_http.dart';
 import 'package:space_anywhere/widgets/answer_card.dart';
 import 'package:space_anywhere/widgets/button.dart';
 import 'package:space_anywhere/widgets/info_error_home.dart';
 import 'package:space_anywhere/widgets/question_card.dart';
-import 'package:space_anywhere/widgets/stylized_container.dart';
 
 class QuizPage extends StatefulWidget {
   const QuizPage({super.key});
@@ -35,20 +35,24 @@ class _QuizPageState extends State<QuizPage> {
     );
 
     getQuestion();
+    
   }
 
   Future<void> verifyInternet() async {
     checkInternet = await Internet.hasInternet();
   }
 
-  Future<void> getQuestion([int? questionId]) async {
+  Future<void> getQuestion({int? questionId}) async {
     if (questionId != null) await Future.delayed(Duration(seconds: 1));
 
     await verifyInternet();
-    
+
     if (!checkInternet) {
       if (!mounted) return;
-      setState(() => isLoading = false);
+      setState(() {
+        quizStarted = true; 
+        isLoading = false;
+      });
       return;
     }
 
@@ -56,7 +60,10 @@ class _QuizPageState extends State<QuizPage> {
 
     if (!checkAPI) {
       if (!mounted) return;
-      setState(() => isLoading = false);
+      setState(() {
+        quizStarted = true; 
+        isLoading = false;
+      });
       return;
     }
 
@@ -70,8 +77,6 @@ class _QuizPageState extends State<QuizPage> {
 
     if (!mounted) return;
     setState(() => isLoading = false);
-
-    if (questionId == null) showStylizedSnackBar(context: context, msm: "Acesso Liberado!", txtColor: Colors.lightBlueAccent);
 
     if (questionController.getErrorQuestion != null) error = questionController.getErrorQuestion!;
   }
@@ -98,7 +103,7 @@ class _QuizPageState extends State<QuizPage> {
                   color: Colors.white.withValues(alpha: 0.1)
                 ),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: .center,
                   spacing: 20,
                   children: <Widget>[
                     const Text(
@@ -116,11 +121,8 @@ class _QuizPageState extends State<QuizPage> {
           ),
           const SizedBox(height: 40),
           if (isLoading)...[
-            StylizedContainer(
-              height: size.height * 0.6,
-              child: CircularProgressIndicator(
-                color: Colors.white.withValues(alpha: 0.5),
-              )
+            CircularProgressIndicator.adaptive(
+              backgroundColor: Color.fromARGB(255, 206, 206, 207)
             )
           ] else...[
             FractionallySizedBox(
@@ -132,9 +134,15 @@ class _QuizPageState extends State<QuizPage> {
             )
           ]
         ] else if (!checkInternet)...[
-          InfoErrorHome(message: "Erro. Sem conexão com a internet", icon: Icons.wifi_off, height: size.height * 0.6)
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: InfoErrorHome(message: "Erro. Sem conexão com a internet", icon: Icons.wifi_off, height: size.height * 0.6),
+          )
         ] else if (!checkAPI)...[
-          InfoErrorHome(message: "Erro. Não foi possível se conectar ao servidor", icon: Icons.dns, height: size.height * 0.6)
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: InfoErrorHome(message: "Erro. Não foi possível se conectar ao servidor", icon: Icons.dns, height: size.height * 0.6),
+          )
         ] else...[
           Expanded(
             child: Padding(
@@ -188,9 +196,9 @@ class _QuizPageState extends State<QuizPage> {
     setState(() => quizStarted = !quizStarted);
   }
 
-  Future<void> closeDialog([bool? retry]) async {
+  Future<void> closeDialog({bool? retry}) async {
     if (retry == null) {
-      await getQuestion(questionController.getQuestionModel!.id);
+      await getQuestion(questionId: questionController.getQuestionModel!.id);
     }
 
     if (!mounted) return;
@@ -203,7 +211,7 @@ class _QuizPageState extends State<QuizPage> {
       barrierDismissible: false,
       builder: (context) {
         WidgetsBinding.instance.addPostFrameCallback((_) async {
-          closeDialog(await retryInternetConnection());
+          closeDialog(retry: await retryInternetConnection());
         });
         return const AlertDialog(
           title: Center(child: Text("Tentando Conexão...")),
@@ -211,8 +219,8 @@ class _QuizPageState extends State<QuizPage> {
             height: 300,
             width: 300,
             child: Center(
-              child: CircularProgressIndicator(
-                color: Color.fromARGB(255, 38, 46, 139)
+              child: CircularProgressIndicator.adaptive(
+                backgroundColor: Color.fromARGB(255, 38, 46, 139)
               )
             )
           )
@@ -229,56 +237,35 @@ class _QuizPageState extends State<QuizPage> {
 
   Future<void> onTapAnswer({required int index}) async {
     if (questionController.getQuestionModel!.rightAnswerIndex == index) {
-      await showResponseMessage(isAnswerCorrect: true);
+      showResponse(isCorrect: true);
+      await closeDialog();
     } else {
-      await showResponseMessage(isAnswerCorrect: false);
+      showResponse(
+        isCorrect: false, 
+        correctAnswer: questionController.getQuestionModel!.alternatives[questionController.getQuestionModel!.rightAnswerIndex]
+      );
+      await closeDialog();
     }
   }
+  void showResponse({required bool isCorrect, String? correctAnswer}) {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        opaque: false,
+        pageBuilder: (_, _, _) => ResultPage(isCorrect: isCorrect, correctAnswer: correctAnswer),
+        transitionsBuilder: (_, animation, _, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset.zero;
+          const curve = Curves.easeInOut;
 
-  Future<void> showResponseMessage({required bool isAnswerCorrect}) async {
-    await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          closeDialog();
-        });
-        return AlertDialog(
-          title: Center(
-            child: Text(isAnswerCorrect ? "Parabéns!" : "Quase lá!"),
-          ),
-          content: SizedBox(
-            height: 200,
-            width: 300,
-            child: Column(
-              spacing: 15,
-              mainAxisAlignment: isAnswerCorrect ? MainAxisAlignment.center : MainAxisAlignment.start,
-              children: <Widget>[
-                const SizedBox(height: 20),
-                Text(
-                  isAnswerCorrect 
-                    ? "Certa Resposta!" 
-                    : "Resposta Incorreta. Alternativa correta:",
-                  style: const TextStyle(
-                    fontSize: 18
-                  ),
-                  textAlign: TextAlign.center
-                ),
-                Text(
-                  isAnswerCorrect 
-                    ? "" 
-                    : "${questionController.getQuestionModel!.alternatives[questionController.getQuestionModel!.rightAnswerIndex]} ",
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold
-                  ),
-                  textAlign: TextAlign.justify
-                )
-              ]
-            )
-          )
-        );
-      }
+          final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child
+          );
+        }
+      )
     );
   }
 

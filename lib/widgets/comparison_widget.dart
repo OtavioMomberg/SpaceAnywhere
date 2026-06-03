@@ -20,7 +20,7 @@ class ComparisonWidget extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       child: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: .start,
           spacing: 10,
           children: <Widget>[
             SizedBox(

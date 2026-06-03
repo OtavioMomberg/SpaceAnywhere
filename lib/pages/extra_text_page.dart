@@ -23,7 +23,7 @@ class ExtraTextPage extends StatelessWidget {
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(gradient: AppTheme.mainGradient),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: .start,
           spacing: 20,
           children: <Widget>[
             Text(
@@ -42,7 +42,7 @@ class ExtraTextPage extends StatelessWidget {
                 child: StylizedContainer(
                   child: SingleChildScrollView(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisAlignment: .start,
                       spacing: 20,
                       children: <Widget>[
                         Text(

@@ -19,6 +19,8 @@ class ExpandedImagePage extends StatefulWidget {
 }
 
 class _ExpandedImagePageState extends State<ExpandedImagePage> {
+  bool response = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,14 +30,17 @@ class _ExpandedImagePageState extends State<ExpandedImagePage> {
         foregroundColor: const Color.fromARGB(255, 206, 206, 207),
       ),
       body: Container(
-        padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 10),
+        padding: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 20),
         decoration: BoxDecoration(gradient: AppTheme.mainGradient),
         child: Column(
           mainAxisAlignment: .start,
           spacing: 20,
           children: <Widget>[
             Expanded(
-              child: Center(child: ImageWidget(imagePath: widget.imagePath, option: widget.option))
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: ImageWidget(imagePath: widget.imagePath, option: widget.option),
+              )
             ),
             FractionallySizedBox(
               widthFactor: 0.8,
@@ -50,41 +55,73 @@ class _ExpandedImagePageState extends State<ExpandedImagePage> {
     );
   }
 
-  Future<void> saveImage() async {
-    final response = await SaveImageServices.saveImageFromUrl(imageUrl: widget.imagePath);
-    showResponse(response: response);
+  Future<void> saveImage({int? n}) async {
+    await showResponse();
+
+    if (!mounted) return;
+
+    showStylizedSnackBar(
+      context: context, 
+      msm: response 
+        ? "Imagem salva na galeria!"
+        : "Erro ao salvar imagem.", 
+      txtColor: response 
+        ? Colors.lightBlueAccent
+        : Colors.red
+    );
   }
 
-  void showResponse({required bool response}) {
-    showDialog(
+  Future<void> showResponse() async {
+    await showDialog(
       context: context,
       builder: (_) {
         WidgetsBinding.instance.addPostFrameCallback((_) async {
-          await Future.delayed(Duration(seconds: 3));
+          response = await SaveImageServices.saveImageFromUrl(imageUrl: widget.imagePath);
+
           if (!mounted) return;
           Navigator.pop(context);
         });
 
         return AlertDialog(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(response ? "Sucesso!" : "Erro."),
-              IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.close))
-            ]
-          ),
+          title: Center(child: Text("Salvando imagem na galeria!")),
           content: SizedBox(
             height: 100,
+            width: double.infinity,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: .center,
+              mainAxisSize: .min,
               children: <Widget>[
-                Text(response ? "Imagem salva na galeria!" : "Houve um erro ao tentar salvar imagem.")
+                CircularProgressIndicator.adaptive(
+                  backgroundColor: Color.fromARGB(255, 38, 46, 139)
+                )      
               ]
             )
           )
         );
       }
+    );
+  }
+
+  void showStylizedSnackBar({required BuildContext context, required String msm, required Color txtColor}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        padding: const EdgeInsets.all(10),
+        content: Center(
+          child: Text(
+            msm, 
+            style: const TextStyle(
+              color: Colors.white
+            )
+          )
+        ),
+        backgroundColor: txtColor.withValues(alpha: 0.15),
+        shape: StadiumBorder(
+          side: BorderSide(
+            color: txtColor.withValues(alpha: 0.5)
+          )
+        ),
+        duration: const Duration(seconds: 1)
+      )
     );
   }
 }

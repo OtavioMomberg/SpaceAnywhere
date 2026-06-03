@@ -18,7 +18,7 @@ class InfoErrorHome extends StatelessWidget {
     return StylizedContainer(
       height: height,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: .center,
         children: <Widget>[
           Text(
             message,

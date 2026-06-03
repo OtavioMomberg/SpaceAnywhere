@@ -10,7 +10,7 @@ class DrawerPage extends StatefulWidget {
 }
 
 class _DrawerPageState extends State<DrawerPage> {
-  final List<IconData> drawerIcons = [
+  final List<IconData> drawerIcons = const [
     Icons.home,
     Icons.quiz,
     Icons.analytics,
@@ -38,8 +38,8 @@ class _DrawerPageState extends State<DrawerPage> {
               height: size.height * 0.15,
               child: const DrawerHeader(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: .center,
+                  crossAxisAlignment: .start,
                   children: <Widget>[
                     Text(
                       "Menu", 
@@ -70,7 +70,7 @@ class _DrawerPageState extends State<DrawerPage> {
                     style: TextStyle(
                       color: selectedPage == index 
                         ? const Color.fromARGB(255, 250, 221, 134).withValues(alpha: 0.8)  
-                        : Color.fromARGB(255, 206, 206, 207)
+                        : const Color.fromARGB(255, 206, 206, 207)
                     )
                   ),
                   shape: StadiumBorder(),
