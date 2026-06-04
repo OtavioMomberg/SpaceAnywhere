@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:space_anywhere/services/cache_manager_service.dart';
 
 class ImageWidget extends StatelessWidget {
   final String imagePath;
@@ -21,29 +23,26 @@ class ImageWidget extends StatelessWidget {
             fit: BoxFit.contain,
             colorBlendMode: BlendMode.darken,
           )
-        : Image.network(
-            imagePath,
+        : CachedNetworkImage(
+            imageUrl: imagePath,
             filterQuality: FilterQuality.high,
             fit: BoxFit.cover,
             colorBlendMode: BlendMode.darken,
-            loadingBuilder: (context, child, loadingProgress) {
-              if (loadingProgress == null) return child;
+            cacheManager: CacheManagerService.instance,
+            placeholder: (context, url) {
               return Container(
                 color: Colors.white.withValues(alpha: 0.05),
                 child: Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.white.withValues(alpha: 0.5),
-                    value: loadingProgress.expectedTotalBytes != null
-                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                      : null
+                  child: CircularProgressIndicator.adaptive(
+                    backgroundColor: Colors.white.withValues(alpha: 0.5),
                   )
                 )
               );
             },
-            errorBuilder: (context, error, stackTrace) {
+            errorWidget: (context, url, error) {
               return Container(
                 color: Colors.white.withValues(alpha: 0.05),
-                child: const Icon(Icons.broken_image, color: Colors.white38),
+                child: const Icon(Icons.broken_image, color: Colors.white38)
               );
             }
           )

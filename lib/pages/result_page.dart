@@ -44,6 +44,7 @@ class ResultPage extends StatelessWidget {
                     )
                   ),
                 if (!isCorrect)...[
+                  const SizedBox(height: 10),
                   Text(
                     "Alternativa correta:",
                     style: const TextStyle(
