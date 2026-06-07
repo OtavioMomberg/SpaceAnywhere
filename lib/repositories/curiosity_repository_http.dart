@@ -1,5 +1,5 @@
 import 'package:space_anywhere/models/api_models/curiosity_model.dart';
 
-abstract class CuriosityRepositoryHttp {
+abstract interface class CuriosityRepositoryHttp {
   Future<CuriosityModel?> getCuriosity({required int id});
 }

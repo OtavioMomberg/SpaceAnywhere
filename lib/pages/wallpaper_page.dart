@@ -16,7 +16,7 @@ class WallpaperPage extends StatefulWidget {
 }
 
 class _WallpaperPageState extends State<WallpaperPage> {
-  late final WallpaperController wallpaperController;
+  late final WallpaperController _wallpaperController;
   bool isLoading = true;
   bool checkInternet = false;
   bool checkAPI = false;
@@ -26,7 +26,7 @@ class _WallpaperPageState extends State<WallpaperPage> {
   void initState() {
     super.initState();
 
-    wallpaperController = WallpaperController(
+    _wallpaperController = WallpaperController(
       WallpaperImplementationHttp(Client())
     );
 
@@ -46,16 +46,24 @@ class _WallpaperPageState extends State<WallpaperPage> {
   Future<void> getImages() async {
     await verifyInternet();
 
-    if (!checkInternet) return;
+    if (!checkInternet) {
+      if (!mounted) { return; }
+      setState(() => isLoading = false);
+      return;
+    }
 
     checkAPI = await Internet.isApiAwake();
 
-    if (!checkAPI) return;
+    if (!checkAPI) {
+      if (!mounted) { return; }
+      setState(() => isLoading = false);
+      return;
+    }
 
-    await wallpaperController.onGetWallpaper(offset: offset);
+    await _wallpaperController.onGetWallpaper(offset: offset);
 
-    if (wallpaperController.getErrorWallpaper == null) {
-      ImageCacheService.wallpapers = wallpaperController.getWallpaperModel;
+    if (_wallpaperController.getErrorWallpaper == null) {
+      ImageCacheService.wallpapers = _wallpaperController.getWallpaperModel;
     }
 
     setState(() => isLoading = false);
@@ -94,7 +102,10 @@ class _WallpaperPageState extends State<WallpaperPage> {
               itemBuilder: (context, index) {
                 return InkWell(
                   onTap: () {
-                    seeImageExpanded(imagePath: ImageCacheService.wallpapers![index]!.fullImageUrl, context: context);
+                    seeImageExpanded(
+                      imagePath: ImageCacheService.wallpapers![index]!.fullImageUrl, 
+                      context: context
+                    );
                   },
                   child: Container(
                     padding: index % 2 == 0 

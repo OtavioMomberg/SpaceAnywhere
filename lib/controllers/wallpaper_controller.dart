@@ -2,17 +2,13 @@ import 'package:space_anywhere/models/api_models/wallpaper_model.dart';
 import 'package:space_anywhere/repositories/wallpaper_repository_http.dart';
 
 class WallpaperController {
-  final WallpaperRepositoryHttp wallpaperRepositoryHttp;
+  final WallpaperRepositoryHttp _wallpaperRepositoryHttp;
 
-  WallpaperController(this.wallpaperRepositoryHttp);
+  WallpaperController(this._wallpaperRepositoryHttp);
 
   String? _errorGetWallpaper;
 
   String? get getErrorWallpaper => _errorGetWallpaper;
-
-  bool _isLoading = true;
-
-  bool get getIsLoading => _isLoading;
 
   List<WallpaperModel?> _wallpaperModel = [];
 
@@ -20,15 +16,13 @@ class WallpaperController {
 
   Future<void> onGetWallpaper({required int offset}) async {
     _errorGetWallpaper = null;
-    _isLoading = true;
     try {
-      final response = await wallpaperRepositoryHttp.getWallpaper(offset: offset);
+      final response = await _wallpaperRepositoryHttp.getWallpaper(offset: offset);
 
-      if (response.isNotEmpty) _wallpaperModel = response;
+      if (response.isNotEmpty) { _wallpaperModel = response; }
       
     } catch(error) {
       _errorGetWallpaper = error.toString();
     }
-    _isLoading = false;
   }
 }

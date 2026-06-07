@@ -2,9 +2,9 @@ import 'package:space_anywhere/models/api_models/curiosity_model.dart';
 import 'package:space_anywhere/repositories/curiosity_repository_http.dart';
 
 class CuriosityController {
-  final CuriosityRepositoryHttp curiosityRepositoryHttp;
+  final CuriosityRepositoryHttp _curiosityRepositoryHttp;
 
-  CuriosityController(this.curiosityRepositoryHttp);
+  CuriosityController(this._curiosityRepositoryHttp);
 
   String? _errorGetCuriosity;
 
@@ -17,9 +17,9 @@ class CuriosityController {
   Future<void> onGetCuriosity({required int id}) async {
     _errorGetCuriosity = null;
     try {
-      final response = await curiosityRepositoryHttp.getCuriosity(id: id);
+      final response = await _curiosityRepositoryHttp.getCuriosity(id: id);
 
-      if (response != null) _curiosityModel = response;
+      if (response != null) { _curiosityModel = response; }
 
     } catch(error) {
       _errorGetCuriosity = error.toString();

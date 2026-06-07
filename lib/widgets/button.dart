@@ -21,7 +21,7 @@ class Button extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () {
-          if (awaitFunction?.call() != null) return;
+          if (awaitFunction?.call() != null) { return; }
           function!(n: pageIndex);
         },
         child: Container(

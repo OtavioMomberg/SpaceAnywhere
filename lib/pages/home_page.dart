@@ -19,9 +19,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final dbInstance = DbServices.instance();
+  final dbInstance = DatabaseServices.instance();
   final curiosityId = 2;
-  late final CuriosityController curiosityController;
+  late final CuriosityController _curiosityController;
   List<dynamic> selectCuriosity = [];
   List<dynamic> selectFonts = [];
   bool isLoading = true;
@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    curiosityController = CuriosityController(
+    _curiosityController = CuriosityController(
       CuriosityImplementationHttp(client: Client()),
     );
 
@@ -67,29 +67,42 @@ class _HomePageState extends State<HomePage> {
     checkInternet = await Internet.hasInternet();
   }
 
-  Future<void> getCuriosity({required int curiosityId, required DbActions action}) async {
+  Future<void> getCuriosity({
+    required int curiosityId,
+    required DatabaseActions action,
+  }) async {
     await verifyInternet();
 
-    if (!checkInternet) return;
+    if (!checkInternet) {
+      if (!mounted) { return; }
+      setState(() => isLoading = false);
+      return;
+    }
 
     checkAPI = await Internet.isApiAwake();
 
-    if (!checkAPI) return;
+    if (!checkAPI) {
+      if (!mounted) { return; }
+      setState(() => isLoading = false);
+      return;
+    }
 
-    await curiosityController.onGetCuriosity(id: curiosityId);
+    await _curiosityController.onGetCuriosity(id: curiosityId);
 
-    if (curiosityController.getErrorCuriosity == null) {
-      text = cleanText(text: curiosityController.getCuriosityModel!.shortAnswer);
-      extraText = cleanText(text: curiosityController.getCuriosityModel!.longAnswer);
-      title = curiosityController.getCuriosityModel!.title;
-      fonts = curiosityController.getCuriosityModel!.contentFont;
+    if (_curiosityController.getErrorCuriosity == null) {
+      text = cleanText(
+        text: _curiosityController.getCuriosityModel!.shortAnswer,
+      );
+      extraText = cleanText(
+        text: _curiosityController.getCuriosityModel!.longAnswer,
+      );
+      title = _curiosityController.getCuriosityModel!.title;
+      fonts = _curiosityController.getCuriosityModel!.contentFont;
 
       showKnowMoreButton = true;
-      action == DbActions.add
-          ? addToDatabase()
-          : updateInDatabase();
+      action == DatabaseActions.add ? addToDatabase() : updateInDatabase();
     } else {
-      error = curiosityController.getErrorCuriosity!;
+      error = _curiosityController.getErrorCuriosity!;
     }
   }
 
@@ -97,9 +110,12 @@ class _HomePageState extends State<HomePage> {
     bool checkDatabaseEmpty = await checkDatabaseIsNull();
 
     if (checkDatabaseEmpty) {
-      await getCuriosity(curiosityId: curiosityId, action: DbActions.add);
+      await getCuriosity(curiosityId: curiosityId, action: DatabaseActions.add);
     } else if (DateTime.now().difference(DateTime.parse(selectCuriosity[0].time)).inHours >= 24) {
-      await getCuriosity(curiosityId: selectCuriosity[0].curiosityId + 1, action: DbActions.update);
+      await getCuriosity(
+        curiosityId: selectCuriosity[0].curiosityId + 1,
+        action: DatabaseActions.update,
+      );
     } else {
       checkInternet = true;
       checkAPI = true;
@@ -107,11 +123,11 @@ class _HomePageState extends State<HomePage> {
       text = cleanText(text: selectCuriosity[0].shortAnswer);
       extraText = cleanText(text: selectCuriosity[0].longAnswer);
       title = selectCuriosity[0].title;
-      for (int i=0; i<selectFonts.length; i++) {
+      for (int i = 0; i < selectFonts.length; i++) {
         fonts.add(selectFonts[i].font);
       }
     }
-    if (!mounted) return;
+    if (!mounted) { return; }
     setState(() {
       isLoading = false;
     });
@@ -120,36 +136,58 @@ class _HomePageState extends State<HomePage> {
   Future<void> addToDatabase() async {
     final curiosityModel = CuriosityDbModel(
       id: 0,
-      curiosityId: curiosityController.getCuriosityModel!.id,
-      shortAnswer: cleanText(text: curiosityController.getCuriosityModel!.shortAnswer),
-      longAnswer: cleanText(text: curiosityController.getCuriosityModel!.longAnswer),
-      title: curiosityController.getCuriosityModel!.title,
+      curiosityId: _curiosityController.getCuriosityModel!.id,
+      shortAnswer: cleanText(
+        text: _curiosityController.getCuriosityModel!.shortAnswer,
+      ),
+      longAnswer: cleanText(
+        text: _curiosityController.getCuriosityModel!.longAnswer,
+      ),
+      title: _curiosityController.getCuriosityModel!.title,
       time: DateTime.now().toIso8601String(),
     );
 
-    await dbInstance.add(curiosityModel: curiosityModel, fontModel: null, getCuriosity: true);
+    await dbInstance.add(
+      curiosityModel: curiosityModel,
+      fontModel: null,
+      getCuriosity: true,
+    );
 
     await addFonts();
   }
 
   Future<void> addFonts() async {
     final List<FontModel> fontModel = List.generate(
-      curiosityController.getCuriosityModel!.contentFont.length, 
-      (index) => FontModel(font: curiosityController.getCuriosityModel!.contentFont[index])
+      _curiosityController.getCuriosityModel!.contentFont.length,
+      (index) => FontModel(
+        font: _curiosityController.getCuriosityModel!.contentFont[index],
+      ),
     );
 
-    for (int i=0; i<curiosityController.getCuriosityModel!.contentFont.length; i++) {
-      await dbInstance.add(curiosityModel: null, fontModel: fontModel[i], getCuriosity: false);
+    for (
+      int i = 0;
+      i < _curiosityController.getCuriosityModel!.contentFont.length;
+      i++
+    ) {
+      await dbInstance.add(
+        curiosityModel: null,
+        fontModel: fontModel[i],
+        getCuriosity: false,
+      );
     }
   }
- 
+
   Future<void> updateInDatabase() async {
     final curiosityModel = CuriosityDbModel(
       id: selectCuriosity[0].id,
-      curiosityId: curiosityController.getCuriosityModel!.id,
-      shortAnswer: cleanText(text: curiosityController.getCuriosityModel!.shortAnswer),
-      longAnswer: cleanText(text: curiosityController.getCuriosityModel!.longAnswer),
-      title: curiosityController.getCuriosityModel!.title,
+      curiosityId: _curiosityController.getCuriosityModel!.id,
+      shortAnswer: cleanText(
+        text: _curiosityController.getCuriosityModel!.shortAnswer,
+      ),
+      longAnswer: cleanText(
+        text: _curiosityController.getCuriosityModel!.longAnswer,
+      ),
+      title: _curiosityController.getCuriosityModel!.title,
       time: DateTime.now().toIso8601String(),
     );
 
@@ -163,7 +201,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
- 
+
     return Column(
       spacing: 20,
       mainAxisAlignment: .start,
@@ -175,26 +213,34 @@ class _HomePageState extends State<HomePage> {
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
-          textAlign: TextAlign.center
+          textAlign: TextAlign.center,
         ),
         if (isLoading)...[
           StylizedContainer(
             height: size.height * 0.6,
             child: CircularProgressIndicator.adaptive(
-              backgroundColor: Color.fromARGB(255, 206, 206, 207)
-            )
-          )
+              backgroundColor: Color.fromARGB(255, 206, 206, 207),
+            ),
+          ),
         ] else if (!checkInternet)...[
           Padding(
             padding: const EdgeInsets.only(top: 10),
-            child: InfoErrorHome(message: "Erro. Sem conexão com a internet", icon: Icons.wifi_off, height: size.height * 0.6),
-          )
+            child: InfoErrorHome(
+              message: "Erro. Sem conexão com a internet",
+              icon: Icons.wifi_off,
+              height: size.height * 0.6,
+            ),
+          ),
         ] else if (!checkAPI)...[
           Padding(
             padding: const EdgeInsets.only(top: 10),
-            child: InfoErrorHome(message: "Erro. Não foi possível se conectar ao servidor", icon: Icons.dns, height: size.height * 0.6),
-          )
-        ] else if (curiosityController.getErrorCuriosity == null)...[
+            child: InfoErrorHome(
+              message: "Erro. Não foi possível se conectar ao servidor",
+              icon: Icons.dns,
+              height: size.height * 0.6,
+            ),
+          ),
+        ] else if (_curiosityController.getErrorCuriosity == null)...[
           Flexible(
             child: FractionallySizedBox(
               heightFactor: 0.9,
@@ -203,7 +249,7 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     spacing: 15,
                     children: <Widget>[
-                      if (curiosityController.getErrorCuriosity == null) ...[
+                      if (_curiosityController.getErrorCuriosity == null)...[
                         Text(
                           title,
                           style: const TextStyle(
@@ -220,59 +266,74 @@ class _HomePageState extends State<HomePage> {
                             color: Color.fromARGB(255, 206, 206, 207),
                             height: 1.7,
                           ),
-                          textAlign: TextAlign.justify
-                        )
-                      ]
-                    ]
-                  )
-                )
-              )
-            )
-          )
+                          textAlign: TextAlign.justify,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
         ] else...[
           Text(
             error,
             style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207)),
-            textAlign: TextAlign.center
-          )
+            textAlign: TextAlign.center,
+          ),
         ],
         if (showKnowMoreButton)...[
           Row(
             mainAxisAlignment: .center,
             spacing: 10,
             children: <Widget>[
-              Expanded(child: Button(label: "Saiba Mais", function: goNextPage, pageIndex: 0)),
-              Expanded(child: Button(label: "Fontes", function: goNextPage, pageIndex: 1))
-            ]
-          )
-        ]
-      ]
+              Expanded(
+                child: Button(
+                  label: "Saiba Mais",
+                  function: goNextPage,
+                  pageIndex: 0,
+                ),
+              ),
+              Expanded(
+                child: Button(
+                  label: "Fontes",
+                  function: goNextPage,
+                  pageIndex: 1,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ],
     );
   }
 
   void goNextPage({int? n}) {
     final int? pageIndex = n;
-    if (pageIndex == null) return;
+    if (pageIndex == null) { return; }
 
     Navigator.push(
       context,
       PageRouteBuilder(
-        pageBuilder: (_, _, _) => pageIndex == 0 
-          ? ExtraTextPage(title: title, text: extraText)
-          : FontsPage(fonts: fonts),
+        pageBuilder: (_, _, _) => pageIndex == 0
+            ? ExtraTextPage(title: title, text: extraText)
+            : FontsPage(fonts: fonts),
         transitionsBuilder: (_, animation, _, child) {
           const begin = Offset(1.0, 0.0);
           const end = Offset.zero;
           const curve = Curves.easeInOut;
 
-          final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          final tween = Tween(
+            begin: begin,
+            end: end,
+          ).chain(CurveTween(curve: curve));
 
           return SlideTransition(
             position: animation.drive(tween),
-            child: child
+            child: child,
           );
-        }
-      )
+        },
+      ),
     );
   }
 }

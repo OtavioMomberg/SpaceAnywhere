@@ -18,7 +18,7 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  late final QuestionController questionController;
+  late final QuestionController _questionController;
   int id = 0;
   bool quizStarted = false;
   bool checkInternet = false;
@@ -30,7 +30,7 @@ class _QuizPageState extends State<QuizPage> {
   void initState() {
     super.initState();
 
-    questionController = QuestionController(
+    _questionController = QuestionController(
       QuestionInplementationHttp(client: Client())
     );
 
@@ -43,12 +43,12 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   Future<void> getQuestion({int? questionId}) async {
-    if (questionId != null) await Future.delayed(Duration(seconds: 1));
+    if (questionId != null) { await Future.delayed(Duration(seconds: 1)); }
 
     await verifyInternet();
 
     if (!checkInternet) {
-      if (!mounted) return;
+      if (!mounted) { return; }
       setState(() {
         quizStarted = true; 
         isLoading = false;
@@ -59,7 +59,7 @@ class _QuizPageState extends State<QuizPage> {
     checkAPI = await Internet.isApiAwake();
 
     if (!checkAPI) {
-      if (!mounted) return;
+      if (!mounted) { return; }
       setState(() {
         quizStarted = true; 
         isLoading = false;
@@ -67,18 +67,18 @@ class _QuizPageState extends State<QuizPage> {
       return;
     }
 
-    await questionController.onGetQuestion(id: questionId ?? id);
+    await _questionController.onGetQuestion(id: questionId ?? id);
 
-    if (!mounted) return;
+    if (!mounted) { return; }
     if (questionId != null) {
       showStylizedSnackBar(context:  context, msm:  "Próxima pergunta!", txtColor: Colors.white);
       await Future.delayed(Duration(milliseconds: 500));
     }
 
-    if (!mounted) return;
+    if (!mounted) { return; }
     setState(() => isLoading = false);
 
-    if (questionController.getErrorQuestion != null) error = questionController.getErrorQuestion!;
+    if (_questionController.getErrorQuestion != null) { error = _questionController.getErrorQuestion!; }
   }
 
   @override
@@ -148,7 +148,7 @@ class _QuizPageState extends State<QuizPage> {
             child: Padding(
               padding: const EdgeInsets.only(top: 8),
               child: QuestionCard(
-                question: questionController.getQuestionModel!.question,
+                question: _questionController.getQuestionModel!.question,
                 color: Color.fromARGB(255, 206, 206, 207)
               )
             )
@@ -163,7 +163,7 @@ class _QuizPageState extends State<QuizPage> {
                   ...List.generate(5, (index) {
                     return AnswerCard(
                       index: index,
-                      option: questionController.getQuestionModel!.alternatives[index],
+                      option: _questionController.getQuestionModel!.alternatives[index],
                       color: Color.fromARGB(255, 206, 206, 207), 
                       onTap: onTapAnswer
                     );
@@ -179,9 +179,7 @@ class _QuizPageState extends State<QuizPage> {
 
   Future<void> startQuiz() async {
     bool retryCheck = false;
-    if (!checkInternet) {
-      retryCheck = await openRetryDialog();
-    }
+    if (!checkInternet) { retryCheck = await openRetryDialog(); }
 
     if (!retryCheck && !checkInternet) {
       showError();
@@ -197,11 +195,9 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   Future<void> closeDialog({bool? retry}) async {
-    if (retry == null) {
-      await getQuestion(questionId: questionController.getQuestionModel!.id);
-    }
+    if (retry == null) { await getQuestion(questionId: _questionController.getQuestionModel!.id); }
 
-    if (!mounted) return;
+    if (!mounted) { return; }
     Navigator.pop<bool?>(context, retry);
   }
 
@@ -236,13 +232,13 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   Future<void> onTapAnswer({required int index}) async {
-    if (questionController.getQuestionModel!.rightAnswerIndex == index) {
+    if (_questionController.getQuestionModel!.rightAnswerIndex == index) {
       showResponse(isCorrect: true);
       await closeDialog();
     } else {
       showResponse(
         isCorrect: false, 
-        correctAnswer: questionController.getQuestionModel!.alternatives[questionController.getQuestionModel!.rightAnswerIndex]
+        correctAnswer: _questionController.getQuestionModel!.alternatives[_questionController.getQuestionModel!.rightAnswerIndex]
       );
       await closeDialog();
     }

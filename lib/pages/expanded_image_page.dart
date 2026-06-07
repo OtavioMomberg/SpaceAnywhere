@@ -58,7 +58,7 @@ class _ExpandedImagePageState extends State<ExpandedImagePage> {
   Future<void> saveImage({int? n}) async {
     await showResponse();
 
-    if (!mounted) return;
+    if (!mounted) { return; }
 
     showStylizedSnackBar(
       context: context, 
@@ -78,7 +78,7 @@ class _ExpandedImagePageState extends State<ExpandedImagePage> {
         WidgetsBinding.instance.addPostFrameCallback((_) async {
           response = await SaveImageServices.saveImageFromUrl(imageUrl: widget.imagePath);
 
-          if (!mounted) return;
+          if (!mounted) { return; }
           Navigator.pop(context);
         });
 
