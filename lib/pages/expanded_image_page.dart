@@ -55,7 +55,7 @@ class _ExpandedImagePageState extends State<ExpandedImagePage> {
     );
   }
 
-  Future<void> saveImage({int? n}) async {
+  Future<void> saveImage() async {
     await showResponse();
 
     if (!mounted) { return; }
