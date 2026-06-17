@@ -26,34 +26,40 @@
 
 Return Type:
 
+```json
 {
-    "id" : 0 (int),
-    "title" : "" (string),
-    "short_answer" : "" (string),
-    "long_answer" : "" (string),
-    "content_font" : ["", ...] (List[string]),
+    "id": 0,
+    "title": "",
+    "short_answer": "",
+    "long_answer": "",
+    "content_font": ["", ...]
 }
+```
 
 - GET "api/v1/quiz"
     
 Return Type:
 
+```json
 {
     "id" : 0 (int),
     "question" : "" (string),
     "alternatives" : ["", ...] (List[string]),
     "right_answer_index" : 0 (int),
 }
+```
 
 - GET "api/v1/wallpaper"
 
 Return Type:
 
+```json
 {
     "id" : 0 (int),
     "thumbnail_image_url" : "" (string),
     "full_image_url": "" (string),
 }
+```
 
 # Database (Supabase - PostgreSQL):
 
