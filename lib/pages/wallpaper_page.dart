@@ -20,6 +20,7 @@ class _WallpaperPageState extends State<WallpaperPage> {
   bool isLoading = true;
   bool checkInternet = false;
   bool checkAPI = false;
+  String error = "";
   int offset = 0;
 
   @override
@@ -64,6 +65,8 @@ class _WallpaperPageState extends State<WallpaperPage> {
 
     if (_wallpaperController.getErrorWallpaper == null) {
       ImageCacheService.wallpapers = _wallpaperController.getWallpaperModel;
+    } else {
+      error = _wallpaperController.getErrorWallpaper!;
     }
 
     setState(() => isLoading = false);
@@ -119,6 +122,12 @@ class _WallpaperPageState extends State<WallpaperPage> {
                 );
               }
             )
+          )
+        ] else...[
+          Text(
+            error,
+            style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207)),
+            textAlign: TextAlign.center
           )
         ]
       ]

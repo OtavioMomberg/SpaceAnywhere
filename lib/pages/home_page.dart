@@ -279,8 +279,8 @@ class _HomePageState extends State<HomePage> {
           Text(
             error,
             style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207)),
-            textAlign: TextAlign.center,
-          ),
+            textAlign: TextAlign.center
+          )
         ],
         if (showKnowMoreButton)...[
           Row(
@@ -291,20 +291,20 @@ class _HomePageState extends State<HomePage> {
                 child: Button(
                   label: "Saiba Mais",
                   function: goNextPage,
-                  pageIndex: 0,
-                ),
+                  pageIndex: 0
+                )
               ),
               Expanded(
                 child: Button(
                   label: "Fontes",
                   function: goNextPage,
-                  pageIndex: 1,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ],
+                  pageIndex: 1
+                )
+              )
+            ]
+          )
+        ]
+      ]
     );
   }
 

@@ -5,7 +5,7 @@ class CacheManagerService {
     Config(
       "wallpaper_cache",
       stalePeriod: Duration(days: 1),
-      maxNrOfCacheObjects: 10
+      maxNrOfCacheObjects: 15
     )
   );
 }
