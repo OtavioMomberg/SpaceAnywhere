@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'package:space_anywhere/controllers/wallpaper_controller.dart';
-import 'package:space_anywhere/internet/check_internet.dart';
 import 'package:space_anywhere/pages/expanded_image_page.dart';
-import 'package:space_anywhere/repositories/implementations/wallpaper_implementation_http.dart';
+import 'package:space_anywhere/services/wallpaper_service.dart';
 import 'package:space_anywhere/utils/image_cache_service.dart';
 import 'package:space_anywhere/widgets/check_connection.dart';
 import 'package:space_anywhere/widgets/image_widget.dart';
@@ -16,61 +13,25 @@ class WallpaperPage extends StatefulWidget {
 }
 
 class _WallpaperPageState extends State<WallpaperPage> {
-  late final WallpaperController _wallpaperController;
+  final WallpaperService _wallpaperService = WallpaperService.instance();
   bool isLoading = true;
-  bool checkInternet = false;
-  bool checkAPI = false;
-  String error = "";
-  int offset = 0;
 
   @override
   void initState() {
     super.initState();
 
-    _wallpaperController = WallpaperController(
-      WallpaperImplementationHttp(Client())
-    );
-
-    if (ImageCacheService.wallpapers != null) {
+    if (!_wallpaperService.checkImageCache()) {
       isLoading = false;
-      checkInternet = true;
-      checkAPI = true;
     } else {
-      getImages();
+      callWallpaperService();
     }
   }
 
-  Future<void> verifyInternet() async {
-    checkInternet = await Internet.hasInternet();
-  }
+  Future<void> callWallpaperService() async {
+    await _wallpaperService.getImages();
 
-  Future<void> getImages() async {
-    await verifyInternet();
-
-    if (!checkInternet) {
-      if (!mounted) { return; }
-      await Future.delayed(Duration(seconds: 1));
-      setState(() => isLoading = false);
-      return;
-    }
-
-    checkAPI = await Internet.isApiAwake();
-
-    if (!checkAPI) {
-      if (!mounted) { return; }
-      await Future.delayed(Duration(seconds: 1));
-      setState(() => isLoading = false);
-      return;
-    }
-
-    await _wallpaperController.onGetWallpaper(offset: offset);
-
-    if (_wallpaperController.getErrorWallpaper == null) {
-      ImageCacheService.wallpapers = _wallpaperController.getWallpaperModel;
-    } else {
-      error = _wallpaperController.getErrorWallpaper!;
-    }
-
+    await Future.delayed(Duration(seconds: 1));
+    if (!mounted) { return; } 
     setState(() => isLoading = false);
   }
 
@@ -89,8 +50,12 @@ class _WallpaperPageState extends State<WallpaperPage> {
           CircularProgressIndicator.adaptive(
             backgroundColor: Color.fromARGB(255, 206, 206, 207),
           )
-        ] else if (!checkInternet || !checkAPI)...[
-          CheckConnection(checkInternet: checkInternet, checkAPI: checkAPI, height: size.height * 0.6)
+        ] else if (!_wallpaperService.checkInternet || !_wallpaperService.checkAPI)...[
+          CheckConnection(
+            checkInternet: _wallpaperService.checkInternet, 
+            checkAPI: _wallpaperService.checkAPI, 
+            height: size.height * 0.6
+          )
         ] else if (ImageCacheService.wallpapers != null)...[
           Expanded(
             child: GridView.builder(
@@ -100,7 +65,7 @@ class _WallpaperPageState extends State<WallpaperPage> {
                 return InkWell(
                   onTap: () {
                     seeImageExpanded(
-                      imagePath: ImageCacheService.wallpapers![index]!.thumbnailImageUrl, 
+                      imagePath: ImageCacheService.wallpapers![index]!.fullImageUrl, 
                       context: context
                     );
                   },
@@ -120,7 +85,7 @@ class _WallpaperPageState extends State<WallpaperPage> {
           )
         ] else...[
           Text(
-            error,
+            _wallpaperService.error,
             style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207)),
             textAlign: TextAlign.center
           )

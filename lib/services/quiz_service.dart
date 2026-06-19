@@ -5,7 +5,7 @@ import 'package:space_anywhere/repositories/implementations/question_inplementat
 
 class QuizService {
   // attributes
-  final QuestionController _questionController = QuestionController(
+  static final QuestionController _questionController = QuestionController(
     QuestionInplementationHttp(client: Client())
   );
   final int _id = 0;
