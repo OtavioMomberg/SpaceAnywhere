@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Button extends StatelessWidget {
   final String label;
   final int? pageIndex;
-  final void Function({int? n})? function;
+  final void Function({int? index})? function;
   final Future<void> Function()? awaitFunction;
   const Button({
     required this.label, 
@@ -22,7 +22,7 @@ class Button extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         onTap: () {
           if (awaitFunction?.call() != null) { return; }
-          function!(n: pageIndex);
+          function!(index: pageIndex);
         },
         child: Container(
           decoration: BoxDecoration(

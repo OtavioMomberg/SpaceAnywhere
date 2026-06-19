@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:space_anywhere/services/cache_manager_service.dart';
+import 'package:space_anywhere/utils/cache_manager_service.dart';
 
 class ImageWidget extends StatelessWidget {
   final String imagePath;

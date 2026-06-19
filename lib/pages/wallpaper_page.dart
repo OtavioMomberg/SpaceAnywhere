@@ -4,9 +4,9 @@ import 'package:space_anywhere/controllers/wallpaper_controller.dart';
 import 'package:space_anywhere/internet/check_internet.dart';
 import 'package:space_anywhere/pages/expanded_image_page.dart';
 import 'package:space_anywhere/repositories/implementations/wallpaper_implementation_http.dart';
-import 'package:space_anywhere/services/image_cache_service.dart';
+import 'package:space_anywhere/utils/image_cache_service.dart';
+import 'package:space_anywhere/widgets/check_connection.dart';
 import 'package:space_anywhere/widgets/image_widget.dart';
-import 'package:space_anywhere/widgets/info_error_home.dart';
 
 class WallpaperPage extends StatefulWidget {
   const WallpaperPage({super.key});
@@ -49,6 +49,7 @@ class _WallpaperPageState extends State<WallpaperPage> {
 
     if (!checkInternet) {
       if (!mounted) { return; }
+      await Future.delayed(Duration(seconds: 1));
       setState(() => isLoading = false);
       return;
     }
@@ -57,6 +58,7 @@ class _WallpaperPageState extends State<WallpaperPage> {
 
     if (!checkAPI) {
       if (!mounted) { return; }
+      await Future.delayed(Duration(seconds: 1));
       setState(() => isLoading = false);
       return;
     }
@@ -87,16 +89,8 @@ class _WallpaperPageState extends State<WallpaperPage> {
           CircularProgressIndicator.adaptive(
             backgroundColor: Color.fromARGB(255, 206, 206, 207),
           )
-        ] else if (!checkInternet)...[
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: InfoErrorHome(message: "Erro. Sem conexão com a internet", icon: Icons.wifi_off, height: size.height * 0.6),
-          )
-        ] else if (!checkAPI)...[
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: InfoErrorHome(message: "Erro. Não foi possível se conectar ao servidor", icon: Icons.dns, height: size.height * 0.6),
-          )
+        ] else if (!checkInternet || !checkAPI)...[
+          CheckConnection(checkInternet: checkInternet, checkAPI: checkAPI, height: size.height * 0.6)
         ] else if (ImageCacheService.wallpapers != null)...[
           Expanded(
             child: GridView.builder(
@@ -106,7 +100,7 @@ class _WallpaperPageState extends State<WallpaperPage> {
                 return InkWell(
                   onTap: () {
                     seeImageExpanded(
-                      imagePath: ImageCacheService.wallpapers![index]!.fullImageUrl, 
+                      imagePath: ImageCacheService.wallpapers![index]!.thumbnailImageUrl, 
                       context: context
                     );
                   },
@@ -115,8 +109,9 @@ class _WallpaperPageState extends State<WallpaperPage> {
                       ? const EdgeInsets.only(right: 5, bottom: 10)
                       : const EdgeInsets.only(left: 5, bottom: 10),
                     child: ImageWidget(
-                      imagePath: ImageCacheService.wallpapers![index]!.fullImageUrl,
-                      option: "network"
+                      imagePath: ImageCacheService.wallpapers![index]!.thumbnailImageUrl,
+                      option: "network",
+                      key: ValueKey(ImageCacheService.wallpapers![index]!.thumbnailImageUrl),
                     )
                   )
                 );

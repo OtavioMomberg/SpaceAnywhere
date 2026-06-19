@@ -7,7 +7,7 @@ import 'package:space_anywhere/pages/result_page.dart';
 import 'package:space_anywhere/repositories/implementations/question_inplementation_http.dart';
 import 'package:space_anywhere/widgets/answer_card.dart';
 import 'package:space_anywhere/widgets/button.dart';
-import 'package:space_anywhere/widgets/info_error_home.dart';
+import 'package:space_anywhere/widgets/check_connection.dart';
 import 'package:space_anywhere/widgets/question_card.dart';
 
 class QuizPage extends StatefulWidget {
@@ -46,9 +46,10 @@ class _QuizPageState extends State<QuizPage> {
     if (questionId != null) { await Future.delayed(Duration(seconds: 1)); }
 
     await verifyInternet();
-
+    
     if (!checkInternet) {
       if (!mounted) { return; }
+      await Future.delayed(Duration(seconds: 1));
       setState(() {
         quizStarted = true; 
         isLoading = false;
@@ -60,6 +61,7 @@ class _QuizPageState extends State<QuizPage> {
 
     if (!checkAPI) {
       if (!mounted) { return; }
+      await Future.delayed(Duration(seconds: 1));
       setState(() {
         quizStarted = true; 
         isLoading = false;
@@ -133,16 +135,8 @@ class _QuizPageState extends State<QuizPage> {
               )
             )
           ]
-        ] else if (!checkInternet)...[
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: InfoErrorHome(message: "Erro. Sem conexão com a internet", icon: Icons.wifi_off, height: size.height * 0.6),
-          )
-        ] else if (!checkAPI)...[
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: InfoErrorHome(message: "Erro. Não foi possível se conectar ao servidor", icon: Icons.dns, height: size.height * 0.6),
-          )
+        ] else if (!checkInternet || !checkAPI)...[
+          CheckConnection(checkInternet: checkInternet, checkAPI: checkAPI, height: size.height * 0.6)
         ] else...[
           Expanded(
             child: Padding(
