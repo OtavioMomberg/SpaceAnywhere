@@ -5,7 +5,8 @@ import 'package:space_anywhere/internet/check_internet.dart';
 import 'package:space_anywhere/models/database_models/curiosity_db_model.dart';
 import 'package:space_anywhere/repositories/implementations/curiosity_implementation_http.dart';
 
-class HomeServices {
+class HomeService {
+  // attributes
   final _curiosityId = 2;
   final _dbInstance = DatabaseServices.instance();
   final CuriosityController _curiosityController = CuriosityController(
@@ -34,20 +35,29 @@ class HomeServices {
   List<String> get fonts => _fonts;
 
   // instance
-  static final _instance = HomeServices._();
-  HomeServices._();
+  static final _instance = HomeService._();
+  HomeService._();
 
-  factory HomeServices.instance() => _instance;
+  factory HomeService.instance() => _instance;
 
+  // check if the database is null method
+  // select values from the curiosity table
+  // set each item returned to [CuriosityDbModel] type
+  // select values from the font table
+  // set each item returned to [FontModel] type
+  // return true if [_selectCuriosity] is empty; false otherwise
   Future<bool> checkDatabaseIsNull() async {
     _selectCuriosity = await _dbInstance.select(getCuriosity: true);
     _selectCuriosity.map((item) => item as CuriosityDbModel);
 
     _selectFonts = await _dbInstance.select(getCuriosity: false);
     _selectFonts.map((item) => item as FontModel);
+
     return _selectCuriosity.isEmpty;
   }
 
+  // clean text recieved from the API method
+  // clean the text (need to be improved)
   String cleanText({required String text}) {
     return text
       .replaceAll('\\n', '\n')
@@ -55,10 +65,13 @@ class HomeServices {
       .replaceAll('\\"', '"');
   }
 
-  Future<void> getCuriosity({
-    required int curiosityId,
-    required DatabaseActions action,
-  }) async {
+  // get curiosity method
+  // check the internet [_checkInternet] and the API [_checkAPI]
+  // the controller call the [onGetCuriosity] method
+  // if there is no error attribute the values returned to the attributes 
+  // call [addToDatabase()] or [updateInDatabase()] method
+  // if there is an an error, attribute the error to [_error]
+  Future<void> getCuriosity({required int curiosityId, required DatabaseActions action}) async {
     _checkInternet = await Internet.hasInternet();
 
     if (!_checkInternet) {
@@ -72,12 +85,8 @@ class HomeServices {
     await _curiosityController.onGetCuriosity(id: curiosityId);
 
     if (_curiosityController.getErrorCuriosity == null) {
-      _text = cleanText(
-        text: _curiosityController.getCuriosityModel!.shortAnswer,
-      );
-      _extraText = cleanText(
-        text: _curiosityController.getCuriosityModel!.longAnswer,
-      );
+      _text = cleanText(text: _curiosityController.getCuriosityModel!.shortAnswer);
+      _extraText = cleanText(text: _curiosityController.getCuriosityModel!.longAnswer);
       _title = _curiosityController.getCuriosityModel!.title;
       _fonts = _curiosityController.getCuriosityModel!.contentFont;
 
@@ -88,22 +97,16 @@ class HomeServices {
     }
   }
 
+  // control curiosity method
+  // check the database
+  // if else block to verify the need of call the API or not and control the time
   Future<void> controlCuriosity() async {
     bool checkDatabaseEmpty = await checkDatabaseIsNull();
 
     if (checkDatabaseEmpty) {
-      await getCuriosity(
-        curiosityId: _curiosityId,
-        action: DatabaseActions.add,
-      );
-    } else if (DateTime.now()
-            .difference(DateTime.parse(_selectCuriosity[0].time))
-            .inHours >=
-        24) {
-      await getCuriosity(
-        curiosityId: _selectCuriosity[0].curiosityId + 1,
-        action: DatabaseActions.update,
-      );
+      await getCuriosity(curiosityId: _curiosityId, action: DatabaseActions.add);
+    } else if (DateTime.now().difference(DateTime.parse(_selectCuriosity[0].time)).inHours >= 24) {
+      await getCuriosity(curiosityId: _selectCuriosity[0].curiosityId + 1, action: DatabaseActions.update);
     } else {
       _checkInternet = true;
       _checkAPI = true;
@@ -117,16 +120,13 @@ class HomeServices {
     }
   }
 
+  // add curiosity data to curiosity table
   Future<void> addToDatabase() async {
     final curiosityModel = CuriosityDbModel(
       id: 0,
       curiosityId: _curiosityController.getCuriosityModel!.id,
-      shortAnswer: cleanText(
-        text: _curiosityController.getCuriosityModel!.shortAnswer,
-      ),
-      longAnswer: cleanText(
-        text: _curiosityController.getCuriosityModel!.longAnswer,
-      ),
+      shortAnswer: cleanText(text: _curiosityController.getCuriosityModel!.shortAnswer),
+      longAnswer: cleanText(text: _curiosityController.getCuriosityModel!.longAnswer),
       title: _curiosityController.getCuriosityModel!.title,
       time: DateTime.now().toIso8601String(),
     );
@@ -140,6 +140,7 @@ class HomeServices {
     await addFonts();
   }
 
+  // add fonts data to font table
   Future<void> addFonts() async {
     final List<FontModel> fontModel = List.generate(
       _curiosityController.getCuriosityModel!.contentFont.length,
@@ -148,11 +149,7 @@ class HomeServices {
       ),
     );
 
-    for (
-      int i = 0;
-      i < _curiosityController.getCuriosityModel!.contentFont.length;
-      i++
-    ) {
+    for (int i = 0; i < _curiosityController.getCuriosityModel!.contentFont.length; i++) {
       await _dbInstance.add(
         curiosityModel: null,
         fontModel: fontModel[i],
@@ -161,16 +158,13 @@ class HomeServices {
     }
   }
 
+  // update curiosity data
   Future<void> updateInDatabase() async {
     final curiosityModel = CuriosityDbModel(
       id: _selectCuriosity[0].id,
       curiosityId: _curiosityController.getCuriosityModel!.id,
-      shortAnswer: cleanText(
-        text: _curiosityController.getCuriosityModel!.shortAnswer,
-      ),
-      longAnswer: cleanText(
-        text: _curiosityController.getCuriosityModel!.longAnswer,
-      ),
+      shortAnswer: cleanText(text: _curiosityController.getCuriosityModel!.shortAnswer),
+      longAnswer: cleanText(text: _curiosityController.getCuriosityModel!.longAnswer),
       title: _curiosityController.getCuriosityModel!.title,
       time: DateTime.now().toIso8601String(),
     );

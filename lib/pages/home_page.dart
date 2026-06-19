@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:space_anywhere/pages/extra_text_page.dart';
 import 'package:space_anywhere/pages/fonts_page.dart';
-import 'package:space_anywhere/services/home_services.dart';
+import 'package:space_anywhere/services/home_service.dart';
 import 'package:space_anywhere/widgets/button.dart';
 import 'package:space_anywhere/widgets/check_connection.dart';
 import 'package:space_anywhere/widgets/stylized_container.dart';
@@ -14,17 +14,17 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _homeServices = HomeServices.instance();
+  final _homeService = HomeService.instance();
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    controlCuriosity();
+    callHomeService();
   }
 
-  Future<void> controlCuriosity() async {
-    await _homeServices.controlCuriosity();
+  Future<void> callHomeService() async {
+    await _homeService.controlCuriosity();
 
     if (!mounted) {
       return;
@@ -56,13 +56,13 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Color.fromARGB(255, 206, 206, 207)
             )
           ),
-        ] else if (!_homeServices.checkInternet || !_homeServices.checkAPI)...[
+        ] else if (!_homeService.checkInternet || !_homeService.checkAPI)...[
           CheckConnection(
-            checkInternet: _homeServices.checkInternet,
-            checkAPI: _homeServices.checkAPI,
+            checkInternet: _homeService.checkInternet,
+            checkAPI: _homeService.checkAPI,
             height: size.height * 0.6,
           ),
-        ] else if (_homeServices.curiosityController.getErrorCuriosity == null)...[
+        ] else if (_homeService.curiosityController.getErrorCuriosity == null)...[
           Flexible(
             child: FractionallySizedBox(
               heightFactor: 0.9,
@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> {
                     spacing: 15,
                     children: <Widget>[
                       Text(
-                        _homeServices.title,
+                        _homeService.title,
                         style: const TextStyle(
                           color: Color.fromARGB(255, 206, 206, 207),
                           fontWeight: FontWeight.bold,
@@ -82,7 +82,7 @@ class _HomePageState extends State<HomePage> {
                         textAlign: TextAlign.center
                       ),
                       Text(
-                        _homeServices.text,
+                        _homeService.text,
                         style: const TextStyle(
                           color: Color.fromARGB(255, 206, 206, 207),
                           height: 1.7,
@@ -97,12 +97,12 @@ class _HomePageState extends State<HomePage> {
           )
         ] else...[
           Text(
-            _homeServices.error,
+            _homeService.error,
             style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207)),
             textAlign: TextAlign.center
           )
         ],
-        if (_homeServices.showKnowMoreButton)...[
+        if (_homeService.showKnowMoreButton)...[
           Row(
             mainAxisAlignment: .center,
             spacing: 10,
@@ -139,10 +139,10 @@ class _HomePageState extends State<HomePage> {
       PageRouteBuilder(
         pageBuilder: (_, _, _) => pageIndex == 0
             ? ExtraTextPage(
-                title: _homeServices.title,
-                text: _homeServices.extraText,
+                title: _homeService.title,
+                text: _homeService.extraText,
               )
-            : FontsPage(fonts: _homeServices.fonts),
+            : FontsPage(fonts: _homeService.fonts),
         transitionsBuilder: (_, animation, _, child) {
           const begin = Offset(1.0, 0.0);
           const end = Offset.zero;

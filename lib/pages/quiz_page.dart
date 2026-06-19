@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'dart:ui';
-import 'package:space_anywhere/controllers/question_controller.dart';
-import 'package:space_anywhere/internet/check_internet.dart';
 import 'package:space_anywhere/pages/result_page.dart';
-import 'package:space_anywhere/repositories/implementations/question_inplementation_http.dart';
+//import 'package:http/http.dart';
+import 'dart:ui';
+//import 'package:space_anywhere/controllers/question_controller.dart';
+//import 'package:space_anywhere/internet/check_internet.dart';
+//import 'package:space_anywhere/pages/result_page.dart';
+//import 'package:space_anywhere/repositories/implementations/question_inplementation_http.dart';
+import 'package:space_anywhere/services/quiz_service.dart';
 import 'package:space_anywhere/widgets/answer_card.dart';
 import 'package:space_anywhere/widgets/button.dart';
 import 'package:space_anywhere/widgets/check_connection.dart';
@@ -18,69 +20,28 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  late final QuestionController _questionController;
-  int id = 0;
-  bool quizStarted = false;
-  bool checkInternet = false;
-  bool checkAPI = false;
+  late final QuizService _quizService;
   bool isLoading = true;
-  String error = "";
 
   @override
   void initState() {
     super.initState();
-
-    _questionController = QuestionController(
-      QuestionInplementationHttp(client: Client())
-    );
-
-    getQuestion();
-    
+    _quizService = QuizService(showResponse: showResponse, closeDialog: closeDialog);
+    callQuizService();
   }
 
-  Future<void> verifyInternet() async {
-    checkInternet = await Internet.hasInternet();
-  }
-
-  Future<void> getQuestion({int? questionId}) async {
-    if (questionId != null) { await Future.delayed(Duration(seconds: 1)); }
-
-    await verifyInternet();
-    
-    if (!checkInternet) {
-      if (!mounted) { return; }
-      await Future.delayed(Duration(seconds: 1));
-      setState(() {
-        quizStarted = true; 
-        isLoading = false;
-      });
-      return;
-    }
-
-    checkAPI = await Internet.isApiAwake();
-
-    if (!checkAPI) {
-      if (!mounted) { return; }
-      await Future.delayed(Duration(seconds: 1));
-      setState(() {
-        quizStarted = true; 
-        isLoading = false;
-      });
-      return;
-    }
-
-    await _questionController.onGetQuestion(id: questionId ?? id);
+  Future<void> callQuizService({int? questionId}) async {
+    await _quizService.getQuestion(questionId: questionId);
 
     if (!mounted) { return; }
     if (questionId != null) {
-      showStylizedSnackBar(context:  context, msm:  "Próxima pergunta!", txtColor: Colors.white);
+      showStylizedSnackBar(context: context, msm:  "Próxima pergunta!", txtColor: Colors.white);
       await Future.delayed(Duration(milliseconds: 500));
     }
 
+    await Future.delayed(Duration(seconds: 1));
     if (!mounted) { return; }
     setState(() => isLoading = false);
-
-    if (_questionController.getErrorQuestion != null) { error = _questionController.getErrorQuestion!; }
   }
 
   @override
@@ -89,7 +50,7 @@ class _QuizPageState extends State<QuizPage> {
 
     return Column(
       children: <Widget>[
-        if (!quizStarted)...[
+        if (!_quizService.quizStarted)...[
           Text("Quiz", style: TextStyle(color: Color.fromARGB(255, 206, 206, 207), fontWeight: FontWeight.bold, fontSize: 30)),
           const SizedBox(height: 20),
           ClipRRect(
@@ -135,14 +96,18 @@ class _QuizPageState extends State<QuizPage> {
               )
             )
           ]
-        ] else if (!checkInternet || !checkAPI)...[
-          CheckConnection(checkInternet: checkInternet, checkAPI: checkAPI, height: size.height * 0.6)
-        ] else...[
+        ] else if (!_quizService.checkInternet || !_quizService.checkAPI)...[
+          CheckConnection(
+            checkInternet: _quizService.checkInternet, 
+            checkAPI: _quizService.checkAPI,
+            height: size.height * 0.6
+          )
+        ] else if (_quizService.questionController.getErrorQuestion == null)...[
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(top: 8),
               child: QuestionCard(
-                question: _questionController.getQuestionModel!.question,
+                question: _quizService.questionController.getQuestionModel!.question,
                 color: Color.fromARGB(255, 206, 206, 207)
               )
             )
@@ -157,14 +122,20 @@ class _QuizPageState extends State<QuizPage> {
                   ...List.generate(5, (index) {
                     return AnswerCard(
                       index: index,
-                      option: _questionController.getQuestionModel!.alternatives[index],
+                      option: _quizService.questionController.getQuestionModel!.alternatives[index],
                       color: Color.fromARGB(255, 206, 206, 207), 
-                      onTap: onTapAnswer
+                      onTap: ({required int index}) async => await _quizService.onTapAnswer(index: index)
                     );
                   })
                 ]
               )
             )
+          )
+        ] else...[
+          Text(
+            _quizService.error,
+            style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207)),
+            textAlign: TextAlign.center
           )
         ]
       ]
@@ -172,71 +143,21 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   Future<void> startQuiz() async {
-    bool retryCheck = false;
-    if (!checkInternet) { retryCheck = await openRetryDialog(); }
-
-    if (!retryCheck && !checkInternet) {
+    if (_quizService.error.isNotEmpty) { 
       showError();
       return;
     }
-
-    if (error.isNotEmpty) {
-      showError();
-      return;
-    }
-
-    setState(() => quizStarted = !quizStarted);
+    if (!mounted) { return; }
+    setState(() => _quizService.changeQuizState());
   }
 
-  Future<void> closeDialog({bool? retry}) async {
-    if (retry == null) { await getQuestion(questionId: _questionController.getQuestionModel!.id); }
+  Future<void> closeDialog() async {
+    await callQuizService(questionId: _quizService.questionController.getQuestionModel!.id);
 
     if (!mounted) { return; }
-    Navigator.pop<bool?>(context, retry);
+    Navigator.pop(context);
   }
 
-  Future<bool> openRetryDialog() async {
-    final bool? retry = await showDialog<bool>(
-      context: context, 
-      barrierDismissible: false,
-      builder: (context) {
-        WidgetsBinding.instance.addPostFrameCallback((_) async {
-          closeDialog(retry: await retryInternetConnection());
-        });
-        return const AlertDialog(
-          title: Center(child: Text("Tentando Conexão...")),
-          content: SizedBox(
-            height: 300,
-            width: 300,
-            child: Center(
-              child: CircularProgressIndicator.adaptive(
-                backgroundColor: Color.fromARGB(255, 38, 46, 139)
-              )
-            )
-          )
-        );
-      }
-    );
-    return retry ?? false;
-  }
-
-  Future<bool> retryInternetConnection() async {  
-    await getQuestion();
-    return checkAPI ? true : false;
-  }
-
-  Future<void> onTapAnswer({required int index}) async {
-    if (_questionController.getQuestionModel!.rightAnswerIndex == index) {
-      showResponse(isCorrect: true);
-      await closeDialog();
-    } else {
-      showResponse(
-        isCorrect: false, 
-        correctAnswer: _questionController.getQuestionModel!.alternatives[_questionController.getQuestionModel!.rightAnswerIndex]
-      );
-      await closeDialog();
-    }
-  }
   void showResponse({required bool isCorrect, String? correctAnswer}) {
     Navigator.push(
       context,
