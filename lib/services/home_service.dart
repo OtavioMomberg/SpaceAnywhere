@@ -9,9 +9,7 @@ class HomeService {
   // attributes
   final _curiosityId = 2;
   final _dbInstance = DatabaseServices.instance();
-  final CuriosityController _curiosityController = CuriosityController(
-    CuriosityImplementationHttp(client: Client()),
-  );
+  final CuriosityController _curiosityController = CuriosityController(CuriosityImplementationHttp(client: Client()));
   List<dynamic> _selectCuriosity = [];
   List<dynamic> _selectFonts = [];
   bool _checkInternet = false;

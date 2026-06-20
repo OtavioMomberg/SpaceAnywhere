@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:space_anywhere/pages/result_page.dart';
-//import 'package:http/http.dart';
 import 'dart:ui';
-//import 'package:space_anywhere/controllers/question_controller.dart';
-//import 'package:space_anywhere/internet/check_internet.dart';
-//import 'package:space_anywhere/pages/result_page.dart';
-//import 'package:space_anywhere/repositories/implementations/question_inplementation_http.dart';
 import 'package:space_anywhere/services/quiz_service.dart';
 import 'package:space_anywhere/widgets/answer_card.dart';
 import 'package:space_anywhere/widgets/button.dart';
@@ -21,26 +16,65 @@ class QuizPage extends StatefulWidget {
 
 class _QuizPageState extends State<QuizPage> {
   late final QuizService _quizService;
+  final int retryAttempts = 15;
+  int currentRetryAttempt = 0;
   bool isLoading = true;
+  bool retrySucced = false;
 
   @override
   void initState() {
     super.initState();
-    _quizService = QuizService(showResponse: showResponse, closeDialog: closeDialog);
-    callQuizService();
+
+    _quizService = QuizService(
+      showResponse: showResponse,
+      closeAnswerPage: closeAnswerPage
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      retryConnectionSystem();
+    });
+
+    //callQuizService();
+  }
+
+  Future<void> retryConnectionSystem({int? questionId}) async {
+    currentRetryAttempt = 0;
+    while (currentRetryAttempt < retryAttempts) {
+      await callQuizService(questionId: questionId);
+
+      if (_quizService.checkInternet && _quizService.checkAPI) { 
+        currentRetryAttempt = retryAttempts;
+        break; 
+      }
+      currentRetryAttempt++;
+    }
   }
 
   Future<void> callQuizService({int? questionId}) async {
     await _quizService.getQuestion(questionId: questionId);
 
     if (!mounted) { return; }
+
     if (questionId != null) {
-      showStylizedSnackBar(context: context, msm:  "Próxima pergunta!", txtColor: Colors.white);
-      await Future.delayed(Duration(milliseconds: 500));
+      if (!_quizService.checkInternet || !_quizService.checkAPI) {
+        if (currentRetryAttempt == retryAttempts) { 
+          retryConnectionSystem(questionId: questionId); 
+          setState(() => retrySucced = true);
+        }
+        return; 
+      }
+
+      await showStylizedSnackBar(
+        context: context,
+        msm: retrySucced ? "Conexão Reestabelecida!" : "Próxima pergunta!",
+        txtColor: retrySucced ? Colors.lightBlueAccent : Colors.white
+      );
+      retrySucced = false;
     }
 
     await Future.delayed(Duration(seconds: 1));
     if (!mounted) { return; }
+
     setState(() => isLoading = false);
   }
 
@@ -50,8 +84,15 @@ class _QuizPageState extends State<QuizPage> {
 
     return Column(
       children: <Widget>[
-        if (!_quizService.quizStarted)...[
-          Text("Quiz", style: TextStyle(color: Color.fromARGB(255, 206, 206, 207), fontWeight: FontWeight.bold, fontSize: 30)),
+        if (!_quizService.quizStarted) ...[
+          Text(
+            "Quiz",
+            style: TextStyle(
+              color: Color.fromARGB(255, 206, 206, 207),
+              fontWeight: FontWeight.bold,
+              fontSize: 30,
+            ),
+          ),
           const SizedBox(height: 20),
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
@@ -62,8 +103,10 @@ class _QuizPageState extends State<QuizPage> {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
-                  color: Colors.white.withValues(alpha: 0.1)
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.5),
+                  ),
+                  color: Colors.white.withValues(alpha: 0.1),
                 ),
                 child: Column(
                   mainAxisAlignment: .center,
@@ -73,36 +116,37 @@ class _QuizPageState extends State<QuizPage> {
                       "Quiz de Astronômia",
                       style: TextStyle(
                         color: Color.fromARGB(255, 206, 206, 207),
-                        fontSize: 18
-                      )
+                        fontSize: 18,
+                      ),
                     ),
-                    Icon(Icons.rocket_launch, color: Color.fromARGB(255, 206, 206, 207), size: 30)
-                  ]
-                )
-              )
-            )
+                    Icon(
+                      Icons.rocket_launch,
+                      color: Color.fromARGB(255, 206, 206, 207),
+                      size: 30,
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
           const SizedBox(height: 40),
-          if (isLoading)...[
+          if (isLoading) ...[
             CircularProgressIndicator.adaptive(
-              backgroundColor: Color.fromARGB(255, 206, 206, 207)
-            )
-          ] else...[
+              backgroundColor: Color.fromARGB(255, 206, 206, 207),
+            ),
+          ] else ...[
             FractionallySizedBox(
               widthFactor: 0.8,
-              child: Button(
-                label: "Jogar", 
-                awaitFunction: startQuiz
-              )
-            )
-          ]
-        ] else if (!_quizService.checkInternet || !_quizService.checkAPI)...[
+              child: Button(label: "Jogar", awaitFunction: startQuiz),
+            ),
+          ],
+        ] else if (!_quizService.checkInternet || !_quizService.checkAPI) ...[
           CheckConnection(
-            checkInternet: _quizService.checkInternet, 
+            checkInternet: _quizService.checkInternet,
             checkAPI: _quizService.checkAPI,
-            height: size.height * 0.6
-          )
-        ] else if (_quizService.questionController.getErrorQuestion == null)...[
+            height: size.height * 0.6,
+          ),
+        ] else if (_quizService.questionController.getErrorQuestion == null) ...[
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(top: 8),
@@ -123,7 +167,7 @@ class _QuizPageState extends State<QuizPage> {
                     return AnswerCard(
                       index: index,
                       option: _quizService.questionController.getQuestionModel!.alternatives[index],
-                      color: Color.fromARGB(255, 206, 206, 207), 
+                      color: Color.fromARGB(255, 206, 206, 207),
                       onTap: ({required int index}) async => await _quizService.onTapAnswer(index: index)
                     );
                   })
@@ -131,7 +175,7 @@ class _QuizPageState extends State<QuizPage> {
               )
             )
           )
-        ] else...[
+        ] else ...[
           Text(
             _quizService.error,
             style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207)),
@@ -143,15 +187,17 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   Future<void> startQuiz() async {
-    if (_quizService.error.isNotEmpty) { 
-      showError();
+    if (_quizService.error.isNotEmpty) {
+      await showError();
       return;
     }
-    if (!mounted) { return; }
+    if (!mounted) {
+      return;
+    }
     setState(() => _quizService.changeQuizState());
   }
 
-  Future<void> closeDialog() async {
+  Future<void> closeAnswerPage() async {
     await callQuizService(questionId: _quizService.questionController.getQuestionModel!.id);
 
     if (!mounted) { return; }
@@ -163,47 +209,48 @@ class _QuizPageState extends State<QuizPage> {
       context,
       PageRouteBuilder(
         opaque: false,
-        pageBuilder: (_, _, _) => ResultPage(isCorrect: isCorrect, correctAnswer: correctAnswer),
+        pageBuilder: (_, _, _) =>
+            ResultPage(isCorrect: isCorrect, correctAnswer: correctAnswer),
         transitionsBuilder: (_, animation, _, child) {
           const begin = Offset(1.0, 0.0);
           const end = Offset.zero;
           const curve = Curves.easeInOut;
 
-          final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          final tween = Tween(
+            begin: begin,
+            end: end,
+          ).chain(CurveTween(curve: curve));
 
           return SlideTransition(
             position: animation.drive(tween),
-            child: child
+            child: child,
           );
         }
       )
     );
   }
 
-  void showStylizedSnackBar({required BuildContext context, required String msm, required Color txtColor}) {
+  Future<void> showStylizedSnackBar ({required BuildContext context,required String msm,required Color txtColor}) async {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         padding: const EdgeInsets.all(10),
         content: Center(
-          child: Text(
-            msm, 
-            style: const TextStyle(
-              color: Colors.white
-            )
-          )
+          child: Text(msm, style: const TextStyle(color: Colors.white)),
         ),
         backgroundColor: txtColor.withValues(alpha: 0.15),
         shape: StadiumBorder(
-          side: BorderSide(
-            color: txtColor.withValues(alpha: 0.5)
-          )
+          side: BorderSide(color: txtColor.withValues(alpha: 0.5)),
         ),
-        duration: const Duration(seconds: 1)
-      )
+        duration: const Duration(seconds: 1),
+      ),
     );
   }
 
-  void showError() {
-    showStylizedSnackBar(context: context, msm: "Não foi possível se conectar ao servidor.", txtColor: Colors.red);
+  Future<void> showError() async {
+    await showStylizedSnackBar(
+      context: context,
+      msm: "Não foi possível se conectar ao servidor.",
+      txtColor: Colors.red,
+    );
   }
 }

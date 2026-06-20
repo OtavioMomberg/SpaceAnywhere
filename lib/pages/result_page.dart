@@ -5,11 +5,8 @@ import 'package:space_anywhere/widgets/stylized_container.dart';
 class ResultPage extends StatelessWidget {
   final bool isCorrect;
   final String? correctAnswer;
-  const ResultPage({
-    required this.isCorrect,
-    this.correctAnswer,
-    super.key
-  });
+  
+  const ResultPage({required this.isCorrect, this.correctAnswer, super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -6,7 +6,7 @@ import 'package:space_anywhere/repositories/implementations/question_inplementat
 class QuizService {
   // attributes
   static final QuestionController _questionController = QuestionController(
-    QuestionInplementationHttp(client: Client())
+    QuestionInplementationHttp(client: Client()),
   );
   final int _id = 0;
   bool _quizStarted = false;
@@ -24,24 +24,21 @@ class QuizService {
   // method to change the quiz screen state
   void changeQuizState() => _quizStarted = !_quizStarted;
 
-  // callbacks to auxiliate some methods 
+  // callbacks to auxiliate some methods
   final void Function({required bool isCorrect, String? correctAnswer}) showResponse;
-  final Future<void> Function() closeDialog;
+  final Future<void> Function() closeAnswerPage;
 
   // instance
-  QuizService({
-    required this.showResponse,
-    required this.closeDialog
-  });
+  QuizService({required this.showResponse, required this.closeAnswerPage});
 
   // get question method
   // check the internet [_checkInternet] and the API [_checkAPI]
   // the controller call the [onGetQuestion] method
   // if error, assign it to [_error]
   Future<void> getQuestion({int? questionId}) async {
-    if (questionId != null) { await Future.delayed(Duration(seconds: 1)); }
-    
     _checkInternet = await Internet.hasInternet();
+
+    if (questionId != null && !_checkInternet) { await Future.delayed(Duration(seconds: 3)); }
 
     if (!_checkInternet) {
       _quizStarted = true;
@@ -56,24 +53,27 @@ class QuizService {
 
     await _questionController.onGetQuestion(id: questionId ?? _id);
 
-    if (_questionController.getErrorQuestion != null) { _error = _questionController.getErrorQuestion!; }
+    if (_questionController.getErrorQuestion != null) {
+      _error = _questionController.getErrorQuestion!;
+    }
   }
 
   // answer method
-  // compare the given index with the correct answer index 
+  // compare the given index with the correct answer index
   // if true - show the correct answer page
   // if false - show the error answer page and the correct answer is revealed
   // close the answer page
   Future<void> onTapAnswer({required int index}) async {
+    var controller = questionController.getQuestionModel!;
+
     if (questionController.getQuestionModel!.rightAnswerIndex == index) {
       showResponse(isCorrect: true);
     } else {
       showResponse(
-        isCorrect: false, 
-        correctAnswer: 
-        questionController.getQuestionModel!.alternatives[questionController.getQuestionModel!.rightAnswerIndex]
+        isCorrect: false,
+        correctAnswer: controller.alternatives[controller.rightAnswerIndex]
       );
     }
-    await closeDialog();
+    await closeAnswerPage();
   }
 }
