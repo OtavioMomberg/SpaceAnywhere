@@ -20,15 +20,18 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    callHomeService();
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _homeService.internet.setFunction(func: callHomeService);
+      await _homeService.internet.retryConnectionSystem();
+    });
   }
 
   Future<void> callHomeService() async {
     await _homeService.controlCuriosity();
 
-    if (!mounted) {
-      return;
-    }
+    if (!mounted) { return; }
+
     setState(() => isLoading = false);
   }
 
@@ -56,10 +59,10 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Color.fromARGB(255, 206, 206, 207)
             )
           ),
-        ] else if (!_homeService.checkInternet || !_homeService.checkAPI)...[
+        ] else if (!_homeService.internet.checkInternet || !_homeService.internet.checkAPI)...[
           CheckConnection(
-            checkInternet: _homeService.checkInternet,
-            checkAPI: _homeService.checkAPI,
+            checkInternet: _homeService.internet.checkInternet,
+            checkAPI: _homeService.internet.checkAPI,
             height: size.height * 0.6,
           ),
         ] else if (_homeService.curiosityController.getErrorCuriosity == null)...[
@@ -130,19 +133,14 @@ class _HomePageState extends State<HomePage> {
 
   void goNextPage({int? index}) {
     final int? pageIndex = index;
-    if (pageIndex == null) {
-      return;
-    }
+    if (pageIndex == null) { return; }
 
     Navigator.push(
       context,
       PageRouteBuilder(
         pageBuilder: (_, _, _) => pageIndex == 0
-            ? ExtraTextPage(
-                title: _homeService.title,
-                text: _homeService.extraText,
-              )
-            : FontsPage(fonts: _homeService.fonts),
+          ? ExtraTextPage(title: _homeService.title, text: _homeService.extraText)
+          : FontsPage(fonts: _homeService.fonts),
         transitionsBuilder: (_, animation, _, child) {
           const begin = Offset(1.0, 0.0);
           const end = Offset.zero;

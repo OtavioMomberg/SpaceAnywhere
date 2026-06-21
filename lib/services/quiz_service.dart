@@ -4,49 +4,36 @@ import 'package:space_anywhere/internet/check_internet.dart';
 import 'package:space_anywhere/repositories/implementations/question_inplementation_http.dart';
 
 class QuizService {
-  // attributes
-  static final QuestionController _questionController = QuestionController(
-    QuestionInplementationHttp(client: Client()),
-  );
+  static final QuestionController _questionController = QuestionController(QuestionInplementationHttp(client: Client()));
+  final Internet _internet = Internet();
   final int _id = 0;
   bool _quizStarted = false;
-  bool _checkInternet = false;
-  bool _checkAPI = false;
   String _error = "";
 
-  // getters
   QuestionController get questionController => _questionController;
+  Internet get internet => _internet;
   bool get quizStarted => _quizStarted;
-  bool get checkInternet => _checkInternet;
-  bool get checkAPI => _checkAPI;
   String get error => _error;
 
-  // method to change the quiz screen state
   void changeQuizState() => _quizStarted = !_quizStarted;
 
-  // callbacks to auxiliate some methods
   final void Function({required bool isCorrect, String? correctAnswer}) showResponse;
   final Future<void> Function() closeAnswerPage;
 
-  // instance
   QuizService({required this.showResponse, required this.closeAnswerPage});
 
-  // get question method
-  // check the internet [_checkInternet] and the API [_checkAPI]
-  // the controller call the [onGetQuestion] method
-  // if error, assign it to [_error]
   Future<void> getQuestion({int? questionId}) async {
-    _checkInternet = await Internet.hasInternet();
+    await _internet.verifyInternet();
 
-    if (questionId != null && !_checkInternet) { await Future.delayed(Duration(seconds: 3)); }
+    if (questionId != null && !_internet.checkInternet) { await Future.delayed(Duration(seconds: 3)); }
 
-    if (!_checkInternet) {
+    if (!_internet.checkInternet) {
       _quizStarted = true;
       return;
     }
-    _checkAPI = await Internet.isApiAwake();
+    await _internet.verifyAPI();
 
-    if (!_checkAPI) {
+    if (!_internet.checkAPI) {
       _quizStarted = true;
       return;
     }
@@ -58,11 +45,6 @@ class QuizService {
     }
   }
 
-  // answer method
-  // compare the given index with the correct answer index
-  // if true - show the correct answer page
-  // if false - show the error answer page and the correct answer is revealed
-  // close the answer page
   Future<void> onTapAnswer({required int index}) async {
     var controller = questionController.getQuestionModel!;
 

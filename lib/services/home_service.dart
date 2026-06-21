@@ -6,14 +6,12 @@ import 'package:space_anywhere/models/database_models/curiosity_db_model.dart';
 import 'package:space_anywhere/repositories/implementations/curiosity_implementation_http.dart';
 
 class HomeService {
-  // attributes
   final _curiosityId = 2;
   final _dbInstance = DatabaseServices.instance();
   final CuriosityController _curiosityController = CuriosityController(CuriosityImplementationHttp(client: Client()));
+  final Internet _internet = Internet();
   List<dynamic> _selectCuriosity = [];
   List<dynamic> _selectFonts = [];
-  bool _checkInternet = false;
-  bool _checkAPI = false;
   bool _showKnowMoreButton = false;
   String _text = "";
   String _extraText = "";
@@ -21,10 +19,8 @@ class HomeService {
   String _error = "";
   List<String> _fonts = [];
 
-  // getters
   CuriosityController get curiosityController => _curiosityController;
-  bool get checkInternet => _checkInternet;
-  bool get checkAPI => _checkAPI;
+  Internet get internet => _internet;
   bool get showKnowMoreButton => _showKnowMoreButton;
   String get text => _text;
   String get extraText => _extraText;
@@ -32,18 +28,11 @@ class HomeService {
   String get error => _error;
   List<String> get fonts => _fonts;
 
-  // instance
   static final _instance = HomeService._();
   HomeService._();
 
   factory HomeService.instance() => _instance;
 
-  // check if the database is null method
-  // select values from the curiosity table
-  // set each item returned to [CuriosityDbModel] type
-  // select values from the font table
-  // set each item returned to [FontModel] type
-  // return true if [_selectCuriosity] is empty; false otherwise
   Future<bool> checkDatabaseIsNull() async {
     _selectCuriosity = await _dbInstance.select(getCuriosity: true);
     _selectCuriosity.map((item) => item as CuriosityDbModel);
@@ -54,8 +43,6 @@ class HomeService {
     return _selectCuriosity.isEmpty;
   }
 
-  // clean text recieved from the API method
-  // clean the text (need to be improved)
   String cleanText({required String text}) {
     return text
       .replaceAll('\\n', '\n')
@@ -63,23 +50,15 @@ class HomeService {
       .replaceAll('\\"', '"');
   }
 
-  // get curiosity method
-  // check the internet [_checkInternet] and the API [_checkAPI]
-  // the controller call the [onGetCuriosity] method
-  // if there is no error attribute the values returned to the attributes 
-  // call [addToDatabase()] or [updateInDatabase()] method
-  // if there is an an error, attribute the error to [_error]
   Future<void> getCuriosity({required int curiosityId, required DatabaseActions action}) async {
-    _checkInternet = await Internet.hasInternet();
+    await _internet.verifyInternet();
 
-    if (!_checkInternet) {
-      return;
-    }
-    _checkAPI = await Internet.isApiAwake();
+    if (!_internet.checkInternet) { return; }
 
-    if (!_checkAPI) {
-      return;
-    }
+    await _internet.verifyAPI();
+
+    if (!_internet.checkAPI) { return; }
+
     await _curiosityController.onGetCuriosity(id: curiosityId);
 
     if (_curiosityController.getErrorCuriosity == null) {
@@ -95,9 +74,6 @@ class HomeService {
     }
   }
 
-  // control curiosity method
-  // check the database
-  // if else block to verify the need of call the API or not and control the time
   Future<void> controlCuriosity() async {
     bool checkDatabaseEmpty = await checkDatabaseIsNull();
 
@@ -106,8 +82,8 @@ class HomeService {
     } else if (DateTime.now().difference(DateTime.parse(_selectCuriosity[0].time)).inHours >= 24) {
       await getCuriosity(curiosityId: _selectCuriosity[0].curiosityId + 1, action: DatabaseActions.update);
     } else {
-      _checkInternet = true;
-      _checkAPI = true;
+      _internet.updateInternetStatus(status: true);
+      _internet.updateAPIStatus(status: true);
       _showKnowMoreButton = true;
       _text = cleanText(text: _selectCuriosity[0].shortAnswer);
       _extraText = cleanText(text: _selectCuriosity[0].longAnswer);
@@ -118,7 +94,6 @@ class HomeService {
     }
   }
 
-  // add curiosity data to curiosity table
   Future<void> addToDatabase() async {
     final curiosityModel = CuriosityDbModel(
       id: 0,
@@ -138,7 +113,6 @@ class HomeService {
     await addFonts();
   }
 
-  // add fonts data to font table
   Future<void> addFonts() async {
     final List<FontModel> fontModel = List.generate(
       _curiosityController.getCuriosityModel!.contentFont.length,
@@ -156,7 +130,6 @@ class HomeService {
     }
   }
 
-  // update curiosity data
   Future<void> updateInDatabase() async {
     final curiosityModel = CuriosityDbModel(
       id: _selectCuriosity[0].id,

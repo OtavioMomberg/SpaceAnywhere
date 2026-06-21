@@ -23,7 +23,10 @@ class _WallpaperPageState extends State<WallpaperPage> {
     if (!_wallpaperService.checkImageCache()) {
       isLoading = false;
     } else {
-      callWallpaperService();
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        _wallpaperService.internet.setFunction(func: callWallpaperService);
+        await _wallpaperService.internet.retryConnectionSystem();
+      });
     }
   }
 
@@ -50,10 +53,10 @@ class _WallpaperPageState extends State<WallpaperPage> {
           CircularProgressIndicator.adaptive(
             backgroundColor: Color.fromARGB(255, 206, 206, 207),
           )
-        ] else if (!_wallpaperService.checkInternet || !_wallpaperService.checkAPI)...[
+        ] else if (!_wallpaperService.internet.checkInternet || !_wallpaperService.internet.checkAPI)...[
           CheckConnection(
-            checkInternet: _wallpaperService.checkInternet, 
-            checkAPI: _wallpaperService.checkAPI, 
+            checkInternet: _wallpaperService.internet.checkInternet, 
+            checkAPI: _wallpaperService.internet.checkAPI, 
             height: size.height * 0.6
           )
         ] else if (ImageCacheService.wallpapers != null)...[
@@ -74,9 +77,8 @@ class _WallpaperPageState extends State<WallpaperPage> {
                       ? const EdgeInsets.only(right: 5, bottom: 10)
                       : const EdgeInsets.only(left: 5, bottom: 10),
                     child: ImageWidget(
-                      imagePath: ImageCacheService.wallpapers![index]!.thumbnailImageUrl,
-                      option: "network",
-                      key: ValueKey(ImageCacheService.wallpapers![index]!.thumbnailImageUrl),
+                      imagePath: ImageCacheService.wallpapers![index]!.fullImageUrl,
+                      option: "network"
                     )
                   )
                 );

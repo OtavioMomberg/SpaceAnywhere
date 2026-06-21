@@ -6,15 +6,12 @@ import 'package:space_anywhere/utils/image_cache_service.dart';
 
 class WallpaperService {
   final WallpaperController _wallpaperController = WallpaperController(WallpaperImplementationHttp(Client()));
-  bool _checkInternet = false;
-  bool _checkAPI = false;
+  final Internet _internet = Internet();
   int _offset = 0;
   String _error = "";
 
-  // getters
   WallpaperController get wallpaperController => _wallpaperController;
-  bool get checkInternet => _checkInternet;
-  bool get checkAPI => _checkAPI;
+  Internet get internet =>_internet;
   int get offset => _offset;
   String get error => _error;
 
@@ -27,23 +24,23 @@ class WallpaperService {
 
   bool checkImageCache() {
     if (ImageCacheService.wallpapers != null) {
-      _checkInternet = true;
-      _checkAPI = true;
+      _internet.updateInternetStatus(status: true);
+      _internet.updateAPIStatus(status: true);
       return false;
     }
     return true;
   }
   
   Future<void> getImages() async {
-    _checkInternet = await Internet.hasInternet();
+    await _internet.verifyInternet();
 
-    if (!_checkInternet) {
+    if (!_internet.checkInternet) {
       return;
     }
 
-    _checkAPI = await Internet.isApiAwake();
+    await _internet.verifyAPI();
 
-    if (!_checkAPI) {
+    if (!_internet.checkAPI) {
       return;
     }
 

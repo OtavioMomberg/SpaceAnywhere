@@ -16,8 +16,6 @@ class QuizPage extends StatefulWidget {
 
 class _QuizPageState extends State<QuizPage> {
   late final QuizService _quizService;
-  final int retryAttempts = 15;
-  int currentRetryAttempt = 0;
   bool isLoading = true;
   bool retrySucced = false;
 
@@ -25,57 +23,12 @@ class _QuizPageState extends State<QuizPage> {
   void initState() {
     super.initState();
 
-    _quizService = QuizService(
-      showResponse: showResponse,
-      closeAnswerPage: closeAnswerPage
-    );
+    _quizService = QuizService(showResponse: showResponse, closeAnswerPage: closeAnswerPage);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      retryConnectionSystem();
+      _quizService.internet.setFunctionWithParam(funcWithParam: callQuizService);
+      await _quizService.internet.retryConnectionSystem();
     });
-
-    //callQuizService();
-  }
-
-  Future<void> retryConnectionSystem({int? questionId}) async {
-    currentRetryAttempt = 0;
-    while (currentRetryAttempt < retryAttempts) {
-      await callQuizService(questionId: questionId);
-
-      if (_quizService.checkInternet && _quizService.checkAPI) { 
-        currentRetryAttempt = retryAttempts;
-        break; 
-      }
-      currentRetryAttempt++;
-    }
-  }
-
-  Future<void> callQuizService({int? questionId}) async {
-    await _quizService.getQuestion(questionId: questionId);
-
-    if (!mounted) { return; }
-
-    if (questionId != null) {
-      if (!_quizService.checkInternet || !_quizService.checkAPI) {
-        if (currentRetryAttempt == retryAttempts) { 
-          retryConnectionSystem(questionId: questionId); 
-          setState(() => retrySucced = true);
-        }
-        return; 
-      }
-
-      await showStylizedSnackBar(
-        context: context,
-        msm: retrySucced ? "Conexão Reestabelecida!" : "Próxima pergunta!",
-        txtColor: retrySucced ? Colors.lightBlueAccent : Colors.white
-      );
-      retrySucced = false;
-    }
-
-    await Future.delayed(Duration(seconds: 1));
-    if (!mounted) { return; }
-
-    setState(() => isLoading = false);
   }
 
   @override
@@ -83,6 +36,7 @@ class _QuizPageState extends State<QuizPage> {
     final size = MediaQuery.of(context).size;
 
     return Column(
+      mainAxisAlignment: .start,
       children: <Widget>[
         if (!_quizService.quizStarted) ...[
           Text(
@@ -90,8 +44,8 @@ class _QuizPageState extends State<QuizPage> {
             style: TextStyle(
               color: Color.fromARGB(255, 206, 206, 207),
               fontWeight: FontWeight.bold,
-              fontSize: 30,
-            ),
+              fontSize: 30
+            )
           ),
           const SizedBox(height: 20),
           ClipRRect(
@@ -104,9 +58,9 @@ class _QuizPageState extends State<QuizPage> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.5),
+                    color: Colors.white.withValues(alpha: 0.5)
                   ),
-                  color: Colors.white.withValues(alpha: 0.1),
+                  color: Colors.white.withValues(alpha: 0.1)
                 ),
                 child: Column(
                   mainAxisAlignment: .center,
@@ -116,36 +70,36 @@ class _QuizPageState extends State<QuizPage> {
                       "Quiz de Astronômia",
                       style: TextStyle(
                         color: Color.fromARGB(255, 206, 206, 207),
-                        fontSize: 18,
-                      ),
+                        fontSize: 18
+                      )
                     ),
                     Icon(
                       Icons.rocket_launch,
                       color: Color.fromARGB(255, 206, 206, 207),
-                      size: 30,
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                      size: 30
+                    )
+                  ]
+                )
+              )
+            )
           ),
           const SizedBox(height: 40),
           if (isLoading) ...[
             CircularProgressIndicator.adaptive(
-              backgroundColor: Color.fromARGB(255, 206, 206, 207),
-            ),
+              backgroundColor: Color.fromARGB(255, 206, 206, 207)
+            )
           ] else ...[
             FractionallySizedBox(
               widthFactor: 0.8,
-              child: Button(label: "Jogar", awaitFunction: startQuiz),
-            ),
-          ],
-        ] else if (!_quizService.checkInternet || !_quizService.checkAPI) ...[
+              child: Button(label: "Jogar", awaitFunction: startQuiz)
+            )
+          ]
+        ] else if (!_quizService.internet.checkInternet || !_quizService.internet.checkAPI) ...[
           CheckConnection(
-            checkInternet: _quizService.checkInternet,
-            checkAPI: _quizService.checkAPI,
-            height: size.height * 0.6,
-          ),
+            checkInternet: _quizService.internet.checkInternet,
+            checkAPI: _quizService.internet.checkAPI,
+            height: size.height * 0.6
+          )
         ] else if (_quizService.questionController.getErrorQuestion == null) ...[
           Expanded(
             child: Padding(
@@ -186,14 +140,41 @@ class _QuizPageState extends State<QuizPage> {
     );
   }
 
+  Future<void> callQuizService({int? questionId}) async {
+    await _quizService.getQuestion(questionId: questionId);
+
+    if (!mounted) { return; }
+    if (questionId != null) {
+      if (!_quizService.internet.checkInternet || !_quizService.internet.checkAPI) {
+        if (_quizService.internet.currentRetryAttempt == _quizService.internet.retryAttempts) { 
+          _quizService.internet.retryConnectionSystem(); 
+          setState(() => retrySucced = true);
+        }
+        return; 
+      }
+
+      await showStylizedSnackBar(
+        context: context,
+        msm: retrySucced ? "Conexão Reestabelecida!" : "Próxima pergunta!",
+        txtColor: retrySucced ? Colors.lightBlueAccent : Colors.white
+      );
+    }
+
+    await Future.delayed(Duration(seconds: 1));
+
+    if (!mounted) { return; }
+    setState(() {
+      isLoading = false;
+      retrySucced = false;
+    });
+  }
+
   Future<void> startQuiz() async {
     if (_quizService.error.isNotEmpty) {
       await showError();
       return;
     }
-    if (!mounted) {
-      return;
-    }
+    if (!mounted) { return; }
     setState(() => _quizService.changeQuizState());
   }
 
@@ -209,8 +190,7 @@ class _QuizPageState extends State<QuizPage> {
       context,
       PageRouteBuilder(
         opaque: false,
-        pageBuilder: (_, _, _) =>
-            ResultPage(isCorrect: isCorrect, correctAnswer: correctAnswer),
+        pageBuilder: (_, _, _) => ResultPage(isCorrect: isCorrect, correctAnswer: correctAnswer),
         transitionsBuilder: (_, animation, _, child) {
           const begin = Offset(1.0, 0.0);
           const end = Offset.zero;
@@ -223,7 +203,7 @@ class _QuizPageState extends State<QuizPage> {
 
           return SlideTransition(
             position: animation.drive(tween),
-            child: child,
+            child: child
           );
         }
       )
@@ -241,8 +221,8 @@ class _QuizPageState extends State<QuizPage> {
         shape: StadiumBorder(
           side: BorderSide(color: txtColor.withValues(alpha: 0.5)),
         ),
-        duration: const Duration(seconds: 1),
-      ),
+        duration: const Duration(seconds: 1)
+      )
     );
   }
 
@@ -250,7 +230,7 @@ class _QuizPageState extends State<QuizPage> {
     await showStylizedSnackBar(
       context: context,
       msm: "Não foi possível se conectar ao servidor.",
-      txtColor: Colors.red,
+      txtColor: Colors.red
     );
   }
 }
