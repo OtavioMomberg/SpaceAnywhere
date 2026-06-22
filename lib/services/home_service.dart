@@ -9,15 +9,21 @@ class HomeService {
   final _curiosityId = 2;
   final _dbInstance = DatabaseServices.instance();
   final CuriosityController _curiosityController = CuriosityController(CuriosityImplementationHttp(client: Client()));
-  final Internet _internet = Internet();
+  late Internet _internet;
   List<dynamic> _selectCuriosity = [];
   List<dynamic> _selectFonts = [];
   bool _showKnowMoreButton = false;
+  bool _checkFunction = false;
   String _text = "";
   String _extraText = "";
   String _title = "";
   String _error = "";
   List<String> _fonts = [];
+  Future<void> Function()? _function;
+
+  static final _instance = HomeService._();
+  HomeService._();
+  factory HomeService.instance() => _instance;
 
   CuriosityController get curiosityController => _curiosityController;
   Internet get internet => _internet;
@@ -28,10 +34,20 @@ class HomeService {
   String get error => _error;
   List<String> get fonts => _fonts;
 
-  static final _instance = HomeService._();
-  HomeService._();
+  set generalError(String value) => _error = value;
 
-  factory HomeService.instance() => _instance;
+  Future<void> getFunction({required Future<void> Function() func}) async {
+    if (_checkFunction) return;
+    
+    _function = func;
+    _checkFunction = true;
+  }
+
+  Future<void> initializeInternetInstance() async {
+    if (_function == null) throw Exception("É necessário receber a função service.");
+
+    _internet = Internet.withoutParam(func: _function!);
+  } 
 
   Future<bool> checkDatabaseIsNull() async {
     _selectCuriosity = await _dbInstance.select(getCuriosity: true);
@@ -51,11 +67,11 @@ class HomeService {
   }
 
   Future<void> getCuriosity({required int curiosityId, required DatabaseActions action}) async {
-    await _internet.verifyInternet();
+    await _internet.hasInternet();
 
     if (!_internet.checkInternet) { return; }
 
-    await _internet.verifyAPI();
+    await _internet.isApiAwake();
 
     if (!_internet.checkAPI) { return; }
 

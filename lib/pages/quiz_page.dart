@@ -15,7 +15,7 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  late final QuizService _quizService;
+  final QuizService _quizService = QuizService.instance();
   bool isLoading = true;
   bool retrySucced = false;
 
@@ -23,11 +23,22 @@ class _QuizPageState extends State<QuizPage> {
   void initState() {
     super.initState();
 
-    _quizService = QuizService(showResponse: showResponse, closeAnswerPage: closeAnswerPage);
-
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _quizService.internet.setFunctionWithParam(funcWithParam: callQuizService);
-      await _quizService.internet.retryConnectionSystem();
+      try {
+        _quizService.getFunctions(
+          callQuizService: callQuizService, 
+          showResponse: showResponse, 
+          closeAnswerPage: closeAnswerPage
+        );
+        _quizService.initializeInternetInstance();
+        _quizService.internet.retryConnectionSystemWithParam();
+      } on Exception catch (error) {
+        _quizService.generalError = error.toString();
+        _quizService.internet.updateInternetStatus(status: true);
+        _quizService.internet.updateAPIStatus(status: true);
+        isLoading = false;
+        setState(() {});
+      }
     });
   }
 
@@ -147,12 +158,12 @@ class _QuizPageState extends State<QuizPage> {
     if (questionId != null) {
       if (!_quizService.internet.checkInternet || !_quizService.internet.checkAPI) {
         if (_quizService.internet.currentRetryAttempt == _quizService.internet.retryAttempts) { 
-          _quizService.internet.retryConnectionSystem(); 
+          _quizService.internet.sendQuestionId = questionId;
+          _quizService.internet.retryConnectionSystemWithParam(); 
           setState(() => retrySucced = true);
         }
         return; 
       }
-
       await showStylizedSnackBar(
         context: context,
         msm: retrySucced ? "Conexão Reestabelecida!" : "Próxima pergunta!",

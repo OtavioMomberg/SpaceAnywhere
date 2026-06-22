@@ -5,25 +5,49 @@ import 'package:space_anywhere/repositories/implementations/question_inplementat
 
 class QuizService {
   static final QuestionController _questionController = QuestionController(QuestionInplementationHttp(client: Client()));
-  final Internet _internet = Internet();
+  late Internet _internet;
   final int _id = 0;
   bool _quizStarted = false;
+  bool _checkFunction = false;
   String _error = "";
+  Future<void> Function({int? questionId})? _callQuizService; 
+  void Function({required bool isCorrect, String? correctAnswer})? _showResponse;
+  Future<void> Function()? _closeAnswerPage;
+
+  static final _instance = QuizService._();
+  QuizService._();
+  factory QuizService.instance() => _instance;
 
   QuestionController get questionController => _questionController;
   Internet get internet => _internet;
   bool get quizStarted => _quizStarted;
   String get error => _error;
 
+  set generalError(String value) => _error = value;
+
+  Future<void> getFunctions({
+    required Future<void> Function({int? questionId}) callQuizService, 
+    required void Function({required bool isCorrect, String? correctAnswer}) showResponse, 
+    required Future<void> Function() closeAnswerPage
+  }) async {
+    if (_checkFunction) return;
+
+    _callQuizService = callQuizService;
+    _showResponse = showResponse;
+    _closeAnswerPage = closeAnswerPage;
+    _checkFunction = true;
+  }
+
+  Future<void> initializeInternetInstance() async {
+    if (_callQuizService == null) throw Exception("É necessário receber a função service.");
+
+    _internet = Internet.withParam(func: _callQuizService!);
+  }
+
   void changeQuizState() => _quizStarted = !_quizStarted;
 
-  final void Function({required bool isCorrect, String? correctAnswer}) showResponse;
-  final Future<void> Function() closeAnswerPage;
-
-  QuizService({required this.showResponse, required this.closeAnswerPage});
-
   Future<void> getQuestion({int? questionId}) async {
-    await _internet.verifyInternet();
+    await _internet.hasInternet();
 
     if (questionId != null && !_internet.checkInternet) { await Future.delayed(Duration(seconds: 3)); }
 
@@ -31,7 +55,7 @@ class QuizService {
       _quizStarted = true;
       return;
     }
-    await _internet.verifyAPI();
+    await _internet.isApiAwake();
 
     if (!_internet.checkAPI) {
       _quizStarted = true;
@@ -46,16 +70,18 @@ class QuizService {
   }
 
   Future<void> onTapAnswer({required int index}) async {
+    if (_showResponse == null || _closeAnswerPage == null) { throw Exception("É necessário receber a função service."); }
+
     var controller = questionController.getQuestionModel!;
 
     if (questionController.getQuestionModel!.rightAnswerIndex == index) {
-      showResponse(isCorrect: true);
+      _showResponse!(isCorrect: true);
     } else {
-      showResponse(
+      _showResponse!(
         isCorrect: false,
         correctAnswer: controller.alternatives[controller.rightAnswerIndex]
       );
     }
-    await closeAnswerPage();
+    await _closeAnswerPage!();
   }
 }

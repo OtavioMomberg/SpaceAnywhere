@@ -24,18 +24,19 @@ class _WallpaperPageState extends State<WallpaperPage> {
       isLoading = false;
     } else {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        _wallpaperService.internet.setFunction(func: callWallpaperService);
-        await _wallpaperService.internet.retryConnectionSystem();
+        try {
+          _wallpaperService.getFunction(func: callWallpaperService);
+          _wallpaperService.initializeInternetInstance();
+          _wallpaperService.internet.retryConnectionSystem();
+        } on Exception catch (error) {
+          _wallpaperService.generalError = error.toString();
+          _wallpaperService.internet.updateInternetStatus(status: true);
+          _wallpaperService.internet.updateAPIStatus(status: true);
+          isLoading = false;
+          setState(() {});
+        }
       });
     }
-  }
-
-  Future<void> callWallpaperService() async {
-    await _wallpaperService.getImages();
-
-    await Future.delayed(Duration(seconds: 1));
-    if (!mounted) { return; } 
-    setState(() => isLoading = false);
   }
 
   @override
@@ -95,9 +96,16 @@ class _WallpaperPageState extends State<WallpaperPage> {
       ]
     );
   }
-}
 
-void seeImageExpanded({required String imagePath, required BuildContext context}) {
+  Future<void> callWallpaperService() async {
+    await _wallpaperService.getImages();
+
+    await Future.delayed(Duration(seconds: 1));
+    if (!mounted) { return; } 
+    setState(() => isLoading = false);
+  }
+
+  void seeImageExpanded({required String imagePath, required BuildContext context}) {
     Navigator.push(
       context,
       PageRouteBuilder(
@@ -117,3 +125,4 @@ void seeImageExpanded({required String imagePath, required BuildContext context}
       )
     );
   }
+}

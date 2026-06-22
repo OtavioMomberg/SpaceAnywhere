@@ -6,59 +6,62 @@ class Internet{
   int _currentRetryAttempt = 0;
   bool _checkInternet = false;
   bool _checkAPI = false;
-  dynamic _function;
+  int? _questionId;
+  Future<void> Function({int? questionId})? _functionWithParam;
+  Future<void> Function()? _function;
+
+  Internet.withParam({required Future<void> Function({int? questionId}) func}) : _functionWithParam = func;
+
+  Internet.withoutParam({required Future<void> Function() func}) : _function = func;
 
   bool get checkInternet => _checkInternet;
   bool get checkAPI => _checkAPI;
   int get retryAttempts => _retryAttempts;
   int get currentRetryAttempt => _currentRetryAttempt;
 
-  Future<bool> hasInternet() async {
+  set sendQuestionId(int? value) => _questionId = value;
+
+  Future<void> hasInternet() async {
     try {
       final url = "https://www.google.com";
       final response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 5));
-      return response.statusCode == 200;
+      _checkInternet =  response.statusCode == 200;
     } catch (e) {
-      return false;
+      _checkInternet = false;
     }
   }
 
-  Future<bool> isApiAwake() async {
+  Future<void> isApiAwake() async {
     try {
       final url = "$URL/health/";
       final response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 60));
-      return response.statusCode == 200;
+      _checkAPI = response.statusCode == 200;
     } catch(error) {
-      return false;
+      _checkAPI = false;
     }
   }
 
-  Future<void> verifyInternet() async {
-    _checkInternet = await hasInternet();
-  }
-
-  Future<void> verifyAPI() async {
-    _checkAPI = await isApiAwake();
-  }
-
   void updateInternetStatus({required bool status}) => _checkInternet = status;
-  void updateAPIStatus({required bool status}) => _checkAPI = status;
 
-  void setFunction({required Future<void> Function() func}) {
-    _function = func;
-    return;
-  }
-  void setFunctionWithParam({required Future<void> Function({int? questionId}) funcWithParam}) {
-    _function = funcWithParam;
-    return;
-  }
+  void updateAPIStatus({required bool status}) => _checkAPI = status;
   
   Future<void> retryConnectionSystem() async {
-    if (_function == null) return;
-
     _currentRetryAttempt = 0;
     while (_currentRetryAttempt < _retryAttempts) {
-      await _function.call();
+      await _function!();
+
+      if (checkInternet && checkAPI) { 
+        _currentRetryAttempt = _retryAttempts;
+        break; 
+      }
+      _currentRetryAttempt++;
+    }
+  }
+
+  Future<void> retryConnectionSystemWithParam() async {
+    _currentRetryAttempt = 0;
+    while (_currentRetryAttempt < _retryAttempts) {
+      await _functionWithParam!(questionId: _questionId);
 
       if (checkInternet && checkAPI) { 
         _currentRetryAttempt = _retryAttempts;

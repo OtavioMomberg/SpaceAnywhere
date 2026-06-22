@@ -22,17 +22,18 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _homeService.internet.setFunction(func: callHomeService);
-      await _homeService.internet.retryConnectionSystem();
+      try {
+        _homeService.getFunction(func: callHomeService);
+        _homeService.initializeInternetInstance();
+        _homeService.internet.retryConnectionSystem();
+      } on Exception catch (error) {
+        _homeService.generalError = error.toString();
+        _homeService.internet.updateInternetStatus(status: true);
+        _homeService.internet.updateAPIStatus(status: true);
+        isLoading = false;
+        setState(() {});
+      }
     });
-  }
-
-  Future<void> callHomeService() async {
-    await _homeService.controlCuriosity();
-
-    if (!mounted) { return; }
-
-    setState(() => isLoading = false);
   }
 
   @override
@@ -129,6 +130,14 @@ class _HomePageState extends State<HomePage> {
         ]
       ]
     );
+  }
+
+  Future<void> callHomeService() async {
+    await _homeService.controlCuriosity();
+
+    if (!mounted) { return; }
+
+    setState(() => isLoading = false);
   }
 
   void goNextPage({int? index}) {
