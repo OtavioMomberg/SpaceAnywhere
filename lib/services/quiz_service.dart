@@ -8,7 +8,6 @@ class QuizService {
   late Internet _internet;
   final int _id = 0;
   bool _quizStarted = false;
-  bool _checkFunction = false;
   String _error = "";
   Future<void> Function({int? questionId})? _callQuizService; 
   void Function({required bool isCorrect, String? correctAnswer})? _showResponse;
@@ -24,23 +23,21 @@ class QuizService {
   String get error => _error;
 
   set generalError(String value) => _error = value;
+  
+  void initializeQuiz() => _quizStarted = false;
 
   Future<void> getFunctions({
     required Future<void> Function({int? questionId}) callQuizService, 
     required void Function({required bool isCorrect, String? correctAnswer}) showResponse, 
     required Future<void> Function() closeAnswerPage
   }) async {
-    if (_checkFunction) return;
-
     _callQuizService = callQuizService;
     _showResponse = showResponse;
     _closeAnswerPage = closeAnswerPage;
-    _checkFunction = true;
   }
 
   Future<void> initializeInternetInstance() async {
     if (_callQuizService == null) throw Exception("É necessário receber a função service.");
-
     _internet = Internet.withParam(func: _callQuizService!);
   }
 
@@ -50,11 +47,11 @@ class QuizService {
     await _internet.hasInternet();
 
     if (questionId != null && !_internet.checkInternet) { await Future.delayed(Duration(seconds: 3)); }
-
     if (!_internet.checkInternet) {
       _quizStarted = true;
       return;
     }
+
     await _internet.isApiAwake();
 
     if (!_internet.checkAPI) {
@@ -73,8 +70,7 @@ class QuizService {
     if (_showResponse == null || _closeAnswerPage == null) { throw Exception("É necessário receber a função service."); }
 
     var controller = questionController.getQuestionModel!;
-
-    if (questionController.getQuestionModel!.rightAnswerIndex == index) {
+    if (controller.rightAnswerIndex == index) {
       _showResponse!(isCorrect: true);
     } else {
       _showResponse!(

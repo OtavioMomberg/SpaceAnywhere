@@ -22,22 +22,22 @@ class _QuizPageState extends State<QuizPage> {
   @override
   void initState() {
     super.initState();
+    _quizService.initializeQuiz();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
-        _quizService.getFunctions(
+        await _quizService.getFunctions(
           callQuizService: callQuizService, 
           showResponse: showResponse, 
           closeAnswerPage: closeAnswerPage
         );
-        _quizService.initializeInternetInstance();
+        await _quizService.initializeInternetInstance();
         _quizService.internet.retryConnectionSystemWithParam();
       } on Exception catch (error) {
         _quizService.generalError = error.toString();
         _quizService.internet.updateInternetStatus(status: true);
-        _quizService.internet.updateAPIStatus(status: true);
-        isLoading = false;
-        setState(() {});
+        _quizService.internet.updateAPIStatus(status: true);  
+        setState(() => isLoading = false);
       }
     });
   }
@@ -197,6 +197,7 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   void showResponse({required bool isCorrect, String? correctAnswer}) {
+    if (!mounted) return;
     Navigator.push(
       context,
       PageRouteBuilder(

@@ -23,16 +23,15 @@ class _HomePageState extends State<HomePage> {
     
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
-        _homeService.getFunction(func: callHomeService);
-        _homeService.initializeInternetInstance();
+        await _homeService.getFunction(func: callHomeService);
+        await _homeService.initializeInternetInstance();
         _homeService.internet.retryConnectionSystem();
       } on Exception catch (error) {
         _homeService.generalError = error.toString();
         _homeService.internet.updateInternetStatus(status: true);
         _homeService.internet.updateAPIStatus(status: true);
-        isLoading = false;
-        setState(() {});
-      }
+        setState(() => isLoading = false);
+      } 
     });
   }
 
@@ -136,7 +135,6 @@ class _HomePageState extends State<HomePage> {
     await _homeService.controlCuriosity();
 
     if (!mounted) { return; }
-
     setState(() => isLoading = false);
   }
 

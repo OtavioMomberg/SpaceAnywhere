@@ -13,7 +13,6 @@ class HomeService {
   List<dynamic> _selectCuriosity = [];
   List<dynamic> _selectFonts = [];
   bool _showKnowMoreButton = false;
-  bool _checkFunction = false;
   String _text = "";
   String _extraText = "";
   String _title = "";
@@ -37,10 +36,7 @@ class HomeService {
   set generalError(String value) => _error = value;
 
   Future<void> getFunction({required Future<void> Function() func}) async {
-    if (_checkFunction) return;
-    
     _function = func;
-    _checkFunction = true;
   }
 
   Future<void> initializeInternetInstance() async {

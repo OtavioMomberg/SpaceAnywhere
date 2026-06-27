@@ -25,8 +25,8 @@ class _WallpaperPageState extends State<WallpaperPage> {
     } else {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         try {
-          _wallpaperService.getFunction(func: callWallpaperService);
-          _wallpaperService.initializeInternetInstance();
+          await _wallpaperService.getFunction(func: callWallpaperService);
+          await _wallpaperService.initializeInternetInstance();
           _wallpaperService.internet.retryConnectionSystem();
         } on Exception catch (error) {
           _wallpaperService.generalError = error.toString();

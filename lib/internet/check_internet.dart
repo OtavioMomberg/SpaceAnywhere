@@ -62,7 +62,7 @@ class Internet{
     _currentRetryAttempt = 0;
     while (_currentRetryAttempt < _retryAttempts) {
       await _functionWithParam!(questionId: _questionId);
-
+      
       if (checkInternet && checkAPI) { 
         _currentRetryAttempt = _retryAttempts;
         break; 
