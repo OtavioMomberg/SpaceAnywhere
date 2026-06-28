@@ -22,18 +22,18 @@ class _WallpaperPageState extends State<WallpaperPage> {
 
     if (!_wallpaperService.checkImageCache()) {
       isLoading = false;
+      setState(() {});
     } else {
+      _wallpaperService.getFunction(func: callWallpaperService);
+      _wallpaperService.initializeInternetInstance();
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         try {
-          await _wallpaperService.getFunction(func: callWallpaperService);
-          await _wallpaperService.initializeInternetInstance();
           _wallpaperService.internet.retryConnectionSystem();
         } on Exception catch (error) {
           _wallpaperService.generalError = error.toString();
           _wallpaperService.internet.updateInternetStatus(status: true);
           _wallpaperService.internet.updateAPIStatus(status: true);
-          isLoading = false;
-          setState(() {});
+          setState(() => isLoading = false);
         }
       });
     }
@@ -48,14 +48,15 @@ class _WallpaperPageState extends State<WallpaperPage> {
       children: <Widget>[
         const Text(
           "Catálogo de Wallpapers",
-          style: TextStyle(color: Color.fromARGB(255, 206, 206, 207), fontWeight: FontWeight.bold, fontSize: 20)
-        ),
-        if (isLoading)...[
-          CircularProgressIndicator.adaptive(
-            backgroundColor: Color.fromARGB(255, 206, 206, 207),
+          style: TextStyle(
+            color: Color.fromARGB(255, 206, 206, 207), 
+            fontWeight: FontWeight.bold, 
+            fontSize: 20
           )
-        ] else if (!_wallpaperService.internet.checkInternet || !_wallpaperService.internet.checkAPI)...[
+        ),
+        if (!_wallpaperService.internet.checkInternet || !_wallpaperService.internet.checkAPI)...[
           CheckConnection(
+            isLoading: isLoading,
             checkInternet: _wallpaperService.internet.checkInternet, 
             checkAPI: _wallpaperService.internet.checkAPI, 
             height: size.height * 0.6

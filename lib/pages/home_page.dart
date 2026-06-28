@@ -20,11 +20,12 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+
+    _homeService.getFunction(func: callHomeService);
+    _homeService.initializeInternetInstance();
     
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
-        await _homeService.getFunction(func: callHomeService);
-        await _homeService.initializeInternetInstance();
         _homeService.internet.retryConnectionSystem();
       } on Exception catch (error) {
         _homeService.generalError = error.toString();
@@ -52,15 +53,9 @@ class _HomePageState extends State<HomePage> {
           ),
           textAlign: TextAlign.center
         ),
-        if (isLoading)...[
-          StylizedContainer(
-            height: size.height * 0.6,
-            child: CircularProgressIndicator.adaptive(
-              backgroundColor: Color.fromARGB(255, 206, 206, 207)
-            )
-          ),
-        ] else if (!_homeService.internet.checkInternet || !_homeService.internet.checkAPI)...[
+        if (!_homeService.internet.checkInternet || !_homeService.internet.checkAPI)...[
           CheckConnection(
+            isLoading: isLoading,
             checkInternet: _homeService.internet.checkInternet,
             checkAPI: _homeService.internet.checkAPI,
             height: size.height * 0.6,

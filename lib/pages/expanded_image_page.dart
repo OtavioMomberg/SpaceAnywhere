@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:space_anywhere/utils/save_image_services.dart';
 import 'package:space_anywhere/themes/app_theme.dart';
+import 'package:space_anywhere/utils/stylized_snack_bar.dart';
 import 'package:space_anywhere/widgets/button.dart';
 import 'package:space_anywhere/widgets/image_widget.dart';
 
@@ -18,7 +19,7 @@ class ExpandedImagePage extends StatefulWidget {
   State<ExpandedImagePage> createState() => _ExpandedImagePageState();
 }
 
-class _ExpandedImagePageState extends State<ExpandedImagePage> {
+class _ExpandedImagePageState extends State<ExpandedImagePage> with StylizedSnackBar {
   bool response = false;
 
   @override
@@ -27,7 +28,7 @@ class _ExpandedImagePageState extends State<ExpandedImagePage> {
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
         backgroundColor: const Color.fromARGB(255, 38, 46, 139),
-        foregroundColor: const Color.fromARGB(255, 206, 206, 207),
+        foregroundColor: const Color.fromARGB(255, 206, 206, 207)
       ),
       body: Container(
         padding: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 20),
@@ -77,7 +78,6 @@ class _ExpandedImagePageState extends State<ExpandedImagePage> {
       builder: (_) {
         WidgetsBinding.instance.addPostFrameCallback((_) async {
           response = await SaveImageServices.saveImageFromUrl(imageUrl: widget.imagePath);
-
           if (!mounted) { return; }
           Navigator.pop(context);
         });
@@ -99,29 +99,6 @@ class _ExpandedImagePageState extends State<ExpandedImagePage> {
           )
         );
       }
-    );
-  }
-
-  void showStylizedSnackBar({required BuildContext context, required String msm, required Color txtColor}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        padding: const EdgeInsets.all(10),
-        content: Center(
-          child: Text(
-            msm, 
-            style: const TextStyle(
-              color: Colors.white
-            )
-          )
-        ),
-        backgroundColor: txtColor.withValues(alpha: 0.15),
-        shape: StadiumBorder(
-          side: BorderSide(
-            color: txtColor.withValues(alpha: 0.5)
-          )
-        ),
-        duration: const Duration(seconds: 1)
-      )
     );
   }
 }

@@ -14,24 +14,12 @@ class ComparisonPage extends StatefulWidget {
 class _ComparisonPageState extends State<ComparisonPage> {
   final ScrollController _scrollController = ScrollController();
   final List<InfoObject> finalList = [];
+  final Random rand = Random();
 
   @override
   void initState() {
     super.initState();
-
     randomizeList();
-  }
-
-  void randomizeList() {
-    Random rand = Random();
-
-    while(finalList.length < ComparisonModel.objectList.length) {
-      int index = rand.nextInt(ComparisonModel.objectList.length);
-
-      if (!finalList.contains(ComparisonModel.objectList[index])) {
-        finalList.add(ComparisonModel.objectList[index]);
-      }
-    }
   }
 
   @override
@@ -76,6 +64,16 @@ class _ComparisonPageState extends State<ComparisonPage> {
         )
       ]
     );
+  }
+  
+  void randomizeList() {
+    while(finalList.length < ComparisonModel.objectList.length) {
+      int index = rand.nextInt(ComparisonModel.objectList.length);
+
+      if (!finalList.contains(ComparisonModel.objectList[index])) {
+        finalList.add(ComparisonModel.objectList[index]);
+      }
+    }
   }
 
   void moveScroll({required double value}) {

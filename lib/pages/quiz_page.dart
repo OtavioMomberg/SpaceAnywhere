@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:space_anywhere/pages/result_page.dart';
 import 'dart:ui';
 import 'package:space_anywhere/services/quiz_service.dart';
+import 'package:space_anywhere/utils/stylized_snack_bar.dart';
 import 'package:space_anywhere/widgets/answer_card.dart';
 import 'package:space_anywhere/widgets/button.dart';
 import 'package:space_anywhere/widgets/check_connection.dart';
@@ -14,7 +15,7 @@ class QuizPage extends StatefulWidget {
   State<QuizPage> createState() => _QuizPageState();
 }
 
-class _QuizPageState extends State<QuizPage> {
+class _QuizPageState extends State<QuizPage> with StylizedSnackBar {
   final QuizService _quizService = QuizService.instance();
   bool isLoading = true;
   bool retrySucced = false;
@@ -23,15 +24,15 @@ class _QuizPageState extends State<QuizPage> {
   void initState() {
     super.initState();
     _quizService.initializeQuiz();
+    _quizService.getFunctions(
+      callQuizService: callQuizService, 
+      showResponse: showResponse, 
+      closeAnswerPage: closeAnswerPage
+    );
+    _quizService.initializeInternetInstance();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
-        await _quizService.getFunctions(
-          callQuizService: callQuizService, 
-          showResponse: showResponse, 
-          closeAnswerPage: closeAnswerPage
-        );
-        await _quizService.initializeInternetInstance();
         _quizService.internet.retryConnectionSystemWithParam();
       } on Exception catch (error) {
         _quizService.generalError = error.toString();
@@ -95,18 +96,13 @@ class _QuizPageState extends State<QuizPage> {
             )
           ),
           const SizedBox(height: 40),
-          if (isLoading) ...[
-            CircularProgressIndicator.adaptive(
-              backgroundColor: Color.fromARGB(255, 206, 206, 207)
-            )
-          ] else ...[
-            FractionallySizedBox(
-              widthFactor: 0.8,
-              child: Button(label: "Jogar", awaitFunction: startQuiz)
-            )
-          ]
+          FractionallySizedBox(
+            widthFactor: 0.8,
+            child: Button(label: "Jogar", awaitFunction: startQuiz)
+          )
         ] else if (!_quizService.internet.checkInternet || !_quizService.internet.checkAPI) ...[
           CheckConnection(
+            isLoading: isLoading,
             checkInternet: _quizService.internet.checkInternet,
             checkAPI: _quizService.internet.checkAPI,
             height: size.height * 0.6
@@ -164,6 +160,7 @@ class _QuizPageState extends State<QuizPage> {
         }
         return; 
       }
+
       await showStylizedSnackBar(
         context: context,
         msm: retrySucced ? "Conexão Reestabelecida!" : "Próxima pergunta!",
@@ -208,32 +205,13 @@ class _QuizPageState extends State<QuizPage> {
           const end = Offset.zero;
           const curve = Curves.easeInOut;
 
-          final tween = Tween(
-            begin: begin,
-            end: end,
-          ).chain(CurveTween(curve: curve));
+          final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
 
           return SlideTransition(
             position: animation.drive(tween),
             child: child
           );
         }
-      )
-    );
-  }
-
-  Future<void> showStylizedSnackBar ({required BuildContext context,required String msm,required Color txtColor}) async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        padding: const EdgeInsets.all(10),
-        content: Center(
-          child: Text(msm, style: const TextStyle(color: Colors.white)),
-        ),
-        backgroundColor: txtColor.withValues(alpha: 0.15),
-        shape: StadiumBorder(
-          side: BorderSide(color: txtColor.withValues(alpha: 0.5)),
-        ),
-        duration: const Duration(seconds: 1)
       )
     );
   }
