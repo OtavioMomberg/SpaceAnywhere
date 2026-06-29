@@ -23,26 +23,32 @@ class ComparisonWidget extends StatelessWidget {
           crossAxisAlignment: .start,
           spacing: 10,
           children: <Widget>[
-            SizedBox(
-              height: size.height * 0.3,
-              width: double.infinity,
-              child: Center(child: ImageWidget(imagePath: objectData.imagePath, option: "asset"))
+            Column(
+              children: <Widget>[
+                SizedBox(
+                  height: size.height * 0.3,
+                  width: double.infinity,
+                  child: Center(child: ImageWidget(imagePath: objectData.imagePath, option: "asset"))
+                ),
+                Text(
+                  "*Imagem gerada por Inteligência Artificial",
+                  style: TextStyle(color: Color.fromARGB(255, 206, 206, 207)),
+                )
+              ]
             ),
-            Text(
-              "*Imagem gerada por Inteligência Artificial",
-              style: TextStyle(color: Color.fromARGB(255, 206, 206, 207))
-            ),
-        
+
             const SizedBox(height: 10),
             Divider(),
             Center(child: Text(objectData.name, style: TextStyle(color: Color.fromARGB(255, 206, 206, 207)))),
             Divider(),
             const SizedBox(height: 10),
-        
-            Text("Diâmetro: ${objectData.diameter}", style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207))),
-            Text("Massa: ${objectData.mass}", style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207))),
-            Text("Distância para Terra: ${objectData.earthDistance}", style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207))),
-            Text("Tipo de objeto: ${objectData.objectType}", style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207))),
+
+            ...List.generate(objectData.usedParamLength, (int index) {
+              return Text(
+                "${objectData.paramNames[index]}: ${objectData.diameter}", 
+                style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207))
+              );
+            })
           ]
         )
       )

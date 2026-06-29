@@ -54,7 +54,7 @@ class _WallpaperPageState extends State<WallpaperPage> {
             fontSize: 20
           )
         ),
-        if (!_wallpaperService.internet.checkInternet || !_wallpaperService.internet.checkAPI)...[
+        if (isLoading || !_wallpaperService.internet.checkInternet || !_wallpaperService.internet.checkAPI)...[
           CheckConnection(
             isLoading: isLoading,
             checkInternet: _wallpaperService.internet.checkInternet, 

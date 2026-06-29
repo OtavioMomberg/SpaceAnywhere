@@ -89,7 +89,24 @@ class HomeService {
   Future<void> controlCuriosity() async {
     bool checkDatabaseEmpty = await checkDatabaseIsNull();
 
-    if (checkDatabaseEmpty) {
+    if (!checkDatabaseEmpty) {
+      _internet.updateInternetStatus(status: true);
+      _internet.updateAPIStatus(status: true);
+      _showKnowMoreButton = true;
+      _text = cleanText(text: _selectCuriosity[0].shortAnswer);
+      _extraText = cleanText(text: _selectCuriosity[0].longAnswer);
+      _title = _selectCuriosity[0].title;
+      for (int i = 0; i < _selectFonts.length; i++) {
+        _fonts.add(_selectFonts[i].font);
+      }
+    } else if (checkDatabaseEmpty) {
+      await getCuriosity(curiosityId: _curiosityId, action: DatabaseActions.add);
+    } else {
+      await getCuriosity(curiosityId: _selectCuriosity[0].curiosityId + 1, action: DatabaseActions.update);
+    }
+
+
+    /*if (checkDatabaseEmpty) {
       await getCuriosity(curiosityId: _curiosityId, action: DatabaseActions.add);
     } else if (DateTime.now().difference(DateTime.parse(_selectCuriosity[0].time)).inHours >= 24) {
       await getCuriosity(curiosityId: _selectCuriosity[0].curiosityId + 1, action: DatabaseActions.update);
@@ -103,7 +120,7 @@ class HomeService {
       for (int i = 0; i < _selectFonts.length; i++) {
         _fonts.add(_selectFonts[i].font);
       }
-    }
+    }*/
   }
 
   Future<void> addToDatabase() async {

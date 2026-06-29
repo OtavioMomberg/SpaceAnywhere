@@ -14,4 +14,12 @@ class InfoObject {
     required this.objectType,
     required this.imagePath
   });
+
+  int get usedParamLength => 4;
+  
+  List<String> get paramNames { 
+    return List.unmodifiable(
+      ["Diâmetro", "Massa", "Distância para Terra", "Tipo de objeto"]
+    );
+  }
 }

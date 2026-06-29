@@ -15,7 +15,7 @@ class _DrawerPageState extends State<DrawerPage> {
     Icons.quiz,
     Icons.analytics,
     Icons.wallpaper,
-    Icons.info
+    Icons.calculate
   ];
   int selectedPage = 0;
   
@@ -27,7 +27,7 @@ class _DrawerPageState extends State<DrawerPage> {
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
         backgroundColor: const Color.fromARGB(255, 38, 46, 139),
-        foregroundColor: const Color.fromARGB(255, 206, 206, 207),
+        foregroundColor: const Color.fromARGB(255, 206, 206, 207)
       ),
       drawer: Drawer(
         backgroundColor: const Color.fromARGB(255, 38, 46, 139),
@@ -90,7 +90,7 @@ class _DrawerPageState extends State<DrawerPage> {
           width: double.infinity,
           padding: selectedPage == 2 
             ? const EdgeInsets.only(bottom: 15)
-            : const EdgeInsets.only(left: 15, right: 15, bottom: 10),
+            : const EdgeInsets.only(left: 15, right: 15, bottom: 15),
           decoration: BoxDecoration(gradient: AppTheme.mainGradient),
           child: AppRoutes.pages[selectedPage]
         )

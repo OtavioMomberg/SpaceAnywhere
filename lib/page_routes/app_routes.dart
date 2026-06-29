@@ -1,16 +1,16 @@
 import 'package:space_anywhere/pages/comparison_page.dart';
-import 'package:space_anywhere/pages/credit_page.dart';
+import 'package:space_anywhere/pages/calculator_page.dart';
 import 'package:space_anywhere/pages/home_page.dart';
 import 'package:space_anywhere/pages/quiz_page.dart';
 import 'package:space_anywhere/pages/wallpaper_page.dart';
 
 class AppRoutes {
   static final pages = const [
-    HomePage(), 
+    HomePage(),
     QuizPage(),
     ComparisonPage(),
     WallpaperPage(),
-    CreditPage()
+    CalculatorPage()
   ];
 
   static final pageNames = const [
@@ -18,6 +18,6 @@ class AppRoutes {
     "Quiz",
     "Metrícas",
     "Wallpaper",
-    "Créditos"
+    "Calculadora"
   ];
 }

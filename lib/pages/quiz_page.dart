@@ -100,7 +100,7 @@ class _QuizPageState extends State<QuizPage> with StylizedSnackBar {
             widthFactor: 0.8,
             child: Button(label: "Jogar", awaitFunction: startQuiz)
           )
-        ] else if (!_quizService.internet.checkInternet || !_quizService.internet.checkAPI) ...[
+        ] else if (isLoading || !_quizService.internet.checkInternet || !_quizService.internet.checkAPI) ...[
           CheckConnection(
             isLoading: isLoading,
             checkInternet: _quizService.internet.checkInternet,
