@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:space_anywhere/widgets/expansible_body.dart';
-import 'package:space_anywhere/widgets/expansible_header.dart';
+import 'package:space_anywhere/widgets/expansible/expansible_body.dart';
+import 'package:space_anywhere/widgets/expansible/expansible_header.dart';
 
 class ExpansibleWidget extends StatelessWidget {
   final ExpansibleController controller;

@@ -1,5 +1,5 @@
-import 'package:space_anywhere/models/comparison_models/info_object.dart';
-import 'package:space_anywhere/models/comparison_models/planets_gravity.dart';
+import 'package:space_anywhere/models/local_data_models/info_object.dart';
+import 'package:space_anywhere/models/local_data_models/planets_gravity.dart';
 
 class CalculatorService {
   String _text = "Escolha um objeto";

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:space_anywhere/pages/extra_text_page.dart';
-import 'package:space_anywhere/pages/fonts_page.dart';
+import 'package:space_anywhere/pages/additional_pages/extra_text_page.dart';
+import 'package:space_anywhere/pages/additional_pages/fonts_page.dart';
 import 'package:space_anywhere/services/home_service.dart';
 import 'package:space_anywhere/widgets/button.dart';
 import 'package:space_anywhere/widgets/check_connection.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:space_anywhere/pages/expanded_image_page.dart';
+import 'package:space_anywhere/pages/additional_pages/expanded_image_page.dart';
 import 'package:space_anywhere/services/wallpaper_service.dart';
 import 'package:space_anywhere/utils/image_cache_service.dart';
 import 'package:space_anywhere/widgets/check_connection.dart';

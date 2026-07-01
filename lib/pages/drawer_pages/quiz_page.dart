@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:space_anywhere/pages/result_page.dart';
+import 'package:space_anywhere/pages/additional_pages/result_page.dart';
 import 'dart:ui';
 import 'package:space_anywhere/services/quiz_service.dart';
 import 'package:space_anywhere/utils/stylized_snack_bar.dart';

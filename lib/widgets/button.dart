@@ -22,7 +22,7 @@ class Button extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         onTap: () {
           if (awaitFunction?.call() != null) { return; }
-          function!(index: pageIndex);
+          function?.call(index: pageIndex);
         },
         child: Container(
           decoration: BoxDecoration(

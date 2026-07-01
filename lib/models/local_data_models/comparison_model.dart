@@ -1,4 +1,4 @@
-import 'package:space_anywhere/models/comparison_models/info_object.dart';
+import 'package:space_anywhere/models/local_data_models/info_object.dart';
 
 class ComparisonModel {
   static List<String> topics = [

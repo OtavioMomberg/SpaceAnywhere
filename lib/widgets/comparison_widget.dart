@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:space_anywhere/widgets/image_widget.dart';
-import 'package:space_anywhere/models/comparison_models/info_object.dart';
+import 'package:space_anywhere/models/local_data_models/info_object.dart';
 
 class ComparisonWidget extends StatelessWidget {
   final InfoObject objectData;

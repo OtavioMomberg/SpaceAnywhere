@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
-import 'package:space_anywhere/models/comparison_models/comparison_model.dart';
-import 'package:space_anywhere/models/comparison_models/info_object.dart';
+import 'package:space_anywhere/models/local_data_models/comparison_model.dart';
+import 'package:space_anywhere/models/local_data_models/info_object.dart';
 import 'package:space_anywhere/widgets/comparison_widget.dart';
 
 class ComparisonPage extends StatefulWidget {

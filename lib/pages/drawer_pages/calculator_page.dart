@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:space_anywhere/services/calculator_service.dart';
 import 'package:space_anywhere/widgets/button.dart';
 import 'package:space_anywhere/widgets/calculus_result.dart';
-import 'package:space_anywhere/widgets/expansible_widget.dart';
+import 'package:space_anywhere/widgets/expansible/expansible_widget.dart';
 import 'package:space_anywhere/widgets/input_number.dart';
 
 class CalculatorPage extends StatefulWidget {
