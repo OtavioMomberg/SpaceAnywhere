@@ -17,7 +17,7 @@ class Button extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       borderRadius: BorderRadius.circular(12),
-      color: Colors.white.withValues(alpha: 0.2),
+      color: Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.15),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () {
@@ -27,7 +27,9 @@ class Button extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
+            border: Border.all(
+              color: Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.3)
+            )
           ),
           height: 50,
           child: Center(

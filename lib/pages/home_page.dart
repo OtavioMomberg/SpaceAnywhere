@@ -16,7 +16,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final _homeService = HomeService.instance();
   bool isLoading = true;
-  bool freeze = true;
+  bool showKnowMoreButton = false;
 
   @override
   void initState() {
@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    if (freeze) { return Container(color: Colors.transparent); }
+    //if (freeze) { return Container(color: Colors.transparent); }
 
     return Column(
       spacing: 20,
@@ -103,7 +103,7 @@ class _HomePageState extends State<HomePage> {
             textAlign: TextAlign.center
           )
         ],
-        if (_homeService.showKnowMoreButton)...[
+        if (showKnowMoreButton)...[
           Row(
             mainAxisAlignment: .center,
             spacing: 10,
@@ -124,7 +124,7 @@ class _HomePageState extends State<HomePage> {
               )
             ]
           )
-        ]
+        ] 
       ]
     );
   }
@@ -133,9 +133,11 @@ class _HomePageState extends State<HomePage> {
     await _homeService.controlCuriosity();
 
     if (!mounted) { return; }
-    setState(() { 
-      isLoading = false; 
-      freeze = false;
+    setState(() {
+      if (_homeService.internet.checkInternet && _homeService.internet.checkAPI) {
+        showKnowMoreButton = true;
+      }
+      isLoading = false;
     });
   }
 

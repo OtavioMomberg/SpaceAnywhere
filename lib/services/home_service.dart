@@ -12,7 +12,6 @@ class HomeService {
   late Internet _internet;
   List<dynamic> _selectCuriosity = [];
   List<dynamic> _selectFonts = [];
-  bool _showKnowMoreButton = false;
   String _text = "";
   String _extraText = "";
   String _title = "";
@@ -26,7 +25,6 @@ class HomeService {
 
   CuriosityController get curiosityController => _curiosityController;
   Internet get internet => _internet;
-  bool get showKnowMoreButton => _showKnowMoreButton;
   String get text => _text;
   String get extraText => _extraText;
   String get title => _title;
@@ -78,8 +76,6 @@ class HomeService {
       _extraText = cleanText(text: _curiosityController.getCuriosityModel!.longAnswer);
       _title = _curiosityController.getCuriosityModel!.title;
       _fonts = _curiosityController.getCuriosityModel!.contentFont;
-
-      _showKnowMoreButton = true;
       action == DatabaseActions.add ? addToDatabase() : updateInDatabase();
     } else {
       _error = _curiosityController.getErrorCuriosity!;
@@ -90,37 +86,21 @@ class HomeService {
     bool checkDatabaseEmpty = await checkDatabaseIsNull();
 
     if (!checkDatabaseEmpty) {
+      if (DateTime.now().difference(DateTime.parse(_selectCuriosity[0].time)).inHours >= 24) {
+        await getCuriosity(curiosityId: _selectCuriosity[0].curiosityId + 1, action: DatabaseActions.update);
+        return;
+      }
       _internet.updateInternetStatus(status: true);
       _internet.updateAPIStatus(status: true);
-      _showKnowMoreButton = true;
       _text = cleanText(text: _selectCuriosity[0].shortAnswer);
       _extraText = cleanText(text: _selectCuriosity[0].longAnswer);
       _title = _selectCuriosity[0].title;
       for (int i = 0; i < _selectFonts.length; i++) {
         _fonts.add(_selectFonts[i].font);
       }
-    } else if (checkDatabaseEmpty) {
-      await getCuriosity(curiosityId: _curiosityId, action: DatabaseActions.add);
     } else {
-      await getCuriosity(curiosityId: _selectCuriosity[0].curiosityId + 1, action: DatabaseActions.update);
+      await getCuriosity(curiosityId: _curiosityId, action: DatabaseActions.add);
     }
-
-
-    /*if (checkDatabaseEmpty) {
-      await getCuriosity(curiosityId: _curiosityId, action: DatabaseActions.add);
-    } else if (DateTime.now().difference(DateTime.parse(_selectCuriosity[0].time)).inHours >= 24) {
-      await getCuriosity(curiosityId: _selectCuriosity[0].curiosityId + 1, action: DatabaseActions.update);
-    } else {
-      _internet.updateInternetStatus(status: true);
-      _internet.updateAPIStatus(status: true);
-      _showKnowMoreButton = true;
-      _text = cleanText(text: _selectCuriosity[0].shortAnswer);
-      _extraText = cleanText(text: _selectCuriosity[0].longAnswer);
-      _title = _selectCuriosity[0].title;
-      for (int i = 0; i < _selectFonts.length; i++) {
-        _fonts.add(_selectFonts[i].font);
-      }
-    }*/
   }
 
   Future<void> addToDatabase() async {

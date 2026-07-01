@@ -87,6 +87,7 @@ class _DrawerPageState extends State<DrawerPage> {
       body: SafeArea(
         top: false,
         child: Container(
+          height: double.infinity,
           width: double.infinity,
           padding: selectedPage == 2 
             ? const EdgeInsets.only(bottom: 15)
@@ -94,7 +95,9 @@ class _DrawerPageState extends State<DrawerPage> {
           decoration: BoxDecoration(gradient: AppTheme.mainGradient),
           child: AppRoutes.pages[selectedPage]
         )
-      )
+      ),
+      backgroundColor: const Color.fromARGB(255, 15, 6, 65),
+      resizeToAvoidBottomInset: false
     );
   }
 }

@@ -1,10 +1,11 @@
 class InfoObject {
-  String name;
-  String diameter;
-  String mass;
-  String earthDistance;
-  String objectType;
-  String imagePath;
+  String name = "";
+  String diameter = "";
+  String mass = "";
+  String earthDistance = "";
+  String objectType = "";
+  String imagePath = "";
+  double? gravityOverEarth;
 
   InfoObject({
     required this.name,
@@ -14,6 +15,11 @@ class InfoObject {
     required this.objectType,
     required this.imagePath
   });
+
+  InfoObject.calculate({
+    required this.name, 
+    required double gravity
+  }) : gravityOverEarth = gravity;
 
   int get usedParamLength => 4;
   
