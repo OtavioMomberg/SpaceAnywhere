@@ -20,12 +20,4 @@ class InfoObject {
     required this.name, 
     required double gravity
   }) : gravityOverEarth = gravity;
-
-  int get usedParamLength => 4;
-  
-  List<String> get paramNames { 
-    return List.unmodifiable(
-      ["Diâmetro", "Massa", "Distância para Terra", "Tipo de objeto"]
-    );
-  }
 }

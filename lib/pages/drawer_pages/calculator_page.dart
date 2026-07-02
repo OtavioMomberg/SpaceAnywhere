@@ -48,29 +48,31 @@ class _CalculatorPageState extends State<CalculatorPage> {
             const SizedBox(height: 20),
             Button(
               label: "Calcular", 
-              function: ({index}) {
+              funcWithoutParam: () {
                 _calculatorService.calculate(weight: _textController.text);
                 setState((){});
               }
-            )
-          ],
-          if (_calculatorService.result != 0.0 && _calculatorService.defaultText != "Escolha um objeto")...[
-            const SizedBox(height: 20),
-            CalculusResult(),
-            const SizedBox(height: 10),
-            Button(
-              label: "Limpar",
-              function: ({index}) {
-                _calculatorService.setDefaultText();
-                _calculatorService.initializeResult();
-                _textController.clear();
-                setState(() {});
-              }
-            )
+            ),
+            if (_calculatorService.result != 0.0)...[
+              const SizedBox(height: 20),
+              CalculusResult(),
+              const SizedBox(height: 10),
+              Button(
+                label: "Limpar",
+                funcWithoutParam: cleanPage
+              )
+            ]
           ]
         ]
       )
     );
+  }
+
+  void cleanPage() {
+    _calculatorService.setDefaultText();
+    _calculatorService.initializeResult();
+    _textController.clear();
+    setState(() {});
   }
 
   @override

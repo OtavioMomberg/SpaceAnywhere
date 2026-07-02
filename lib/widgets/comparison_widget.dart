@@ -43,12 +43,22 @@ class ComparisonWidget extends StatelessWidget {
             Divider(),
             const SizedBox(height: 10),
 
-            ...List.generate(objectData.usedParamLength, (int index) {
-              return Text(
-                "${objectData.paramNames[index]}: ${objectData.diameter}", 
-                style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207))
-              );
-            })
+            Text(
+              "Diâmetro: ${objectData.diameter}", 
+              style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207))
+            ),
+            Text(
+              "Massa: ${objectData..mass}", 
+              style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207))
+            ),
+            Text(
+              "Distância para Terra: ${objectData.earthDistance}", 
+              style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207))
+            ),
+            Text(
+              "Tipo de objeto: ${objectData.objectType}", 
+              style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207))
+            )
           ]
         )
       )
