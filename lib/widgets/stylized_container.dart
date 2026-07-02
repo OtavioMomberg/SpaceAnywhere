@@ -35,11 +35,11 @@ class StylizedContainer extends StatelessWidget {
                 borderRadius: borderRadius == null ? BorderRadius.circular(12) : borderRadius!,
                 border: Border.all(
                   color: borderColor == null
-                    ? Colors.white.withValues(alpha: 0.5)
+                    ? Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.5)
                     : borderColor!.withValues(alpha: 0.5),
                 ),
                 color: borderColor == null
-                  ? Colors.white.withValues(alpha: 0.15)
+                  ? Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.15)
                   : borderColor!.withValues(alpha: 0.15),
               ),
               child: height != null ? Center(child: child) : child

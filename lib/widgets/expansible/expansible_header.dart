@@ -14,7 +14,7 @@ class ExpansibleHeader extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           width: 1.5,
-          color: Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.3)
+          color: Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.5)
         )
       ),
       child: Row(

@@ -103,7 +103,7 @@ acertar a resposta, caso erre, será mostrada a resposta correta e a opção de 
 
 4. WallpaperPage - Essa tela disponibilizará uma serie de wallpapers com a tematíca de espaço para poderem ser instalados pelos usuários
 
-5. CreditsPage - Essa tela irá fornecer informações a respeito da ideia do projeto e o nome do desenvolvedor
+5. CalculatorPage - Essa tela irá disponibilizar uma calculadora para o usuário calcular seu peso em outros planetas
 
 # Additional Page:
 

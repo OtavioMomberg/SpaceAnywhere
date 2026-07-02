@@ -10,6 +10,7 @@ class InputNumber extends StatelessWidget {
     return TextFormField(
       keyboardType: TextInputType.number,
       controller: controller,
+      cursorColor: Color.fromARGB(255, 206, 206, 207),
       style: TextStyle(color: const Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.8)),
       decoration: InputDecoration(
         hint: Text(label, style: TextStyle(color: const Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.8))),
@@ -17,21 +18,21 @@ class InputNumber extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
             width: 1.5,
-            color: const Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.3)
+            color: const Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.5)
           )
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
             width: 1.5,
-            color: const Color.fromARGB(255, 206, 206, 207,).withValues(alpha: 0.3)
+            color: const Color.fromARGB(255, 206, 206, 207,).withValues(alpha: 0.5)
           )
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
             width: 1.5,
-            color: const Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.3)
+            color: const Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.5)
           )
         )
       )
