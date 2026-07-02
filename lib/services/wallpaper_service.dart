@@ -1,12 +1,14 @@
 import 'package:http/http.dart';
 import 'package:space_anywhere/controllers/wallpaper_controller.dart';
-import 'package:space_anywhere/internet/check_internet.dart';
+import 'package:space_anywhere/services/internet_service.dart';
 import 'package:space_anywhere/repositories/implementations/wallpaper_implementation_http.dart';
 import 'package:space_anywhere/utils/image_cache_service.dart';
 
 class WallpaperService {
-  final WallpaperController _wallpaperController = WallpaperController(WallpaperImplementationHttp(Client()));
-  late Internet _internet;
+  final WallpaperController _wallpaperController = WallpaperController(
+    WallpaperImplementationHttp(Client()),
+  );
+  late InternetService _internet;
   int _offset = 0;
   bool _checkFunction = false;
   String _error = "";
@@ -17,7 +19,7 @@ class WallpaperService {
   factory WallpaperService.instance() => _instance;
 
   WallpaperController get wallpaperController => _wallpaperController;
-  Internet get internet =>_internet;
+  InternetService get internet => _internet;
   int get offset => _offset;
   String get error => _error;
 
@@ -31,10 +33,11 @@ class WallpaperService {
   }
 
   Future<void> initializeInternetInstance() async {
-    if (_function == null) throw Exception("É necessário receber a função service.");
+    if (_function == null)
+      throw Exception("É necessário receber a função service.");
 
-    _internet = Internet.withoutParam(func: _function!);
-  } 
+    _internet = InternetService.withoutParam(func: _function!);
+  }
 
   void updateOffset({required int newOffset}) => _offset = newOffset;
 
@@ -46,7 +49,7 @@ class WallpaperService {
     }
     return true;
   }
-  
+
   Future<void> getImages() async {
     await _internet.hasInternet();
 

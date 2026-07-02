@@ -48,7 +48,7 @@ class ComparisonWidget extends StatelessWidget {
               style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207))
             ),
             Text(
-              "Massa: ${objectData..mass}", 
+              "Massa: ${objectData.mass}", 
               style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207))
             ),
             Text(

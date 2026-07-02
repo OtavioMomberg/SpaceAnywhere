@@ -4,7 +4,7 @@ import 'package:gallery_saver_plus/gallery_saver.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
-class SaveImageServices {
+class SaveImageService {
   static Future<bool> saveImageFromAsset({required String imagePath}) async {
     final ByteData byteData = await rootBundle.load(imagePath);
     final Uint8List imageBytes = byteData.buffer.asUint8List();
@@ -21,7 +21,8 @@ class SaveImageServices {
 
   static Future<bool> _saveToGallery({required Uint8List imageBytes}) async {
     final Directory tempDir = await getTemporaryDirectory();
-    final String tempPath = "${tempDir.path}/image_temp_${DateTime.now().millisecondsSinceEpoch}.png";
+    final String tempPath =
+        "${tempDir.path}/image_temp_${DateTime.now().millisecondsSinceEpoch}.png";
     final File tempFile = File(tempPath);
 
     await tempFile.writeAsBytes(imageBytes);
@@ -36,4 +37,3 @@ class SaveImageServices {
     return response ?? false;
   }
 }
-

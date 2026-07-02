@@ -1,16 +1,19 @@
 import 'package:http/http.dart';
 import 'package:space_anywhere/controllers/question_controller.dart';
-import 'package:space_anywhere/internet/check_internet.dart';
+import 'package:space_anywhere/services/internet_service.dart';
 import 'package:space_anywhere/repositories/implementations/question_inplementation_http.dart';
 
 class QuizService {
-  static final QuestionController _questionController = QuestionController(QuestionInplementationHttp(client: Client()));
-  late Internet _internet;
+  static final QuestionController _questionController = QuestionController(
+    QuestionInplementationHttp(client: Client()),
+  );
+  late InternetService _internet;
   final int _id = 0;
   bool _quizStarted = false;
   String _error = "";
-  Future<void> Function({int? questionId})? _callQuizService; 
-  void Function({required bool isCorrect, String? correctAnswer})? _showResponse;
+  Future<void> Function({int? questionId})? _callQuizService;
+  void Function({required bool isCorrect, String? correctAnswer})?
+  _showResponse;
   Future<void> Function()? _closeAnswerPage;
 
   static final _instance = QuizService._();
@@ -18,18 +21,19 @@ class QuizService {
   factory QuizService.instance() => _instance;
 
   QuestionController get questionController => _questionController;
-  Internet get internet => _internet;
+  InternetService get internet => _internet;
   bool get quizStarted => _quizStarted;
   String get error => _error;
 
   set generalError(String value) => _error = value;
-  
+
   void initializeQuiz() => _quizStarted = false;
 
   Future<void> getFunctions({
-    required Future<void> Function({int? questionId}) callQuizService, 
-    required void Function({required bool isCorrect, String? correctAnswer}) showResponse, 
-    required Future<void> Function() closeAnswerPage
+    required Future<void> Function({int? questionId}) callQuizService,
+    required void Function({required bool isCorrect, String? correctAnswer})
+    showResponse,
+    required Future<void> Function() closeAnswerPage,
   }) async {
     _callQuizService = callQuizService;
     _showResponse = showResponse;
@@ -37,8 +41,9 @@ class QuizService {
   }
 
   Future<void> initializeInternetInstance() async {
-    if (_callQuizService == null) throw Exception("É necessário receber a função service.");
-    _internet = Internet.withParam(func: _callQuizService!);
+    if (_callQuizService == null)
+      throw Exception("É necessário receber a função service.");
+    _internet = InternetService.withParam(func: _callQuizService!);
   }
 
   void changeQuizState() => _quizStarted = !_quizStarted;
@@ -46,7 +51,9 @@ class QuizService {
   Future<void> getQuestion({int? questionId}) async {
     await _internet.hasInternet();
 
-    if (questionId != null && !_internet.checkInternet) { await Future.delayed(Duration(seconds: 3)); }
+    if (questionId != null && !_internet.checkInternet) {
+      await Future.delayed(Duration(seconds: 3));
+    }
     if (!_internet.checkInternet) {
       _quizStarted = true;
       return;
@@ -67,7 +74,9 @@ class QuizService {
   }
 
   Future<void> onTapAnswer({required int index}) async {
-    if (_showResponse == null || _closeAnswerPage == null) { throw Exception("É necessário receber a função service."); }
+    if (_showResponse == null || _closeAnswerPage == null) {
+      throw Exception("É necessário receber a função service.");
+    }
 
     var controller = questionController.getQuestionModel!;
     if (controller.rightAnswerIndex == index) {
@@ -75,7 +84,7 @@ class QuizService {
     } else {
       _showResponse!(
         isCorrect: false,
-        correctAnswer: controller.alternatives[controller.rightAnswerIndex]
+        correctAnswer: controller.alternatives[controller.rightAnswerIndex],
       );
     }
     await _closeAnswerPage!();

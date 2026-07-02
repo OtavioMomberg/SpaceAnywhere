@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:space_anywhere/utils/save_image_services.dart';
+import 'package:space_anywhere/utils/save_image_service.dart';
 import 'package:space_anywhere/themes/app_theme.dart';
 import 'package:space_anywhere/utils/stylized_snack_bar.dart';
 import 'package:space_anywhere/widgets/button.dart';
@@ -10,16 +10,17 @@ class ExpandedImagePage extends StatefulWidget {
   final String option;
 
   const ExpandedImagePage({
-    required this.imagePath, 
+    required this.imagePath,
     required this.option,
-    super.key
+    super.key,
   });
 
   @override
   State<ExpandedImagePage> createState() => _ExpandedImagePageState();
 }
 
-class _ExpandedImagePageState extends State<ExpandedImagePage> with StylizedSnackBar {
+class _ExpandedImagePageState extends State<ExpandedImagePage>
+    with StylizedSnackBar {
   bool response = false;
 
   @override
@@ -28,10 +29,15 @@ class _ExpandedImagePageState extends State<ExpandedImagePage> with StylizedSnac
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
         backgroundColor: const Color.fromARGB(255, 38, 46, 139),
-        foregroundColor: const Color.fromARGB(255, 206, 206, 207)
+        foregroundColor: const Color.fromARGB(255, 206, 206, 207),
       ),
       body: Container(
-        padding: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 20),
+        padding: const EdgeInsets.only(
+          top: 10,
+          left: 10,
+          right: 10,
+          bottom: 20,
+        ),
         decoration: BoxDecoration(gradient: AppTheme.mainGradient),
         child: Column(
           mainAxisAlignment: .start,
@@ -40,35 +46,33 @@ class _ExpandedImagePageState extends State<ExpandedImagePage> with StylizedSnac
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 10),
-                child: ImageWidget(imagePath: widget.imagePath, option: widget.option),
-              )
+                child: ImageWidget(
+                  imagePath: widget.imagePath,
+                  option: widget.option,
+                ),
+              ),
             ),
             FractionallySizedBox(
               widthFactor: 0.8,
-              child: Button(
-                label: "Baixar",
-                awaitFunction: saveImage
-              )
-            )
-          ]
-        )
-      )
+              child: Button(label: "Baixar", awaitFunction: saveImage),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
   Future<void> saveImage() async {
     await showResponse();
 
-    if (!mounted) { return; }
+    if (!mounted) {
+      return;
+    }
 
     showStylizedSnackBar(
-      context: context, 
-      msm: response 
-        ? "Imagem salva na galeria!"
-        : "Erro ao salvar imagem.", 
-      txtColor: response 
-        ? Colors.lightBlueAccent
-        : Colors.red
+      context: context,
+      msm: response ? "Imagem salva na galeria!" : "Erro ao salvar imagem.",
+      txtColor: response ? Colors.lightBlueAccent : Colors.red,
     );
   }
 
@@ -77,8 +81,12 @@ class _ExpandedImagePageState extends State<ExpandedImagePage> with StylizedSnac
       context: context,
       builder: (_) {
         WidgetsBinding.instance.addPostFrameCallback((_) async {
-          response = await SaveImageServices.saveImageFromUrl(imageUrl: widget.imagePath);
-          if (!mounted) { return; }
+          response = await SaveImageService.saveImageFromUrl(
+            imageUrl: widget.imagePath,
+          );
+          if (!mounted) {
+            return;
+          }
           Navigator.pop(context);
         });
 
@@ -92,13 +100,13 @@ class _ExpandedImagePageState extends State<ExpandedImagePage> with StylizedSnac
               mainAxisSize: .min,
               children: <Widget>[
                 CircularProgressIndicator.adaptive(
-                  backgroundColor: Color.fromARGB(255, 38, 46, 139)
-                )      
-              ]
-            )
-          )
+                  backgroundColor: Color.fromARGB(255, 38, 46, 139),
+                ),
+              ],
+            ),
+          ),
         );
-      }
+      },
     );
   }
 }

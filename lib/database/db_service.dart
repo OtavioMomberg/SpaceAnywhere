@@ -5,14 +5,14 @@ import 'package:sqflite/sqflite.dart';
 
 enum DatabaseActions { add, update }
 
-class DatabaseServices {
+class DatabaseService {
   Database? _db;
 
-  static final _instance = DatabaseServices._();
+  static final _instance = DatabaseService._();
 
-  DatabaseServices._();
+  DatabaseService._();
 
-  factory DatabaseServices.instance() {
+  factory DatabaseService.instance() {
     return _instance;
   }
 
@@ -27,7 +27,9 @@ class DatabaseServices {
   final String _font = "font";
 
   Future<Database> get database async {
-    if (_db != null) { return _db!; }
+    if (_db != null) {
+      return _db!;
+    }
     _db = await createDatabase();
     return _db!;
   }

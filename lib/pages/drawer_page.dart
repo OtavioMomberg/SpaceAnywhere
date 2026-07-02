@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:space_anywhere/page_routes/app_routes.dart';
+import 'package:space_anywhere/routes/app_routes.dart';
 import 'package:space_anywhere/themes/app_theme.dart';
 
 class DrawerPage extends StatefulWidget {

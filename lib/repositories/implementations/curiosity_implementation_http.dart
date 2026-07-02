@@ -1,7 +1,7 @@
 import 'package:http/http.dart';
 import 'package:space_anywhere/models/api_models/curiosity_model.dart';
 import 'package:space_anywhere/repositories/curiosity_repository_http.dart';
-import 'package:space_anywhere/repositories/route/api_route.dart';
+import 'package:space_anywhere/routes/api_route.dart';
 
 class CuriosityImplementationHttp implements CuriosityRepositoryHttp {
   final Client _client;
