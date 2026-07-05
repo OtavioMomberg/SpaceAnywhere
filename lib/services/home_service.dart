@@ -6,7 +6,7 @@ import 'package:space_anywhere/models/database_models/curiosity_db_model.dart';
 import 'package:space_anywhere/repositories/implementations/curiosity_implementation_http.dart';
 
 class HomeService {
-  final _curiosityId = 2;
+  final _curiosityId = 1;
   final _dbInstance = DatabaseService.instance();
   final CuriosityController _curiosityController = CuriosityController(
     CuriosityImplementationHttp(client: Client()),
@@ -40,8 +40,7 @@ class HomeService {
   }
 
   Future<void> initializeInternetInstance() async {
-    if (_function == null)
-      throw Exception("É necessário receber a função service.");
+    if (_function == null) throw Exception("É necessário receber a função service.");
 
     _internet = InternetService.withoutParam(func: _function!);
   }
@@ -58,15 +57,12 @@ class HomeService {
 
   String cleanText({required String text}) {
     return text
-        .replaceAll('\\n', '\n')
-        .replaceAll('\\r', '')
-        .replaceAll('\\"', '"');
+      .replaceAll('\\n', '\n')
+      .replaceAll('\\r', '')
+      .replaceAll('\\"', '"');
   }
 
-  Future<void> getCuriosity({
-    required int curiosityId,
-    required DatabaseActions action,
-  }) async {
+  Future<void> getCuriosity({required int curiosityId, required DatabaseActions action}) async {
     await _internet.hasInternet();
 
     if (!_internet.checkInternet) {
@@ -100,10 +96,7 @@ class HomeService {
     bool checkDatabaseEmpty = await checkDatabaseIsNull();
 
     if (!checkDatabaseEmpty) {
-      if (DateTime.now()
-              .difference(DateTime.parse(_selectCuriosity[0].time))
-              .inHours >=
-          24) {
+      if (DateTime.now().difference(DateTime.parse(_selectCuriosity[0].time)).inHours >= 24) {
         await getCuriosity(
           curiosityId: _selectCuriosity[0].curiosityId + 1,
           action: DatabaseActions.update,
