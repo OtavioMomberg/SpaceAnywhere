@@ -40,7 +40,7 @@ class HomeService {
   }
 
   Future<void> initializeInternetInstance() async {
-    if (_function == null) throw Exception("É necessário receber a função service.");
+    if (_function == null) { throw Exception("É necessário receber a função service."); }
 
     _internet = InternetService.withoutParam(func: _function!);
   }

@@ -41,8 +41,8 @@ class QuizService {
   }
 
   Future<void> initializeInternetInstance() async {
-    if (_callQuizService == null)
-      throw Exception("É necessário receber a função service.");
+    if (_callQuizService == null) { throw Exception("É necessário receber a função service."); }
+    
     _internet = InternetService.withParam(func: _callQuizService!);
   }
 

@@ -9,11 +9,12 @@ class WallpaperImplementationHttp implements WallpaperRepositoryHttp {
   WallpaperImplementationHttp(Client client) : _client = client;
 
   @override
-  Future<List<WallpaperModel?>> getWallpaper({required int offset}) async {
+  Future<List<WallpaperModel?>> getWallpaper({int? offset}) async {
     try {
-      final url = "$URL/api/v1/wallpapers/$offset";
+      final path = "/api/v1/wallpapers/";
+      final queryParam = {"offset": offset.toString()};
       final response = await _client.get(
-        Uri.parse(url),
+        Uri.https(URL, path, queryParam),
         headers: {"Content-Type": "application/json"},
       );
 

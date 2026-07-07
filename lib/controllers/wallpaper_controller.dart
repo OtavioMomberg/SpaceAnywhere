@@ -14,7 +14,7 @@ class WallpaperController {
 
   List<WallpaperModel?> get getWallpaperModel => _wallpaperModel;
 
-  Future<void> onGetWallpaper({required int offset}) async {
+  Future<void> onGetWallpaper({int? offset}) async {
     _errorGetWallpaper = null;
     try {
       final response = await _wallpaperRepositoryHttp.getWallpaper(offset: offset);
