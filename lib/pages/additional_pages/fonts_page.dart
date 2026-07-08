@@ -31,17 +31,13 @@ class FontsPage extends StatelessWidget {
                 itemCount: fonts.length,
                 itemBuilder: (context, index) {
                   return Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 4,
-                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
                     child: Material(
                       borderRadius: BorderRadius.circular(12),
                       color: Colors.white.withValues(alpha: 0.1),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(12),
-                        onTap: () =>
-                            OpenLinksService.openLink(url: fonts[index]),
+                        onTap: () => OpenLinksService.openLink(url: fonts[index]),
                         child: Padding(
                           padding: const EdgeInsets.all(10),
                           child: Text(
@@ -49,19 +45,19 @@ class FontsPage extends StatelessWidget {
                             style: TextStyle(
                               color: Colors.white,
                               decoration: TextDecoration.underline,
-                              decorationColor: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                              decorationColor: Colors.white
+                            )
+                          )
+                        )
+                      )
+                    )
                   );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
+                }
+              )
+            )
+          ]
+        )
+      )
     );
   }
 }

@@ -24,7 +24,7 @@ class CalculusResult extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.3),
+              color: Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.5),
             ),
             color: Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.15),
           ),

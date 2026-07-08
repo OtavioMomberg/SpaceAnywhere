@@ -65,15 +65,11 @@ class HomeService {
   Future<void> getCuriosity({required int curiosityId, required DatabaseActions action}) async {
     await _internet.hasInternet();
 
-    if (!_internet.checkInternet) {
-      return;
-    }
+    if (!_internet.checkInternet) { return; }
 
     await _internet.isApiAwake();
 
-    if (!_internet.checkAPI) {
-      return;
-    }
+    if (!_internet.checkAPI) { return; }
 
     await _curiosityController.onGetCuriosity(id: curiosityId);
 
@@ -103,6 +99,7 @@ class HomeService {
         );
         return;
       }
+      _fonts.clear();
       _internet.updateInternetStatus(status: true);
       _internet.updateAPIStatus(status: true);
       _text = cleanText(text: _selectCuriosity[0].shortAnswer);
