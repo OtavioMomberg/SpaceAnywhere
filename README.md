@@ -12,6 +12,8 @@
 3. Disponibilizar um quiz, contendo 5 alternativas para cada pergunta
 4. Fazer uma comparação entre alguns objetos astronômicos
 5. Permitir a realização do download de wallpapers disponíveis no aplicativo
+6. Permitir o usuário visualizar seu peso em outros planetas e objetos astronômicos
+7. Demonstrar o nome de objetos astronômicos em outros idiomas
 
 ## Stack do Projeto:
 
@@ -29,10 +31,10 @@ Return Type:
 ```json
 {
     "id": 0,
-    "title": "",
-    "short_answer": "",
-    "long_answer": "",
-    "content_font": ["", ...]
+    "title": "Titulo Exemplo",
+    "short_answer": "Resposta curta exemplo",
+    "long_answer": "Resposta longa exemplo",
+    "content_font": ["https://astronomia.com", ...]
 }
 ```
 
@@ -43,8 +45,8 @@ Return Type:
 ```json
 {
     "id" : 0 (int),
-    "question" : "" (string),
-    "alternatives" : ["", ...] (List[string]),
+    "question" : "Pergunta exemplo?" (string),
+    "alternatives" : ["alternativa 1", ...] (List[string]),
     "right_answer_index" : 0 (int),
 }
 ```
@@ -56,8 +58,20 @@ Return Type:
 ```json
 {
     "id" : 0 (int),
-    "thumbnail_image_url" : "" (string),
-    "full_image_url": "" (string),
+    "thumbnail_image_url" : "exemplo_thumbnail/imagem" (string),
+    "full_image_url": "exemplo_full_image/imagem" (string),
+}
+```
+
+- GET "api/v1/translation" - (Ainda não implementado)
+
+Return Type:
+
+```json
+{
+    "id" : 0 (int),
+    "object_translated" : "Exemplo" (string),
+    "language_flag": "pt-BR" (string),
 }
 ```
 
@@ -80,6 +94,30 @@ Return Type:
     - id - int,
     - thumbnail_image_url - string,
     - full_image_url - string
+
+(Ainda não implementadas)
+- astronomical_object_table:
+    - id - int,
+    - name (unique) - string
+
+- language_table:
+    - id - int,
+    - lang (unique) - string
+
+- translation_table:
+    - id - int,
+    - translated - string,
+    - language_flag - string,
+    - astronomical_object_fk - int,
+    - language_fk - int
+
+(
+    SELECT t.id, t.object_translated, t.language_flag 
+    FROM ASTRONOMICAL_OBJECT_TABLE a 
+    JOIN TRANSLATION_TABLE t ON a.id = t.id
+    JOIN LANGUAGE_TABLE l ON t.id = l.id
+    WHERE a.object_name = 'EXEMPLO' AND l.language = 'EXEMPLO';
+)
 
 # Frontend (Mobile):
 
@@ -110,5 +148,7 @@ acertar a resposta, caso erre, será mostrada a resposta correta e a opção de 
 - DetailReadingPage - Essa tela contará com um texto mais aprofundado a respeito da curiosidade do dia (Futuramente podendo ser expandido em outros contextos)
 
 ## Próximos Passos
+
+- Desenvolver uma tela para mostrar os objetos astronômicos em outros idiomas, incluindo a pronúncia
 
 - Desenvolver uma tela na qual haverá a explicação de formúlas físicas e matemáticas;
