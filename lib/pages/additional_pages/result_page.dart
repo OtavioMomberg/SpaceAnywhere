@@ -15,8 +15,8 @@ class ResultPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
-        backgroundColor: const Color.fromARGB(255, 38, 46, 139),
-        foregroundColor: const Color.fromARGB(255, 38, 46, 139)
+        backgroundColor: AppTheme.color2,
+        foregroundColor: AppTheme.color2
       ),
       body: Container(
         height: double.infinity,
@@ -29,13 +29,13 @@ class ResultPage extends StatelessWidget {
               children: <Widget>[
                 Icon(
                   isCorrect ? Icons.check_circle : Icons.cancel,
-                  color:const Color.fromARGB(255, 206, 206, 207),
+                  color:AppTheme.color1,
                   size: 60
                 ),
                 Text(
                   isCorrect ? "Certa Resposta!" : "Resposta Incorreta!",
                     style: const TextStyle(
-                      color: Color.fromARGB(255, 206, 206, 207),
+                      color: AppTheme.color1,
                       fontSize: 22,
                       fontWeight: FontWeight.bold
                     )
@@ -45,14 +45,14 @@ class ResultPage extends StatelessWidget {
                   Text(
                     "Alternativa correta:",
                     style: const TextStyle(
-                      color: Color.fromARGB(255, 206, 206, 207),
+                      color: AppTheme.color1,
                       fontSize: 14
                     )
                   ),
                   Text(
                     correctAnswer!,
                     style: const TextStyle(
-                      color: Color.fromARGB(255, 206, 206, 207),
+                      color: AppTheme.color1,
                       fontSize: 16,
                       fontWeight: FontWeight.bold
                     ),

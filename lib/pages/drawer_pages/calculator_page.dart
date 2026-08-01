@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:space_anywhere/services/calculator_service.dart';
+import 'package:space_anywhere/themes/app_theme.dart';
 import 'package:space_anywhere/widgets/button.dart';
 import 'package:space_anywhere/widgets/calculus_result.dart';
 import 'package:space_anywhere/widgets/expansible/expansible_widget.dart';
@@ -33,7 +34,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
           const Text(
             "Calcule seu peso em outros planetas",
             style: TextStyle(
-              color: Color.fromARGB(255, 206, 206, 207),
+              color: AppTheme.color1,
               fontWeight: FontWeight.bold,
               fontSize: 16
             )

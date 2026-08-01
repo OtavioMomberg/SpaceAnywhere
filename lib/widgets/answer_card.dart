@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
+
+import 'package:space_anywhere/themes/app_theme.dart';
 //import 'package:space_anywhere/services/audio_services.dart';
 
 class AnswerCard extends StatelessWidget {
@@ -19,24 +21,24 @@ class AnswerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      borderRadius: BorderRadius.circular(12),
-      color: Colors.white.withValues(alpha: 0.01),
+      borderRadius: AppTheme.borderRadius,
+      color: AppTheme.color1.withValues(alpha: 0.01),
       child: InkWell(
         onTap: () {
           //AudioServices.play(path: "audios/button_click2.mp3", volume: 1);
           onTap(index: index);
         },
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppTheme.borderRadius,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppTheme.borderRadius,
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
-                color: Colors.white.withValues(alpha: 0.15)
+                borderRadius: AppTheme.borderRadius,
+                border: Border.all(color: AppTheme.color1.withValues(alpha: 0.5)),
+                color: AppTheme.color1.withValues(alpha: 0.15)
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
@@ -45,7 +47,7 @@ class AnswerCard extends StatelessWidget {
                   textAlign: TextAlign.start, 
                   softWrap: true,
                   style: TextStyle(
-                    color: Colors.white
+                    color: AppTheme.color1
                   )
                 )
               )

@@ -25,12 +25,18 @@ class CalculatorService {
   void initializeResult() => _result = 0.0;
 
   void calculate({required String weight}) {
+    if (weight.contains(".") || weight.contains(",")) {
+      weight = weight.replaceAll(".", "").replaceAll(",", "");
+    } else {
+      weight = (int.parse(weight) * 100).toString();
+    }      
+
     final checkWeight = double.tryParse(weight);
 
     if (checkWeight == null) { 
       _result = null;
       return;
     }
-    _result = checkWeight * planetsGravity[_index].gravityOverEarth!;
+    _result = (checkWeight * planetsGravity[_index].gravityOverEarth!) / 100;
   }
 }

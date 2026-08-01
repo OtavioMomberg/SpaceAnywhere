@@ -28,16 +28,11 @@ class _ExpandedImagePageState extends State<ExpandedImagePage>
     return Scaffold(
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
-        backgroundColor: const Color.fromARGB(255, 38, 46, 139),
-        foregroundColor: const Color.fromARGB(255, 206, 206, 207),
+        backgroundColor: AppTheme.color2,
+        foregroundColor: AppTheme.color1,
       ),
       body: Container(
-        padding: const EdgeInsets.only(
-          top: 10,
-          left: 10,
-          right: 10,
-          bottom: 20,
-        ),
+        padding: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 20),
         decoration: BoxDecoration(gradient: AppTheme.mainGradient),
         child: Column(
           mainAxisAlignment: .start,
@@ -72,7 +67,7 @@ class _ExpandedImagePageState extends State<ExpandedImagePage>
     showStylizedSnackBar(
       context: context,
       msm: response ? "Imagem salva na galeria!" : "Erro ao salvar imagem.",
-      txtColor: response ? Colors.lightBlueAccent : Colors.red,
+      txtColor: response ? AppTheme.color8 : AppTheme.color7,
     );
   }
 
@@ -95,18 +90,14 @@ class _ExpandedImagePageState extends State<ExpandedImagePage>
           content: SizedBox(
             height: 100,
             width: double.infinity,
-            child: Column(
-              mainAxisAlignment: .center,
-              mainAxisSize: .min,
-              children: <Widget>[
-                CircularProgressIndicator.adaptive(
-                  backgroundColor: Color.fromARGB(255, 38, 46, 139),
-                ),
-              ],
-            ),
-          ),
+            child: Center(
+              child: CircularProgressIndicator.adaptive(
+                backgroundColor: AppTheme.color2
+              )
+            )
+          )
         );
-      },
+      }
     );
   }
 }

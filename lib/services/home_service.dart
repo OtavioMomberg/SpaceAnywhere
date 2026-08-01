@@ -12,8 +12,8 @@ class HomeService {
     CuriosityImplementationHttp(client: Client()),
   );
   late InternetService _internet;
-  List<dynamic> _selectCuriosity = [];
-  List<dynamic> _selectFonts = [];
+  List<CuriosityDbModel> _selectCuriosity = [];
+  List<FontModel> _selectFonts = [];
   String _text = "";
   String _extraText = "";
   String _title = "";
@@ -40,17 +40,16 @@ class HomeService {
   }
 
   Future<void> initializeInternetInstance() async {
-    if (_function == null) { throw Exception("É necessário receber a função service."); }
+    if (_function == null) {
+      throw Exception("É necessário receber a função service.");
+    }
 
     _internet = InternetService.withoutParam(func: _function!);
   }
 
   Future<bool> checkDatabaseIsNull() async {
-    _selectCuriosity = await _dbInstance.select(getCuriosity: true);
-    _selectCuriosity.map((item) => item as CuriosityDbModel);
-
-    _selectFonts = await _dbInstance.select(getCuriosity: false);
-    _selectFonts.map((item) => item as FontModel);
+    _selectCuriosity = await _dbInstance.selectCuriosity();
+    _selectFonts = await _dbInstance.selectFonts();
 
     return _selectCuriosity.isEmpty;
   }
@@ -62,14 +61,21 @@ class HomeService {
       .replaceAll('\\"', '"');
   }
 
-  Future<void> getCuriosity({required int curiosityId, required DatabaseActions action}) async {
+  Future<void> getCuriosity({
+    required int curiosityId,
+    required DatabaseActions action,
+  }) async {
     await _internet.hasInternet();
 
-    if (!_internet.checkInternet) { return; }
+    if (!_internet.checkInternet) {
+      return;
+    }
 
     await _internet.isApiAwake();
 
-    if (!_internet.checkAPI) { return; }
+    if (!_internet.checkAPI) {
+      return;
+    }
 
     await _curiosityController.onGetCuriosity(id: curiosityId);
 
@@ -118,7 +124,6 @@ class HomeService {
 
   Future<void> addToDatabase() async {
     final curiosityModel = CuriosityDbModel(
-      id: 0,
       curiosityId: _curiosityController.getCuriosityModel!.id,
       shortAnswer: cleanText(
         text: _curiosityController.getCuriosityModel!.shortAnswer,
@@ -130,39 +135,24 @@ class HomeService {
       time: DateTime.now().toIso8601String(),
     );
 
-    await _dbInstance.add(
-      curiosityModel: curiosityModel,
-      fontModel: null,
-      getCuriosity: true,
-    );
+    await _dbInstance.addCuriosity(curiosityModel: curiosityModel);
 
     await addFonts();
   }
 
   Future<void> addFonts() async {
-    final List<FontModel> fontModel = List.generate(
-      _curiosityController.getCuriosityModel!.contentFont.length,
-      (index) => FontModel(
-        font: _curiosityController.getCuriosityModel!.contentFont[index],
-      ),
-    );
+    int len = _curiosityController.getCuriosityModel!.contentFont.length;
+    List<String> fonts = _curiosityController.getCuriosityModel!.contentFont;
 
-    for (
-      int i = 0;
-      i < _curiosityController.getCuriosityModel!.contentFont.length;
-      i++
-    ) {
-      await _dbInstance.add(
-        curiosityModel: null,
-        fontModel: fontModel[i],
-        getCuriosity: false,
-      );
+    final List<FontModel> fontModel = List.generate(len, (index) => FontModel(font: fonts[index]));
+
+    for (var font in fontModel) {
+      await _dbInstance.addFonts(fontModel: font);
     }
   }
 
   Future<void> updateInDatabase() async {
     final curiosityModel = CuriosityDbModel(
-      id: _selectCuriosity[0].id,
       curiosityId: _curiosityController.getCuriosityModel!.id,
       shortAnswer: cleanText(
         text: _curiosityController.getCuriosityModel!.shortAnswer,
@@ -174,9 +164,9 @@ class HomeService {
       time: DateTime.now().toIso8601String(),
     );
 
-    await _dbInstance.update(curiosityModel: curiosityModel);
+    await _dbInstance.updateCuriosity(curiosityModel: curiosityModel);
 
-    await _dbInstance.delete();
+    await _dbInstance.deleteFonts();
 
     await addFonts();
   }

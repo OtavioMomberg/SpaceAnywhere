@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:space_anywhere/services/calculator_service.dart';
+import 'package:space_anywhere/themes/app_theme.dart';
 
 class CalculusResult extends StatelessWidget {
   final _calculatorService = CalculatorService.instance();
+
   CalculusResult({super.key});
 
   @override
@@ -13,7 +15,7 @@ class CalculusResult extends StatelessWidget {
         Text(
           "Resultado:",
           style: TextStyle(
-            color: Color.fromARGB(255, 206, 206, 207),
+            color: AppTheme.color1,
             fontWeight: FontWeight.bold,
             fontSize: 16,
           ),
@@ -22,11 +24,11 @@ class CalculusResult extends StatelessWidget {
           height: 200,
           width: double.infinity,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: AppTheme.borderRadius,
             border: Border.all(
-              color: Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.5),
+              color: AppTheme.color1.withValues(alpha: 0.5),
             ),
-            color: Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.15),
+            color: AppTheme.color1.withValues(alpha: 0.15),
           ),
           child: Center(
             child: Text(
@@ -34,7 +36,7 @@ class CalculusResult extends StatelessWidget {
                   ? "Erro ao realizar cálculo."
                   : "O seu peso em ${_calculatorService.defaultText}\né: ${_calculatorService.result!.toStringAsFixed(2)} kg",
               style: TextStyle(
-                color: Color.fromARGB(255, 206, 206, 207),
+                color: AppTheme.color1,
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),

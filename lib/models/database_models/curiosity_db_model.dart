@@ -1,5 +1,4 @@
 class CuriosityDbModel {
-  int id;
   int curiosityId;
   String title;
   String shortAnswer;
@@ -7,7 +6,6 @@ class CuriosityDbModel {
   String time;
 
   CuriosityDbModel({
-    required this.id,
     required this.curiosityId,
     required this.shortAnswer,
     required this.longAnswer,
@@ -17,7 +15,6 @@ class CuriosityDbModel {
 
   Map<String, dynamic> toMap() {
     return {
-      "id": id,
       "curiosity_id": curiosityId,
       "title": title,
       "short_answer": shortAnswer,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:space_anywhere/themes/app_theme.dart';
 import 'package:space_anywhere/utils/cache_manager_service.dart';
 
 class ImageWidget extends StatelessWidget {
@@ -15,7 +16,7 @@ class ImageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: AppTheme.borderRadius,
       child: option == "asset" 
         ? Image.asset(
             imagePath,
@@ -31,17 +32,17 @@ class ImageWidget extends StatelessWidget {
             cacheManager: CacheManagerService.instance,
             placeholder: (context, url) {
               return Container(
-                color: Colors.white.withValues(alpha: 0.05),
+                color: AppTheme.color1.withValues(alpha: 0.05),
                 child: Center(
                   child: CircularProgressIndicator.adaptive(
-                    backgroundColor: Colors.white.withValues(alpha: 0.5),
+                    backgroundColor: AppTheme.color1.withValues(alpha: 0.5),
                   )
                 )
               );
             },
             errorWidget: (context, url, error) {
               return Container(
-                color: Colors.white.withValues(alpha: 0.05),
+                color: AppTheme.color1.withValues(alpha: 0.05),
                 child: const Icon(Icons.broken_image, color: Colors.white38)
               );
             }

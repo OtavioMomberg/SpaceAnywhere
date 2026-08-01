@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:space_anywhere/services/calculator_service.dart';
+import 'package:space_anywhere/themes/app_theme.dart';
 
 class ExpansibleHeader extends StatelessWidget {
   final ExpansibleController controller;
@@ -11,10 +12,10 @@ class ExpansibleHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppTheme.borderRadius,
         border: Border.all(
           width: 1.5,
-          color: Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.5)
+          color: AppTheme.color1.withValues(alpha: 0.5)
         )
       ),
       child: Row(
@@ -25,7 +26,7 @@ class ExpansibleHeader extends StatelessWidget {
             child: Text(
               _calculatorService.defaultText,
               style: TextStyle(
-                color: const Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.8)
+                color: AppTheme.color1.withValues(alpha: 0.8)
               )
             )
           ),
@@ -37,7 +38,7 @@ class ExpansibleHeader extends StatelessWidget {
             },
             icon: Icon(
               controller.isExpanded ? Icons.arrow_upward : Icons.arrow_downward,
-              color: Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.8)
+              color: AppTheme.color1.withValues(alpha: 0.8)
             )
           )
         ]

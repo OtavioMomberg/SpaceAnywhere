@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:space_anywhere/models/local_data_models/comparison_dataset.dart';
 import 'package:space_anywhere/models/local_data_models/info_object.dart';
+import 'package:space_anywhere/themes/app_theme.dart';
 import 'package:space_anywhere/widgets/comparison_widget.dart';
 
 class ComparisonPage extends StatefulWidget {
@@ -38,7 +39,7 @@ class _ComparisonPageState extends State<ComparisonPage> {
               return Container(
                 margin: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: AppTheme.borderRadius,
                   border: Border.all(
                     color: Colors.white.withValues(alpha: 0.5),
                   ),
@@ -51,7 +52,7 @@ class _ComparisonPageState extends State<ComparisonPage> {
                       onPressed: () => moveScroll(value: -size.width),
                       icon: Icon(
                         Icons.arrow_back,
-                        color: Color.fromARGB(255, 206, 206, 207),
+                        color: AppTheme.color1,
                       ),
                     ),
                     Expanded(
@@ -61,16 +62,16 @@ class _ComparisonPageState extends State<ComparisonPage> {
                       onPressed: () => moveScroll(value: size.width),
                       icon: Icon(
                         Icons.arrow_forward,
-                        color: Color.fromARGB(255, 206, 206, 207),
-                      ),
-                    ),
-                  ],
-                ),
+                        color: AppTheme.color1
+                      )
+                    )
+                  ]
+                )
               );
-            },
-          ),
-        ),
-      ],
+            }
+          )
+        )
+      ]
     );
   }
 

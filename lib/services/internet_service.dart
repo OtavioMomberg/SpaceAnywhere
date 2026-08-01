@@ -10,13 +10,9 @@ class InternetService {
   Future<void> Function({int? questionId})? _functionWithParam;
   Future<void> Function()? _function;
 
-  InternetService.withParam({
-    required Future<void> Function({int? questionId}) func
-  }) : _functionWithParam = func;
+  InternetService.withParam({required Future<void> Function({int? questionId}) func}) : _functionWithParam = func;
 
-  InternetService.withoutParam({
-    required Future<void> Function() func
-  }) : _function = func;
+  InternetService.withoutParam({required Future<void> Function() func}) : _function = func;
 
   bool get checkInternet => _checkInternet;
   bool get checkAPI => _checkAPI;
@@ -28,9 +24,7 @@ class InternetService {
   Future<void> hasInternet() async {
     try {
       final url = "https://www.google.com";
-      final response = await http
-          .get(Uri.parse(url))
-          .timeout(Duration(seconds: 5));
+      final response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 5));
       _checkInternet = response.statusCode == 200;
     } catch (e) {
       _checkInternet = false;
@@ -40,9 +34,7 @@ class InternetService {
   Future<void> isApiAwake() async {
     try {
       final url = "$URL/health/";
-      final response = await http
-          .get(Uri.parse(url))
-          .timeout(Duration(seconds: 60));
+      final response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 60));
       _checkAPI = response.statusCode == 200;
     } catch (error) {
       _checkAPI = false;

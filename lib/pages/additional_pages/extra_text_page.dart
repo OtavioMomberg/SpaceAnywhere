@@ -16,8 +16,8 @@ class ExtraTextPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
-        backgroundColor: const Color.fromARGB(255, 38, 46, 139),
-        foregroundColor: const Color.fromARGB(255, 206, 206, 207)
+        backgroundColor: AppTheme.color2,
+        foregroundColor: AppTheme.color1
       ),
       body: Container(
         padding: const EdgeInsets.all(10),
@@ -29,7 +29,7 @@ class ExtraTextPage extends StatelessWidget {
             Text(
               title, 
               style: const TextStyle(
-                color: Color.fromARGB(255, 206, 206, 207), 
+                color: AppTheme.color2, 
                 fontWeight: FontWeight.bold,
                 fontSize: 16
               ), 
@@ -48,7 +48,7 @@ class ExtraTextPage extends StatelessWidget {
                         Text(
                           text, 
                           style: const TextStyle(
-                            color: Color.fromARGB(255, 206, 206, 207),
+                            color: AppTheme.color1,
                             height: 1.7
                           ), 
                           textAlign: TextAlign.justify

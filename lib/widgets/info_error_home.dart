@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:space_anywhere/themes/app_theme.dart';
 import 'package:space_anywhere/widgets/stylized_container.dart';
 
 class InfoErrorHome extends StatelessWidget {
@@ -23,7 +24,7 @@ class InfoErrorHome extends StatelessWidget {
           Text(
             message,
             style: const TextStyle(
-             color: Color.fromARGB(255, 206, 206, 207),
+             color: AppTheme.color1,
               fontWeight: FontWeight.bold,
               fontSize: 16,
             ),
@@ -32,7 +33,7 @@ class InfoErrorHome extends StatelessWidget {
           ),
           Icon(
             icon,
-            color: Color.fromARGB(255, 206, 206, 207),
+            color: AppTheme.color1,
             size: 40
           )
         ]

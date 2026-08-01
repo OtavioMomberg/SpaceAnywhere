@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:space_anywhere/themes/app_theme.dart';
 
 class Button extends StatelessWidget {
   final String label;
@@ -18,10 +19,10 @@ class Button extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      borderRadius: BorderRadius.circular(12),
-      color: Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.15),
+      borderRadius: AppTheme.borderRadius,
+      color: AppTheme.color1.withValues(alpha: 0.15),
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppTheme.borderRadius,
         onTap: () async {
           if (awaitFunction != null) {
             await awaitFunction!();
@@ -35,16 +36,16 @@ class Button extends StatelessWidget {
         },
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: AppTheme.borderRadius,
             border: Border.all(
-              color: Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.5)
+              color: AppTheme.color1.withValues(alpha: 0.5)
             )
           ),
           height: 50,
           child: Center(
             child: Text(
               label,
-              style: TextStyle(color: Colors.white.withValues(alpha: 0.8)),
+              style: TextStyle(color: AppTheme.color1.withValues(alpha: 0.8)),
             )
           )
         )

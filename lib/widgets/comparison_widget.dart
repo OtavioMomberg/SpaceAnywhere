@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:space_anywhere/themes/app_theme.dart';
 import 'package:space_anywhere/widgets/image_widget.dart';
 import 'package:space_anywhere/models/local_data_models/info_object.dart';
 
@@ -28,36 +29,38 @@ class ComparisonWidget extends StatelessWidget {
                 SizedBox(
                   height: size.height * 0.3,
                   width: double.infinity,
-                  child: Center(child: ImageWidget(imagePath: objectData.imagePath, option: "asset"))
+                  child: Center(
+                    child: ImageWidget(imagePath: objectData.imagePath, option: "asset")
+                  )
                 ),
                 Text(
                   "*Imagem gerada por Inteligência Artificial",
-                  style: TextStyle(color: Color.fromARGB(255, 206, 206, 207)),
+                  style: TextStyle(color: AppTheme.color1),
                 )
               ]
             ),
 
             const SizedBox(height: 10),
             Divider(),
-            Center(child: Text(objectData.name, style: TextStyle(color: Color.fromARGB(255, 206, 206, 207)))),
+            Center(child: Text(objectData.name, style: TextStyle(color: AppTheme.color1))),
             Divider(),
             const SizedBox(height: 10),
 
             Text(
               "Diâmetro: ${objectData.diameter}", 
-              style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207))
+              style: const TextStyle(color: AppTheme.color1)
             ),
             Text(
               "Massa: ${objectData.mass}", 
-              style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207))
+              style: const TextStyle(color: AppTheme.color1)
             ),
             Text(
               "Distância para Terra: ${objectData.earthDistance}", 
-              style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207))
+              style: const TextStyle(color: AppTheme.color1)
             ),
             Text(
               "Tipo de objeto: ${objectData.objectType}", 
-              style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207))
+              style: const TextStyle(color: AppTheme.color1)
             )
           ]
         )

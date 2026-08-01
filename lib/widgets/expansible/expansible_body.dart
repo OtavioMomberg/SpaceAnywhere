@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:space_anywhere/services/calculator_service.dart';
+import 'package:space_anywhere/themes/app_theme.dart';
 
 class ExpansibleBody extends StatelessWidget {
   final ExpansibleController controller;
@@ -18,10 +19,10 @@ class ExpansibleBody extends StatelessWidget {
       margin: const EdgeInsets.only(top: 10),
       height: 250,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppTheme.borderRadius,
         border: Border.all(
           width: 1.5,
-          color: Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.5)
+          color: AppTheme.color1.withValues(alpha: 0.5)
         )
       ),
       child: ListView.builder(
@@ -38,7 +39,7 @@ class ExpansibleBody extends StatelessWidget {
               child: Center(
                 child: Text(
                   _calculatorService.planetsGravity[index].name,
-                  style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207))
+                  style: const TextStyle(color: AppTheme.color1)
                 )
               )
             )

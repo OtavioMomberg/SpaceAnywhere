@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:space_anywhere/pages/additional_pages/result_page.dart';
 import 'dart:ui';
 import 'package:space_anywhere/services/quiz_service.dart';
+import 'package:space_anywhere/themes/app_theme.dart';
 import 'package:space_anywhere/utils/stylized_snack_bar.dart';
 import 'package:space_anywhere/widgets/answer_card.dart';
 import 'package:space_anywhere/widgets/button.dart';
@@ -54,25 +55,25 @@ class _QuizPageState extends State<QuizPage> with StylizedSnackBar {
           Text(
             "Quiz",
             style: TextStyle(
-              color: Color.fromARGB(255, 206, 206, 207),
+              color: AppTheme.color1,
               fontWeight: FontWeight.bold,
               fontSize: 30
             )
           ),
           const SizedBox(height: 20),
           ClipRRect(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: AppTheme.borderRadius,
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
               child: Container(
                 height: 350,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: AppTheme.borderRadius,
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.5)
+                    color: AppTheme.color1.withValues(alpha: 0.5)
                   ),
-                  color: Colors.white.withValues(alpha: 0.1)
+                  color: AppTheme.color1.withValues(alpha: 0.1)
                 ),
                 child: Column(
                   mainAxisAlignment: .center,
@@ -81,13 +82,13 @@ class _QuizPageState extends State<QuizPage> with StylizedSnackBar {
                     const Text(
                       "Quiz de Astronômia",
                       style: TextStyle(
-                        color: Color.fromARGB(255, 206, 206, 207),
+                        color: AppTheme.color1,
                         fontSize: 18
                       )
                     ),
                     Icon(
                       Icons.rocket_launch,
-                      color: Color.fromARGB(255, 206, 206, 207),
+                      color: AppTheme.color1,
                       size: 30
                     )
                   ]
@@ -113,7 +114,7 @@ class _QuizPageState extends State<QuizPage> with StylizedSnackBar {
               padding: const EdgeInsets.only(top: 8),
               child: QuestionCard(
                 question: _quizService.questionController.getQuestionModel!.question,
-                color: Color.fromARGB(255, 206, 206, 207)
+                color: AppTheme.color1
               )
             )
           ),
@@ -128,7 +129,7 @@ class _QuizPageState extends State<QuizPage> with StylizedSnackBar {
                     return AnswerCard(
                       index: index,
                       option: _quizService.questionController.getQuestionModel!.alternatives[index],
-                      color: Color.fromARGB(255, 206, 206, 207),
+                      color: AppTheme.color1,
                       onTap: ({required int index}) async => await _quizService.onTapAnswer(index: index)
                     );
                   })
@@ -139,7 +140,7 @@ class _QuizPageState extends State<QuizPage> with StylizedSnackBar {
         ] else ...[
           Text(
             _quizService.error,
-            style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207)),
+            style: const TextStyle(color: AppTheme.color1),
             textAlign: TextAlign.center
           )
         ]
@@ -164,7 +165,7 @@ class _QuizPageState extends State<QuizPage> with StylizedSnackBar {
       await showStylizedSnackBar(
         context: context,
         msm: retrySucced ? "Conexão Reestabelecida!" : "Próxima pergunta!",
-        txtColor: retrySucced ? Colors.lightBlueAccent : Colors.white
+        txtColor: retrySucced ? AppTheme.color8 : AppTheme.color6
       );
     }
 
@@ -220,7 +221,7 @@ class _QuizPageState extends State<QuizPage> with StylizedSnackBar {
     await showStylizedSnackBar(
       context: context,
       msm: "Não foi possível se conectar ao servidor.",
-      txtColor: Colors.red
+      txtColor: AppTheme.color7
     );
   }
 }

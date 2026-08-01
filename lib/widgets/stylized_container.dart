@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 
+import 'package:space_anywhere/themes/app_theme.dart';
+
 class StylizedContainer extends StatelessWidget {
   final BorderRadius? borderRadius;
   final Color? borderColor;
@@ -24,7 +26,7 @@ class StylizedContainer extends StatelessWidget {
       width: double.infinity,
       child: Center(
         child: ClipRRect(
-          borderRadius: borderRadius == null ? BorderRadius.circular(12) : borderRadius!,
+          borderRadius: borderRadius == null ? AppTheme.borderRadius : borderRadius!,
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
             child: Container(
@@ -32,14 +34,14 @@ class StylizedContainer extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                borderRadius: borderRadius == null ? BorderRadius.circular(12) : borderRadius!,
+                borderRadius: borderRadius == null ? AppTheme.borderRadius : borderRadius!,
                 border: Border.all(
                   color: borderColor == null
-                    ? Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.5)
+                    ? AppTheme.color1.withValues(alpha: 0.5)
                     : borderColor!.withValues(alpha: 0.5),
                 ),
                 color: borderColor == null
-                  ? Color.fromARGB(255, 206, 206, 207).withValues(alpha: 0.15)
+                  ? AppTheme.color1.withValues(alpha: 0.15)
                   : borderColor!.withValues(alpha: 0.15),
               ),
               child: height != null ? Center(child: child) : child

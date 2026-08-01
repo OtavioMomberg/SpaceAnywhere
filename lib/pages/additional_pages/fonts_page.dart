@@ -13,8 +13,8 @@ class FontsPage extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         surfaceTintColor: Colors.transparent,
-        backgroundColor: const Color.fromARGB(255, 38, 46, 139),
-        foregroundColor: const Color.fromARGB(255, 206, 206, 207),
+        backgroundColor: AppTheme.color2,
+        foregroundColor: AppTheme.color1,
       ),
       body: Container(
         padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
@@ -24,7 +24,7 @@ class FontsPage extends StatelessWidget {
           children: <Widget>[
             const Text(
               "Fontes Consultadas",
-              style: TextStyle(color: Colors.white, fontSize: 20),
+              style: TextStyle(color: AppTheme.color1, fontSize: 20),
             ),
             Expanded(
               child: ListView.builder(
@@ -33,19 +33,19 @@ class FontsPage extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
                     child: Material(
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.white.withValues(alpha: 0.1),
+                      borderRadius: AppTheme.borderRadius,
+                      color: AppTheme.color1.withValues(alpha: 0.1),
                       child: InkWell(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: AppTheme.borderRadius,
                         onTap: () => OpenLinksService.openLink(url: fonts[index]),
                         child: Padding(
                           padding: const EdgeInsets.all(10),
                           child: Text(
                             fonts[index],
                             style: TextStyle(
-                              color: Colors.white,
+                              color: AppTheme.color1,
                               decoration: TextDecoration.underline,
-                              decorationColor: Colors.white
+                              decorationColor: AppTheme.color1
                             )
                           )
                         )

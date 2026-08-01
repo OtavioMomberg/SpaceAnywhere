@@ -10,7 +10,7 @@ class DrawerPage extends StatefulWidget {
 }
 
 class _DrawerPageState extends State<DrawerPage> {
-  final List<IconData> drawerIcons = const [
+  final List<IconData> _drawerIcons = const [
     Icons.home,
     Icons.quiz,
     Icons.analytics,
@@ -26,11 +26,11 @@ class _DrawerPageState extends State<DrawerPage> {
     return Scaffold(
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
-        backgroundColor: const Color.fromARGB(255, 38, 46, 139),
-        foregroundColor: const Color.fromARGB(255, 206, 206, 207)
+        backgroundColor: AppTheme.color2,
+        foregroundColor: AppTheme.color1
       ),
       drawer: Drawer(
-        backgroundColor: const Color.fromARGB(255, 38, 46, 139),
+        backgroundColor: AppTheme.color2,
         child: ListView(
           padding: EdgeInsets.only(left: 10, right: 10),
           children: <Widget>[
@@ -44,7 +44,7 @@ class _DrawerPageState extends State<DrawerPage> {
                     Text(
                       "Menu", 
                       style: TextStyle(
-                        color: Color.fromARGB(255, 206, 206, 207), 
+                        color: AppTheme.color1, 
                         fontSize: 18
                       )
                     )
@@ -58,22 +58,22 @@ class _DrawerPageState extends State<DrawerPage> {
                 padding: const EdgeInsets.only(bottom: 10),
                 child: ListTile(
                   selected: selectedPage == index,
-                  selectedTileColor: Colors.white.withValues(alpha: 0.15),
+                  selectedTileColor: AppTheme.color1.withValues(alpha: 0.15),
                   leading: Icon(
-                    drawerIcons[index],
+                    _drawerIcons[index],
                     color: selectedPage == index 
-                      ? const Color.fromARGB(255, 250, 221, 134).withValues(alpha: 0.8) 
-                      : const Color.fromARGB(255, 206, 206, 207)
+                      ? AppTheme.color5.withValues(alpha: 0.8) 
+                      : AppTheme.color1
                   ),
                   title: Text(
                     AppRoutes.pageNames[index], 
                     style: TextStyle(
                       color: selectedPage == index 
-                        ? const Color.fromARGB(255, 250, 221, 134).withValues(alpha: 0.8)  
-                        : const Color.fromARGB(255, 206, 206, 207)
+                        ? AppTheme.color5.withValues(alpha: 0.8)  
+                        : AppTheme.color1
                     )
                   ),
-                  shape: StadiumBorder(),
+                  shape: RoundedRectangleBorder(borderRadius: AppTheme.borderRadius),
                   onTap: () {
                     setState(() => selectedPage = index);
                     Navigator.pop(context);
@@ -96,7 +96,7 @@ class _DrawerPageState extends State<DrawerPage> {
           child: AppRoutes.pages[selectedPage]
         )
       ),
-      backgroundColor: const Color.fromARGB(255, 15, 6, 65),
+      backgroundColor: AppTheme.color4,
       resizeToAvoidBottomInset: false
     );
   }

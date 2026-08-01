@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:space_anywhere/pages/drawer_page.dart';
+import 'package:space_anywhere/themes/app_theme.dart';
 //import 'package:space_anywhere/services/audio_services.dart';
 
 void main() async {
@@ -31,7 +32,10 @@ class MyApp extends StatelessWidget {
       title: 'SpaceAnywhere',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: .fromSeed(seedColor: const Color.fromARGB(255, 7, 13, 72)),
+        textSelectionTheme: TextSelectionThemeData(
+          selectionHandleColor: AppTheme.color1,
+        ),
+        colorScheme: .fromSeed(seedColor: AppTheme.color3),
         fontFamily: 'Electrolize',
       ),
       home: const DrawerPage()

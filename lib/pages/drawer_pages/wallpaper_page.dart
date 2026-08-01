@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:space_anywhere/pages/additional_pages/expanded_image_page.dart';
 import 'package:space_anywhere/services/wallpaper_service.dart';
+import 'package:space_anywhere/themes/app_theme.dart';
 import 'package:space_anywhere/utils/image_cache_service.dart';
 import 'package:space_anywhere/widgets/check_connection.dart';
 import 'package:space_anywhere/widgets/image_widget.dart';
@@ -49,7 +50,7 @@ class _WallpaperPageState extends State<WallpaperPage> {
         const Text(
           "Catálogo de Wallpapers",
           style: TextStyle(
-            color: Color.fromARGB(255, 206, 206, 207), 
+            color: AppTheme.color1, 
             fontWeight: FontWeight.bold, 
             fontSize: 20
           )
@@ -90,7 +91,7 @@ class _WallpaperPageState extends State<WallpaperPage> {
         ] else...[
           Text(
             _wallpaperService.error,
-            style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207)),
+            style: const TextStyle(color: AppTheme.color1),
             textAlign: TextAlign.center
           )
         ]

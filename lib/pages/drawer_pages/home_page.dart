@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:space_anywhere/pages/additional_pages/extra_text_page.dart';
 import 'package:space_anywhere/pages/additional_pages/fonts_page.dart';
 import 'package:space_anywhere/services/home_service.dart';
+import 'package:space_anywhere/themes/app_theme.dart';
 import 'package:space_anywhere/widgets/button.dart';
 import 'package:space_anywhere/widgets/check_connection.dart';
 import 'package:space_anywhere/widgets/stylized_container.dart';
@@ -41,8 +42,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    //if (freeze) { return Container(color: Colors.transparent); }
-
     return Column(
       spacing: 20,
       mainAxisAlignment: .start,
@@ -50,7 +49,7 @@ class _HomePageState extends State<HomePage> {
         Text(
           "Curiosidade do Dia",
           style: const TextStyle(
-            color: Color.fromARGB(255, 206, 206, 207),
+            color: AppTheme.color1,
             fontWeight: FontWeight.bold,
             fontSize: 20
           ),
@@ -75,7 +74,7 @@ class _HomePageState extends State<HomePage> {
                       Text(
                         _homeService.title,
                         style: const TextStyle(
-                          color: Color.fromARGB(255, 206, 206, 207),
+                          color: AppTheme.color1,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
@@ -85,7 +84,7 @@ class _HomePageState extends State<HomePage> {
                       Text(
                         _homeService.text,
                         style: const TextStyle(
-                          color: Color.fromARGB(255, 206, 206, 207),
+                          color: AppTheme.color1,
                           height: 1.7,
                         ),
                         textAlign: TextAlign.justify
@@ -99,7 +98,7 @@ class _HomePageState extends State<HomePage> {
         ] else...[
           Text(
             _homeService.error,
-            style: const TextStyle(color: Color.fromARGB(255, 206, 206, 207)),
+            style: const TextStyle(color: AppTheme.color1),
             textAlign: TextAlign.center
           )
         ],

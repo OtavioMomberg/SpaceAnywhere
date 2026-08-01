@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:space_anywhere/themes/app_theme.dart';
 import 'package:space_anywhere/widgets/info_error_home.dart';
 
 class CheckConnection extends StatelessWidget {
@@ -28,11 +29,11 @@ class CheckConnection extends StatelessWidget {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Color.fromARGB(255, 206, 206, 207)
+                color: AppTheme.color1
               )
             ),
             const CircularProgressIndicator.adaptive(
-              backgroundColor: Color.fromARGB(255, 206, 206, 207)
+              backgroundColor: AppTheme.color1
             )
           ]
         )
