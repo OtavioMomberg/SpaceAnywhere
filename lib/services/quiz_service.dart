@@ -1,19 +1,15 @@
-import 'package:http/http.dart';
 import 'package:space_anywhere/controllers/question_controller.dart';
+import 'package:space_anywhere/di/app_dependencies.dart';
 import 'package:space_anywhere/services/internet_service.dart';
-import 'package:space_anywhere/repositories/implementations/question_inplementation_http.dart';
 
 class QuizService {
-  static final QuestionController _questionController = QuestionController(
-    QuestionInplementationHttp(client: Client()),
-  );
-  late InternetService _internet;
   final int _id = 0;
-  bool _quizStarted = false;
+  final QuestionController _questionController = AppDependencies.questionController;
+  late InternetService _internet;
   String _error = "";
+  bool _quizStarted = false;
   Future<void> Function({int? questionId})? _callQuizService;
-  void Function({required bool isCorrect, String? correctAnswer})?
-  _showResponse;
+  void Function({required bool isCorrect, String? correctAnswer})? _showResponse;
   Future<void> Function()? _closeAnswerPage;
 
   static final _instance = QuizService._();

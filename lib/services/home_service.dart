@@ -1,24 +1,21 @@
-import 'package:http/http.dart';
 import 'package:space_anywhere/controllers/curiosity_controller.dart';
 import 'package:space_anywhere/database/db_service.dart';
+import 'package:space_anywhere/di/app_dependencies.dart';
 import 'package:space_anywhere/services/internet_service.dart';
 import 'package:space_anywhere/models/database_models/curiosity_db_model.dart';
-import 'package:space_anywhere/repositories/implementations/curiosity_implementation_http.dart';
 
 class HomeService {
-  final _curiosityId = 1;
+  final int _curiosityId = 1;
   final _dbInstance = DatabaseService.instance();
-  final CuriosityController _curiosityController = CuriosityController(
-    CuriosityImplementationHttp(client: Client()),
-  );
+  final CuriosityController _curiosityController = AppDependencies.curiosityController;
   late InternetService _internet;
-  List<CuriosityDbModel> _selectCuriosity = [];
-  List<FontModel> _selectFonts = [];
   String _text = "";
   String _extraText = "";
   String _title = "";
   String _error = "";
   List<String> _fonts = [];
+  List<CuriosityDbModel> _selectCuriosity = [];
+  List<FontModel> _selectFonts = [];
   Future<void> Function()? _function;
 
   static final _instance = HomeService._();

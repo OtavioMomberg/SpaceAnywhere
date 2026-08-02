@@ -10,20 +10,15 @@ class CuriosityImplementationHttp implements CuriosityRepositoryHttp {
 
   @override
   Future<CuriosityModel?> getCuriosity({required int id}) async {
-    try {
-      final url = "$URL/api/v1/curiosity/$id";
-      final response = await _client.get(
-        Uri.parse(url),
-        headers: {"Content-Type": "application/json"},
-      );
+    final url = "$URL/api/v1/curiosity/$id";
+    final response = await _client.get(
+      Uri.parse(url),
+      headers: {"Content-Type": "application/json"},
+    );
 
-      if (response.statusCode == 200) {
-        return CuriosityModel.fromJson(source: response.body);
-      } else {
-        throw Exception(response.body);
-      }
-    } catch(error) {
-      throw Exception(error.toString());
-    }
+    if (response.statusCode == 200) {
+      return CuriosityModel.fromJson(source: response.body);
+    } 
+    throw Exception(response.body);
   }
 }

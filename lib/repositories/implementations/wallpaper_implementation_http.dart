@@ -6,29 +6,24 @@ import 'package:space_anywhere/repositories/wallpaper_repository_http.dart';
 class WallpaperImplementationHttp implements WallpaperRepositoryHttp {
   final Client _client;
 
-  WallpaperImplementationHttp(Client client) : _client = client;
+  WallpaperImplementationHttp({required Client client}) : _client = client;
 
   @override
   Future<List<WallpaperModel?>> getWallpaper({int? offset}) async {
-    try {
-      final domain = URL.replaceFirst("https://", "");
-      final path = "/api/v1/wallpapers/";
-      final queryParam = {"offset": offset.toString()};
+    final domain = URL.replaceFirst("https://", "");
+    final path = "/api/v1/wallpapers/";
+    final queryParam = {"offset": offset.toString()};
 
-      final url = Uri.https(domain, path, queryParam);
+    final url = Uri.https(domain, path, queryParam);
 
-      final response = await _client.get(
-        url,
-        headers: {"Content-Type": "application/json"},
-      );
+    final response = await _client.get(
+      url,
+      headers: {"Content-Type": "application/json"},
+    );
 
-      if (response.statusCode == 200) {
-        return WallpaperModel.listFromJson(source: response.body);
-      } else {
-        throw Exception(response.body);
-      }
-    } catch(error) {
-      throw Exception(error.toString());
-    }
+    if (response.statusCode == 200) {
+      return WallpaperModel.listFromJson(source: response.body);
+    } 
+    throw Exception(response.body);
   }
 }

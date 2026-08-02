@@ -1,16 +1,12 @@
-import 'package:http/http.dart';
 import 'package:space_anywhere/controllers/wallpaper_controller.dart';
+import 'package:space_anywhere/di/app_dependencies.dart';
 import 'package:space_anywhere/services/internet_service.dart';
-import 'package:space_anywhere/repositories/implementations/wallpaper_implementation_http.dart';
 import 'package:space_anywhere/utils/image_cache_service.dart';
 
 class WallpaperService {
-  final WallpaperController _wallpaperController = WallpaperController(
-    WallpaperImplementationHttp(Client()),
-  );
+  final WallpaperController _wallpaperController = AppDependencies.wallpaperController;
   late InternetService _internet;
   int _offset = 0;
-  bool _checkFunction = false;
   String _error = "";
   Future<void> Function()? _function;
 
@@ -26,10 +22,7 @@ class WallpaperService {
   set generalError(String value) => _error = value;
 
   Future<void> getFunction({required Future<void> Function() func}) async {
-    if (_checkFunction) return;
-
     _function = func;
-    _checkFunction = true;
   }
 
   Future<void> initializeInternetInstance() async {
