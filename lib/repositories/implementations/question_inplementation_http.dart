@@ -1,7 +1,7 @@
 import 'package:http/http.dart';
 import 'package:space_anywhere/models/api_models/question_model.dart';
 import 'package:space_anywhere/repositories/question_repository_http.dart';
-import 'package:space_anywhere/routes/api_route.dart';
+import 'package:space_anywhere/core/constants/api_constants.dart';
 
 class QuestionInplementationHttp implements QuestionRepositoryHttp {
   final Client _client;

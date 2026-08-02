@@ -1,7 +1,7 @@
 import 'package:space_anywhere/controllers/wallpaper_controller.dart';
-import 'package:space_anywhere/di/app_dependencies.dart';
+import 'package:space_anywhere/core/di/app_dependencies.dart';
 import 'package:space_anywhere/services/internet_service.dart';
-import 'package:space_anywhere/utils/image_cache_service.dart';
+import 'package:space_anywhere/core/utils/image_cache_service.dart';
 
 class WallpaperService {
   final WallpaperController _wallpaperController = AppDependencies.wallpaperController;

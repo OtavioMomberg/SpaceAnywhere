@@ -1,12 +1,12 @@
 import 'package:space_anywhere/controllers/curiosity_controller.dart';
-import 'package:space_anywhere/database/db_service.dart';
-import 'package:space_anywhere/di/app_dependencies.dart';
+import 'package:space_anywhere/services/db_service.dart';
+import 'package:space_anywhere/core/di/app_dependencies.dart';
 import 'package:space_anywhere/services/internet_service.dart';
 import 'package:space_anywhere/models/database_models/curiosity_db_model.dart';
 
 class HomeService {
   final int _curiosityId = 1;
-  final _dbInstance = DatabaseService.instance();
+  final _db = DatabaseService.instance();
   final CuriosityController _curiosityController = AppDependencies.curiosityController;
   late InternetService _internet;
   String _text = "";
@@ -45,8 +45,8 @@ class HomeService {
   }
 
   Future<bool> checkDatabaseIsNull() async {
-    _selectCuriosity = await _dbInstance.selectCuriosity();
-    _selectFonts = await _dbInstance.selectFonts();
+    _selectCuriosity = await _db.selectCuriosity();
+    _selectFonts = await _db.selectFonts();
 
     return _selectCuriosity.isEmpty;
   }
@@ -132,7 +132,7 @@ class HomeService {
       time: DateTime.now().toIso8601String(),
     );
 
-    await _dbInstance.addCuriosity(curiosityModel: curiosityModel);
+    await _db.addCuriosity(curiosityModel: curiosityModel);
 
     await addFonts();
   }
@@ -144,7 +144,7 @@ class HomeService {
     final List<FontModel> fontModel = List.generate(len, (index) => FontModel(font: fonts[index]));
 
     for (var font in fontModel) {
-      await _dbInstance.addFonts(fontModel: font);
+      await _db.addFonts(fontModel: font);
     }
   }
 
@@ -161,9 +161,9 @@ class HomeService {
       time: DateTime.now().toIso8601String(),
     );
 
-    await _dbInstance.updateCuriosity(curiosityModel: curiosityModel);
+    await _db.updateCuriosity(curiosityModel: curiosityModel);
 
-    await _dbInstance.deleteFonts();
+    await _db.deleteFonts();
 
     await addFonts();
   }

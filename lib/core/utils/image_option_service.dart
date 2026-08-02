@@ -1,0 +1,1 @@
+enum ImageOption { network, asset }

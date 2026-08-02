@@ -1,5 +1,5 @@
 import "package:http/http.dart" as http;
-import "package:space_anywhere/routes/api_route.dart";
+import "package:space_anywhere/core/constants/api_constants.dart";
 
 class InternetService {
   final int _retryAttempts = 15;

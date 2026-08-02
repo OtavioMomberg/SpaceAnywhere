@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
-import 'package:space_anywhere/pages/drawer_page.dart';
-import 'package:space_anywhere/themes/app_theme.dart';
+import 'package:space_anywhere/presentation/pages/drawer_page.dart';
+import 'package:space_anywhere/presentation/themes/app_theme.dart';
 //import 'package:space_anywhere/services/audio_services.dart';
 
 void main() async {

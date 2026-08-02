@@ -1,0 +1,213 @@
+import 'package:flutter/material.dart';
+import 'package:space_anywhere/presentation/pages/additional_pages/result_page.dart';
+import 'package:space_anywhere/core/routes/app_routes.dart';
+import 'dart:ui';
+import 'package:space_anywhere/services/quiz_service.dart';
+import 'package:space_anywhere/presentation/themes/app_theme.dart';
+import 'package:space_anywhere/core/utils/stylized_snack_bar.dart';
+import 'package:space_anywhere/presentation/widgets/answer_card.dart';
+import 'package:space_anywhere/presentation/widgets/button.dart';
+import 'package:space_anywhere/presentation/widgets/check_connection.dart';
+import 'package:space_anywhere/presentation/widgets/question_card.dart';
+
+class QuizPage extends StatefulWidget {
+  const QuizPage({super.key});
+
+  @override
+  State<QuizPage> createState() => _QuizPageState();
+}
+
+class _QuizPageState extends State<QuizPage> with StylizedSnackBar {
+  final QuizService _quizService = QuizService.instance();
+  bool isLoading = true;
+  bool retrySucced = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _quizService.initializeQuiz();
+    _quizService.getFunctions(
+      callQuizService: callQuizService, 
+      showResponse: showResponse, 
+      closeAnswerPage: closeAnswerPage
+    );
+    _quizService.initializeInternetInstance();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      try {
+        _quizService.internet.retryConnectionSystemWithParam();
+      } on Exception catch (error) {
+        _quizService.generalError = error.toString();
+        _quizService.internet.updateInternetStatus(status: true);
+        _quizService.internet.updateAPIStatus(status: true);  
+        setState(() => isLoading = false);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    return Column(
+      mainAxisAlignment: .start,
+      children: <Widget>[
+        if (!_quizService.quizStarted) ...[
+          Text(
+            "Quiz",
+            style: TextStyle(
+              color: AppTheme.color1,
+              fontWeight: FontWeight.bold,
+              fontSize: 30
+            )
+          ),
+          const SizedBox(height: 20),
+          ClipRRect(
+            borderRadius: AppTheme.borderRadius,
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+              child: Container(
+                height: 350,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: AppTheme.borderRadius,
+                  border: Border.all(
+                    color: AppTheme.color1.withValues(alpha: 0.5)
+                  ),
+                  color: AppTheme.color1.withValues(alpha: 0.1)
+                ),
+                child: Column(
+                  mainAxisAlignment: .center,
+                  spacing: 20,
+                  children: <Widget>[
+                    const Text(
+                      "Quiz de Astronômia",
+                      style: TextStyle(
+                        color: AppTheme.color1,
+                        fontSize: 18
+                      )
+                    ),
+                    Icon(
+                      Icons.rocket_launch,
+                      color: AppTheme.color1,
+                      size: 30
+                    )
+                  ]
+                )
+              )
+            )
+          ),
+          const SizedBox(height: 40),
+          FractionallySizedBox(
+            widthFactor: 0.8,
+            child: Button(label: "Jogar", awaitFunction: startQuiz)
+          )
+        ] else if (isLoading || !_quizService.internet.checkInternet || !_quizService.internet.checkAPI) ...[
+          CheckConnection(
+            isLoading: isLoading,
+            checkInternet: _quizService.internet.checkInternet,
+            checkAPI: _quizService.internet.checkAPI,
+            height: size.height * 0.6
+          )
+        ] else if (_quizService.questionController.getErrorQuestion == null) ...[
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: QuestionCard(
+                question: _quizService.questionController.getQuestionModel!.question,
+                color: AppTheme.color1
+              )
+            )
+          ),
+          const SizedBox(height: 20),
+          Expanded(
+            flex: 2,
+            child: SingleChildScrollView(
+              child: Column(
+                spacing: 10,
+                children: <Widget>[
+                  ...List.generate(5, (index) {
+                    return AnswerCard(
+                      index: index,
+                      option: _quizService.questionController.getQuestionModel!.alternatives[index],
+                      color: AppTheme.color1,
+                      onTap: ({required int index}) async => await _quizService.onTapAnswer(index: index)
+                    );
+                  })
+                ]
+              )
+            )
+          )
+        ] else ...[
+          Text(
+            _quizService.error,
+            style: const TextStyle(color: AppTheme.color1),
+            textAlign: TextAlign.center
+          )
+        ]
+      ]
+    );
+  }
+
+  Future<void> callQuizService({int? questionId}) async {
+    await _quizService.getQuestion(questionId: questionId);
+
+    if (!mounted) { return; }
+    if (questionId != null) {
+      if (!_quizService.internet.checkInternet || !_quizService.internet.checkAPI) {
+        if (_quizService.internet.currentRetryAttempt == _quizService.internet.retryAttempts) { 
+          _quizService.internet.sendQuestionId = questionId;
+          _quizService.internet.retryConnectionSystemWithParam(); 
+          setState(() => retrySucced = true);
+        }
+        return; 
+      }
+
+      await showStylizedSnackBar(
+        context: context,
+        msm: retrySucced ? "Conexão Reestabelecida!" : "Próxima pergunta!",
+        txtColor: retrySucced ? AppTheme.color8 : AppTheme.color6
+      );
+    }
+
+    await Future.delayed(Duration(seconds: 1));
+
+    if (!mounted) { return; }
+    setState(() {
+      isLoading = false;
+      retrySucced = false;
+    });
+  }
+
+  Future<void> startQuiz() async {
+    if (_quizService.error.isNotEmpty) {
+      await showError();
+      return;
+    }
+    if (!mounted) { return; }
+    setState(() => _quizService.changeQuizState());
+  }
+
+  Future<void> closeAnswerPage() async {
+    await callQuizService(questionId: _quizService.questionController.getQuestionModel!.id);
+
+    if (!mounted) { return; }
+    Navigator.pop(context);
+  }
+
+  void showResponse({required bool isCorrect, String? correctAnswer}) {
+    if (!mounted) return;
+    Navigator.push(
+      context,
+      AppRoutes.getRoute(page: ResultPage(isCorrect: isCorrect, correctAnswer: correctAnswer))
+    );
+  }
+
+  Future<void> showError() async {
+    await showStylizedSnackBar(
+      context: context,
+      msm: "Não foi possível se conectar ao servidor.",
+      txtColor: AppTheme.color7
+    );
+  }
+}

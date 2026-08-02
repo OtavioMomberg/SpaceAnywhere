@@ -1,6 +1,6 @@
 import 'package:http/http.dart';
 import 'package:space_anywhere/models/api_models/wallpaper_model.dart';
-import 'package:space_anywhere/routes/api_route.dart';
+import 'package:space_anywhere/core/constants/api_constants.dart';
 import 'package:space_anywhere/repositories/wallpaper_repository_http.dart';
 
 class WallpaperImplementationHttp implements WallpaperRepositoryHttp {

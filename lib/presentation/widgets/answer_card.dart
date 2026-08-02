@@ -1,0 +1,60 @@
+import 'package:flutter/material.dart';
+import 'dart:ui';
+
+import 'package:space_anywhere/presentation/themes/app_theme.dart';
+//import 'package:space_anywhere/services/audio_services.dart';
+
+class AnswerCard extends StatelessWidget {
+  final int index;
+  final String option;
+  final Color color;
+  final Future<void> Function({required int index}) onTap;
+
+  const AnswerCard({
+    required this.index,
+    required this.option,
+    required this.color,
+    required this.onTap,
+    super.key
+    });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      borderRadius: AppTheme.borderRadius,
+      color: AppTheme.color1.withValues(alpha: 0.01),
+      child: InkWell(
+        onTap: () {
+          //AudioServices.play(path: "audios/button_click2.mp3", volume: 1);
+          onTap(index: index);
+        },
+        borderRadius: AppTheme.borderRadius,
+        child: ClipRRect(
+          borderRadius: AppTheme.borderRadius,
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: AppTheme.borderRadius,
+                border: Border.all(color: AppTheme.color1.withValues(alpha: 0.5)),
+                color: AppTheme.color1.withValues(alpha: 0.15)
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                child: Text(
+                  option, 
+                  textAlign: TextAlign.start, 
+                  softWrap: true,
+                  style: TextStyle(
+                    color: AppTheme.color1
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    );
+  }
+}

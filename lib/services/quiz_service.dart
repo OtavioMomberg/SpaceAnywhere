@@ -1,5 +1,5 @@
 import 'package:space_anywhere/controllers/question_controller.dart';
-import 'package:space_anywhere/di/app_dependencies.dart';
+import 'package:space_anywhere/core/di/app_dependencies.dart';
 import 'package:space_anywhere/services/internet_service.dart';
 
 class QuizService {
