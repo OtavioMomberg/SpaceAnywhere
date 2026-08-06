@@ -18,7 +18,9 @@ class DatabaseService {
   }
 
   Future<Database> get database async {
-    if (_db != null) { return _db!; }
+    if (_db != null) {
+      return _db!;
+    }
     _db = await createDatabase();
     return _db!;
   }
@@ -45,38 +47,38 @@ class DatabaseService {
             ${SqliteConstants.font} TEXT NOT NULL
           )
           ''');
-      }
+      },
     );
     return database;
   }
 
-  Future<List<CuriosityDbModel>> selectCuriosity() async {
+  Future<CuriosityDbModel?> selectCuriosity() async {
     final db = await database;
-    final List<Map> data;
+    final List<Map<String, dynamic>> data;
 
     data = await db.query(SqliteConstants.tableNameCuriosity);
 
-    final List<CuriosityDbModel> formatedData = data.map(
+    final CuriosityDbModel? formatedData = data.map(
       (item) => CuriosityDbModel(
         curiosityId: item[SqliteConstants.curiosityId] as int,
         title: item[SqliteConstants.title] as String,
         shortAnswer: item[SqliteConstants.shortAnswer] as String,
         longAnswer: item[SqliteConstants.longAnswer] as String,
         time: item[SqliteConstants.time] as String,
-      )
-    ).toList();
+      ),
+    ).firstOrNull;
 
     return formatedData;
   }
 
-  Future<List<FontModel>> selectFonts() async {
+  Future<List<FontDbModel>> selectFonts() async {
     final db = await database;
     final List<Map> data;
 
     data = await db.query(SqliteConstants.tableNameFonts);
 
-    final List<FontModel> formatedData = data
-      .map((item) => FontModel(font: item[SqliteConstants.font] as String)).toList();
+    final List<FontDbModel> formatedData = data.map(
+      (item) => FontDbModel(font: item[SqliteConstants.font] as String)).toList();
 
     return formatedData;
   }
@@ -85,31 +87,40 @@ class DatabaseService {
     final db = await database;
 
     try {
-      await db.insert(SqliteConstants.tableNameCuriosity, {
-        SqliteConstants.curiosityId: curiosityModel.curiosityId,
-        SqliteConstants.title: curiosityModel.title,
-        SqliteConstants.shortAnswer: curiosityModel.shortAnswer,
-        SqliteConstants.longAnswer: curiosityModel.longAnswer,
-        SqliteConstants.time: curiosityModel.time,
-      });
+      await db.insert(
+        SqliteConstants.tableNameCuriosity, 
+        {
+          SqliteConstants.curiosityId: curiosityModel.curiosityId,
+          SqliteConstants.title: curiosityModel.title,
+          SqliteConstants.shortAnswer: curiosityModel.shortAnswer,
+          SqliteConstants.longAnswer: curiosityModel.longAnswer,
+          SqliteConstants.time: curiosityModel.time,
+        }
+      );
     } catch (e) {
       log(e.toString());
+      rethrow;
     }
   }
 
-  Future<void> addFonts({required FontModel fontModel}) async {
+  Future<void> addFonts({required FontDbModel fontModel}) async {
     final db = await database;
 
     try {
-      await db.insert(SqliteConstants.tableNameFonts, {SqliteConstants.font: fontModel.font});
+      await db.insert(SqliteConstants.tableNameFonts, {
+        SqliteConstants.font: fontModel.font,
+      });
     } catch (e) {
       log(e.toString());
+      rethrow;
     }
   }
 
-  Future<void> updateCuriosity({required CuriosityDbModel curiosityModel}) async {
+  Future<void> updateCuriosity({
+    required CuriosityDbModel curiosityModel,
+    required int previousCuriosityId
+  }) async {
     final db = await database;
-
     try {
       await db.update(
         SqliteConstants.tableNameCuriosity,
@@ -120,11 +131,12 @@ class DatabaseService {
           SqliteConstants.longAnswer: curiosityModel.longAnswer,
           SqliteConstants.time: curiosityModel.time,
         },
-        where: "$SqliteConstants.curiosityId = ?",
-        whereArgs: [curiosityModel.curiosityId],
+        where: "${SqliteConstants.curiosityId} = ?",
+        whereArgs: [previousCuriosityId],
       );
     } catch (e) {
       log(e.toString());
+      rethrow;
     }
   }
 
@@ -135,6 +147,7 @@ class DatabaseService {
       await db.delete(SqliteConstants.tableNameFonts);
     } catch (e) {
       log(e.toString());
+      rethrow;
     }
   }
 }

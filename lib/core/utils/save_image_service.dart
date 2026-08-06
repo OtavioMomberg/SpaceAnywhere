@@ -21,8 +21,7 @@ class SaveImageService {
 
   static Future<bool> _saveToGallery({required Uint8List imageBytes}) async {
     final Directory tempDir = await getTemporaryDirectory();
-    final String tempPath =
-        "${tempDir.path}/image_temp_${DateTime.now().millisecondsSinceEpoch}.png";
+    final String tempPath = "${tempDir.path}/image_temp_${DateTime.now().millisecondsSinceEpoch}.png";
     final File tempFile = File(tempPath);
 
     await tempFile.writeAsBytes(imageBytes);

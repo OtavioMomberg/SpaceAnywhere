@@ -1,6 +1,6 @@
 /*import 'package:audioplayers/audioplayers.dart';
 
-class AudioServices {
+class AudioService {
   static final AudioPlayer _player = AudioPlayer();
 
   static Future<void> init() async {

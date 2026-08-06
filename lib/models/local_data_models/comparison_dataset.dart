@@ -1,15 +1,8 @@
-import 'package:space_anywhere/models/local_data_models/info_object.dart';
+import 'package:space_anywhere/models/local_data_models/object_information.dart';
 
 class ComparisonDataset {
-  static List<String> topics = [
-    "Nome:",
-    "Diâmetro:",
-    "Massa:",
-    "Distância para a Terra:",
-    "Tipo de objeto:",
-  ];
-  static List<InfoObject> objectList = [
-    InfoObject(
+  static const List<ObjectInformation> objects = [
+    ObjectInformation(
       name: "Mercurío",
       diameter: "4.880 km",
       mass: "3.30 x 10^23 kg",
@@ -17,7 +10,7 @@ class ComparisonDataset {
       objectType: "Planeta",
       imagePath: "assets/images/Mercurio.png",
     ),
-    InfoObject(
+    ObjectInformation(
       name: "Vênus",
       diameter: "12.104 km",
       mass: "4.87 x 10^23 kg",
@@ -25,7 +18,7 @@ class ComparisonDataset {
       objectType: "Planeta",
       imagePath: "assets/images/Venus.png",
     ),
-    InfoObject(
+    ObjectInformation(
       name: "Terra",
       diameter: "12.756 km",
       mass: "5.97 x 10^24 kg",
@@ -33,7 +26,7 @@ class ComparisonDataset {
       objectType: "Planeta",
       imagePath: "assets/images/Terra.png",
     ),
-    InfoObject(
+    ObjectInformation(
       name: "Marte",
       diameter: "6.792 km",
       mass: "6.42 x 10^23 kg",
@@ -41,7 +34,7 @@ class ComparisonDataset {
       objectType: "Planeta",
       imagePath: "assets/images/Marte.png",
     ),
-    InfoObject(
+    ObjectInformation(
       name: "Jupiter",
       diameter: "142.984 km",
       mass: "1.90  x 10^27 kg",
@@ -49,7 +42,7 @@ class ComparisonDataset {
       objectType: "Planeta",
       imagePath: "assets/images/Jupiter.png",
     ),
-    InfoObject(
+    ObjectInformation(
       name: "Saturno",
       diameter: "120.536 km",
       mass: "5.68  x 10^26 kg",
@@ -57,7 +50,7 @@ class ComparisonDataset {
       objectType: "Planeta",
       imagePath: "assets/images/Saturno.png",
     ),
-    InfoObject(
+    ObjectInformation(
       name: "Urano",
       diameter: "51.118 km",
       mass: "8.68 x 10^25 kg",
@@ -65,7 +58,7 @@ class ComparisonDataset {
       objectType: "Planeta",
       imagePath: "assets/images/Urano.png",
     ),
-    InfoObject(
+    ObjectInformation(
       name: "Netuno",
       diameter: "49.528 km",
       mass: "1.02 x 10^26 kg",
@@ -73,7 +66,7 @@ class ComparisonDataset {
       objectType: "Planeta",
       imagePath: "assets/images/Netuno.png",
     ),
-    InfoObject(
+    ObjectInformation(
       name: "Plutão",
       diameter: "2.377 km",
       mass: "1.31 x 10^22 kg",
@@ -81,7 +74,7 @@ class ComparisonDataset {
       objectType: "Planeta-Anão",
       imagePath: "assets/images/Plutao.png",
     ),
-    InfoObject(
+    ObjectInformation(
       name: "Sol",
       diameter: "1.392.000 km",
       mass: "1.989 x 10^30 kg",

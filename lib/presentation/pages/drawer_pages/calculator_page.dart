@@ -14,9 +14,9 @@ class CalculatorPage extends StatefulWidget {
 }
 
 class _CalculatorPageState extends State<CalculatorPage> {
+  final _calculatorService = CalculatorService.instance();
   final _textController = TextEditingController();
   final _expansibleController = ExpansibleController();
-  final _calculatorService = CalculatorService.instance();
 
   @override
   void initState() {

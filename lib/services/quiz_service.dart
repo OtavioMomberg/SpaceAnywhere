@@ -12,10 +12,6 @@ class QuizService {
   void Function({required bool isCorrect, String? correctAnswer})? _showResponse;
   Future<void> Function()? _closeAnswerPage;
 
-  static final _instance = QuizService._();
-  QuizService._();
-  factory QuizService.instance() => _instance;
-
   QuestionController get questionController => _questionController;
   InternetService get internet => _internet;
   bool get quizStarted => _quizStarted;
@@ -37,9 +33,13 @@ class QuizService {
   }
 
   Future<void> initializeInternetInstance() async {
-    if (_callQuizService == null) { throw Exception("É necessário receber a função service."); }
-    
-    _internet = InternetService.withParam(func: _callQuizService!);
+    if (_callQuizService == null) {
+      throw Exception("É necessário receber a função service.");
+    }
+
+    _internet = InternetService.withFunctionParameter(
+      function: _callQuizService!,
+    );
   }
 
   void changeQuizState() => _quizStarted = !_quizStarted;

@@ -16,7 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _homeService = HomeService.instance();
+  final _homeService = HomeService();
   bool isLoading = true;
   bool showKnowMoreButton = false;
 
@@ -47,9 +47,9 @@ class _HomePageState extends State<HomePage> {
       spacing: 20,
       mainAxisAlignment: .start,
       children: <Widget>[
-        Text(
+        const Text(
           "Curiosidade do Dia",
-          style: const TextStyle(
+          style: TextStyle(
             color: AppTheme.color1,
             fontWeight: FontWeight.bold,
             fontSize: 20

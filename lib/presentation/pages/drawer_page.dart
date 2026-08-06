@@ -27,8 +27,11 @@ class _DrawerPageState extends State<DrawerPage> {
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
         backgroundColor: AppTheme.color2,
-        foregroundColor: AppTheme.color1
+        foregroundColor: AppTheme.color1,
+        elevation: 0,
+        scrolledUnderElevation: 0,
       ),
+      backgroundColor: AppTheme.color2,
       drawer: Drawer(
         backgroundColor: AppTheme.color2,
         child: ListView(
@@ -87,16 +90,17 @@ class _DrawerPageState extends State<DrawerPage> {
       body: SafeArea(
         top: false,
         child: Container(
-          height: double.infinity,
           width: double.infinity,
-          padding: selectedPage == 2 
+          height: double.infinity,
+          padding: selectedPage == 2
             ? const EdgeInsets.only(bottom: 15)
-            : const EdgeInsets.only(left: 15, right: 15, bottom: 15),
-          decoration: BoxDecoration(gradient: AppTheme.mainGradient),
+            : const EdgeInsets.fromLTRB(15, 0, 15, 15),
+          decoration: const BoxDecoration(
+            gradient: AppTheme.mainGradient,
+          ),
           child: AppRoutes.pages[selectedPage]
-        )
+        ),
       ),
-      backgroundColor: AppTheme.color4,
       resizeToAvoidBottomInset: false
     );
   }

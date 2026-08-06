@@ -4,13 +4,13 @@ import 'package:space_anywhere/presentation/widgets/stylized_container.dart';
 
 class InfoErrorHome extends StatelessWidget {
   final String message;
-  final IconData icon;
   final double height;
+  final IconData icon;
 
   const InfoErrorHome({
     required this.message,
-    required this.icon,
     required this.height,
+    required this.icon,
     super.key
   });
 

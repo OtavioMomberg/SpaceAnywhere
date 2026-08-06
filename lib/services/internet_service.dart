@@ -10,9 +10,13 @@ class InternetService {
   Future<void> Function({int? questionId})? _functionWithParam;
   Future<void> Function()? _function;
 
-  InternetService.withParam({required Future<void> Function({int? questionId}) func}) : _functionWithParam = func;
+  InternetService.withFunctionParameter({
+    required Future<void> Function({int? questionId}) function,
+  }) : _functionWithParam = function;
 
-  InternetService.withoutParam({required Future<void> Function() func}) : _function = func;
+  InternetService.withoutFunctionParameter({
+    required Future<void> Function() function,
+  }) : _function = function;
 
   bool get checkInternet => _checkInternet;
   bool get checkAPI => _checkAPI;

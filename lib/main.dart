@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:space_anywhere/presentation/pages/drawer_page.dart';
 import 'package:space_anywhere/presentation/themes/app_theme.dart';
-//import 'package:space_anywhere/services/audio_services.dart';
+//import 'package:space_anywhere/services/audio_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +18,7 @@ void main() async {
     DeviceOrientation.portraitDown
   ]);
 
-  //await AudioServices.init();
+  //await AudioService.init();
 
   runApp(const MyApp());
 }

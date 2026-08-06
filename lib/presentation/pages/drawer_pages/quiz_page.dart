@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import 'package:space_anywhere/presentation/pages/additional_pages/result_page.dart';
 import 'package:space_anywhere/core/routes/app_routes.dart';
-import 'dart:ui';
 import 'package:space_anywhere/services/quiz_service.dart';
 import 'package:space_anywhere/presentation/themes/app_theme.dart';
 import 'package:space_anywhere/core/utils/stylized_snack_bar.dart';
@@ -18,7 +18,7 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> with StylizedSnackBar {
-  final QuizService _quizService = QuizService.instance();
+  final QuizService _quizService = QuizService();
   bool isLoading = true;
   bool retrySucced = false;
 

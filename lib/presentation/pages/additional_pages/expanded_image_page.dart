@@ -32,27 +32,31 @@ class _ExpandedImagePageState extends State<ExpandedImagePage>
         backgroundColor: AppTheme.color2,
         foregroundColor: AppTheme.color1,
       ),
-      body: Container(
-        padding: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 20),
-        decoration: BoxDecoration(gradient: AppTheme.mainGradient),
-        child: Column(
-          mainAxisAlignment: .start,
-          spacing: 20,
-          children: <Widget>[
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: ImageWidget(
-                  imagePath: widget.imagePath,
-                  option: widget.option,
+      backgroundColor: AppTheme.color2,
+      body: SafeArea(
+        top: false,
+        child: Container(
+          padding: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 20),
+          decoration: BoxDecoration(gradient: AppTheme.mainGradient),
+          child: Column(
+            mainAxisAlignment: .start,
+            spacing: 20,
+            children: <Widget>[
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: ImageWidget(
+                    imagePath: widget.imagePath,
+                    option: widget.option,
+                  ),
                 ),
               ),
-            ),
-            FractionallySizedBox(
-              widthFactor: 0.8,
-              child: Button(label: "Baixar", awaitFunction: saveImage),
-            ),
-          ],
+              FractionallySizedBox(
+                widthFactor: 0.8,
+                child: Button(label: "Baixar", awaitFunction: saveImage),
+              ),
+            ],
+          ),
         ),
       ),
     );

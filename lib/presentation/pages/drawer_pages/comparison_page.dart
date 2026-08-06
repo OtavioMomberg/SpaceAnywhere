@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:space_anywhere/models/local_data_models/comparison_dataset.dart';
-import 'package:space_anywhere/models/local_data_models/info_object.dart';
+import 'package:space_anywhere/models/local_data_models/object_information.dart';
 import 'package:space_anywhere/presentation/themes/app_theme.dart';
 import 'package:space_anywhere/presentation/widgets/comparison_widget.dart';
 
@@ -14,7 +14,7 @@ class ComparisonPage extends StatefulWidget {
 
 class _ComparisonPageState extends State<ComparisonPage> {
   final ScrollController _scrollController = ScrollController();
-  final List<InfoObject> finalList = [];
+  final List<ObjectInformation> finalList = [];
   final Random rand = Random();
 
   @override
@@ -33,7 +33,7 @@ class _ComparisonPageState extends State<ComparisonPage> {
           child: ListView.builder(
             controller: _scrollController,
             scrollDirection: Axis.horizontal,
-            itemCount: ComparisonDataset.objectList.length,
+            itemCount: ComparisonDataset.objects.length,
             itemExtent: size.width,
             itemBuilder: (context, index) {
               return Container(
@@ -41,29 +41,27 @@ class _ComparisonPageState extends State<ComparisonPage> {
                 decoration: BoxDecoration(
                   borderRadius: AppTheme.borderRadius,
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.5),
+                    color: AppTheme.color1.withValues(alpha: 0.5),
                   ),
-                  color: Colors.white.withValues(alpha: 0.15),
+                  color: AppTheme.color1.withValues(alpha: 0.15),
                 ),
                 child: Row(
                   mainAxisAlignment: .spaceBetween,
                   children: <Widget>[
                     IconButton(
                       onPressed: () => moveScroll(value: -size.width),
-                      icon: Icon(
-                        Icons.arrow_back,
-                        color: AppTheme.color1,
-                      ),
+                      icon: Icon(Icons.arrow_back, color: AppTheme.color1),
                     ),
                     Expanded(
-                      child: ComparisonWidget(objectData: finalList[index]),
+                      child: ComparisonWidget(
+                        objectData: finalList[index].toList(), 
+                        objectName: finalList[index].name,
+                        imagePath: finalList[index].imagePath
+                      ),
                     ),
                     IconButton(
                       onPressed: () => moveScroll(value: size.width),
-                      icon: Icon(
-                        Icons.arrow_forward,
-                        color: AppTheme.color1
-                      )
+                      icon: Icon(Icons.arrow_forward, color: AppTheme.color1)
                     )
                   ]
                 )
@@ -76,11 +74,11 @@ class _ComparisonPageState extends State<ComparisonPage> {
   }
 
   void randomizeList() {
-    while (finalList.length < ComparisonDataset.objectList.length) {
-      int index = rand.nextInt(ComparisonDataset.objectList.length);
+    while (finalList.length < ComparisonDataset.objects.length) {
+      int index = rand.nextInt(ComparisonDataset.objects.length);
 
-      if (!finalList.contains(ComparisonDataset.objectList[index])) {
-        finalList.add(ComparisonDataset.objectList[index]);
+      if (!finalList.contains(ComparisonDataset.objects[index])) {
+        finalList.add(ComparisonDataset.objects[index]);
       }
     }
   }

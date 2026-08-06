@@ -10,10 +10,6 @@ class WallpaperService {
   String _error = "";
   Future<void> Function()? _function;
 
-  static final _instance = WallpaperService._();
-  WallpaperService._();
-  factory WallpaperService.instance() => _instance;
-
   WallpaperController get wallpaperController => _wallpaperController;
   InternetService get internet => _internet;
   int get offset => _offset;
@@ -26,9 +22,11 @@ class WallpaperService {
   }
 
   Future<void> initializeInternetInstance() async {
-    if (_function == null) { throw Exception("É necessário receber a função service."); }
+    if (_function == null) {
+      throw Exception("É necessário receber a função service.");
+    }
 
-    _internet = InternetService.withoutParam(func: _function!);
+    _internet = InternetService.withoutFunctionParameter(function: _function!);
   }
 
   void updateOffset({required int newOffset}) => _offset = newOffset;

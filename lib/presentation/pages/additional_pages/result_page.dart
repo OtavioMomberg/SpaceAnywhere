@@ -18,51 +18,55 @@ class ResultPage extends StatelessWidget {
         backgroundColor: AppTheme.color2,
         foregroundColor: AppTheme.color2
       ),
-      body: Container(
-        height: double.infinity,
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(gradient: AppTheme.mainGradient),
-        child: StylizedContainer(
-          height: size.height * 0.6,
-          child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                Icon(
-                  isCorrect ? Icons.check_circle : Icons.cancel,
-                  color:AppTheme.color1,
-                  size: 60
-                ),
-                Text(
-                  isCorrect ? "Certa Resposta!" : "Resposta Incorreta!",
-                    style: const TextStyle(
-                      color: AppTheme.color1,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold
-                    )
-                  ),
-                if (!isCorrect)...[
-                  const SizedBox(height: 10),
-                  Text(
-                    "Alternativa correta:",
-                    style: const TextStyle(
-                      color: AppTheme.color1,
-                      fontSize: 14
-                    )
+      backgroundColor: AppTheme.color2,
+      body: SafeArea(
+        top: false,
+        child: Container(
+          height: double.infinity,
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(gradient: AppTheme.mainGradient),
+          child: StylizedContainer(
+            height: size.height * 0.6,
+            child: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  Icon(
+                    isCorrect ? Icons.check_circle : Icons.cancel,
+                    color:AppTheme.color1,
+                    size: 60
                   ),
                   Text(
-                    correctAnswer!,
-                    style: const TextStyle(
-                      color: AppTheme.color1,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold
+                    isCorrect ? "Certa Resposta!" : "Resposta Incorreta!",
+                      style: const TextStyle(
+                        color: AppTheme.color1,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold
+                      )
                     ),
-                    textAlign: TextAlign.center
-                  )
+                  if (!isCorrect)...[
+                    const SizedBox(height: 10),
+                    Text(
+                      "Alternativa correta:",
+                      style: const TextStyle(
+                        color: AppTheme.color1,
+                        fontSize: 14
+                      )
+                    ),
+                    Text(
+                      correctAnswer!,
+                      style: const TextStyle(
+                        color: AppTheme.color1,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold
+                      ),
+                      textAlign: TextAlign.center
+                    )
+                  ]
                 ]
-              ]
+              )
             )
           )
-        )
+        ),
       )
     );
   }

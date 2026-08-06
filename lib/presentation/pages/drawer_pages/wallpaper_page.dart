@@ -16,19 +16,19 @@ class WallpaperPage extends StatefulWidget {
 }
 
 class _WallpaperPageState extends State<WallpaperPage> {
-  final WallpaperService _wallpaperService = WallpaperService.instance();
+  final WallpaperService _wallpaperService = WallpaperService();
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
 
+    _wallpaperService.getFunction(func: callWallpaperService);
+    _wallpaperService.initializeInternetInstance();
+
     if (!_wallpaperService.checkImageCache()) {
-      isLoading = false;
-      setState(() {});
+      setState(() => isLoading = false);
     } else {
-      _wallpaperService.getFunction(func: callWallpaperService);
-      _wallpaperService.initializeInternetInstance();
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         try {
           _wallpaperService.internet.retryConnectionSystem();

@@ -10,24 +10,12 @@ class CuriosityDbModel {
     required this.shortAnswer,
     required this.longAnswer,
     required this.title,
-    required this.time
+    required this.time,
   });
-
-  Map<String, dynamic> toMap() {
-    return {
-      "curiosity_id": curiosityId,
-      "title": title,
-      "short_answer": shortAnswer,
-      "long_answer": longAnswer,
-      "time": time
-    };
-  }
 }
 
-class FontModel {
+class FontDbModel {
   String font;
 
-  FontModel({
-    required this.font
-  });
+  FontDbModel({required this.font});
 }
