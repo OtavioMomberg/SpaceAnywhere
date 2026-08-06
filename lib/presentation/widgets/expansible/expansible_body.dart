@@ -4,14 +4,15 @@ import 'package:space_anywhere/presentation/themes/app_theme.dart';
 
 class ExpansibleBody extends StatelessWidget {
   final ExpansibleController controller;
+  final CalculatorService _calculatorService;
   final VoidCallback setStateCallback;
-  final _calculatorService = CalculatorService.instance();
 
-  ExpansibleBody({
+  const ExpansibleBody({
     required this.controller,
+    required CalculatorService calculatorService,
     required this.setStateCallback,
-    super.key
-  });
+    super.key,
+  }) : _calculatorService = calculatorService;
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +23,8 @@ class ExpansibleBody extends StatelessWidget {
         borderRadius: AppTheme.borderRadius,
         border: Border.all(
           width: 1.5,
-          color: AppTheme.color1.withValues(alpha: 0.5)
-        )
+          color: AppTheme.color1.withValues(alpha: 0.5),
+        ),
       ),
       child: ListView.builder(
         itemCount: _calculatorService.planetsGravity.length,

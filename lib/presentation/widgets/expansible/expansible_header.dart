@@ -4,9 +4,13 @@ import 'package:space_anywhere/presentation/themes/app_theme.dart';
 
 class ExpansibleHeader extends StatelessWidget {
   final ExpansibleController controller;
-  final _calculatorService = CalculatorService.instance();
+  final CalculatorService _calculatorService;
 
-  ExpansibleHeader({required this.controller, super.key});
+  const ExpansibleHeader({
+    required this.controller, 
+    required CalculatorService calculatorService,
+    super.key
+  }) : _calculatorService = calculatorService;
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:space_anywhere/core/di/app_dependencies.dart';
 import 'package:space_anywhere/presentation/pages/additional_pages/extra_text_page.dart';
 import 'package:space_anywhere/presentation/pages/additional_pages/fonts_page.dart';
 import 'package:space_anywhere/core/routes/app_routes.dart';
@@ -16,7 +17,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _homeService = HomeService();
+  final _homeService = HomeService(
+    db: AppDependencies.db,
+    curiosityController: AppDependencies.curiosityController
+  );
   bool isLoading = true;
   bool showKnowMoreButton = false;
 
@@ -24,9 +28,9 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    _homeService.getFunction(func: callHomeService);
+    _homeService.getFunction(function: callHomeService);
     _homeService.initializeInternetInstance();
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
         _homeService.internet.retryConnectionSystem();
@@ -35,7 +39,7 @@ class _HomePageState extends State<HomePage> {
         _homeService.internet.updateInternetStatus(status: true);
         _homeService.internet.updateAPIStatus(status: true);
         setState(() => isLoading = false);
-      } 
+      }
     });
   }
 
@@ -52,18 +56,21 @@ class _HomePageState extends State<HomePage> {
           style: TextStyle(
             color: AppTheme.color1,
             fontWeight: FontWeight.bold,
-            fontSize: 20
+            fontSize: 20,
           ),
-          textAlign: TextAlign.center
+          textAlign: TextAlign.center,
         ),
-        if (isLoading || !_homeService.internet.checkInternet || !_homeService.internet.checkAPI)...[
+        if (isLoading ||
+            !_homeService.internet.checkInternet ||
+            !_homeService.internet.checkAPI) ...[
           CheckConnection(
             isLoading: isLoading,
             checkInternet: _homeService.internet.checkInternet,
             checkAPI: _homeService.internet.checkAPI,
             height: size.height * 0.6,
           ),
-        ] else if (_homeService.curiosityController.getErrorCuriosity == null)...[
+        ] else if (_homeService.curiosityController.getErrorCuriosity ==
+            null) ...[
           Flexible(
             child: FractionallySizedBox(
               heightFactor: 0.9,
@@ -80,7 +87,7 @@ class _HomePageState extends State<HomePage> {
                           fontSize: 16,
                         ),
                         maxLines: 2,
-                        textAlign: TextAlign.center
+                        textAlign: TextAlign.center,
                       ),
                       Text(
                         _homeService.text,
@@ -88,22 +95,22 @@ class _HomePageState extends State<HomePage> {
                           color: AppTheme.color1,
                           height: 1.7,
                         ),
-                        textAlign: TextAlign.justify
-                      )
-                    ]
-                  )
-                )
-              )
-            )
-          )
-        ] else...[
+                        textAlign: TextAlign.justify,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ] else ...[
           Text(
             _homeService.error,
             style: const TextStyle(color: AppTheme.color1),
-            textAlign: TextAlign.center
-          )
+            textAlign: TextAlign.center,
+          ),
         ],
-        if (showKnowMoreButton)...[
+        if (showKnowMoreButton) ...[
           Row(
             mainAxisAlignment: .center,
             spacing: 10,
@@ -114,12 +121,12 @@ class _HomePageState extends State<HomePage> {
                   function: () {
                     goNextPage(
                       page: ExtraTextPage(
-                        title: _homeService.title, 
-                        text: _homeService.extraText
-                      )
+                        title: _homeService.title,
+                        text: _homeService.extraText,
+                      ),
                     );
                   },
-                )
+                ),
               ),
               Expanded(
                 child: Button(
@@ -127,21 +134,24 @@ class _HomePageState extends State<HomePage> {
                   function: () {
                     goNextPage(page: FontsPage(fonts: _homeService.fonts));
                   },
-                )
-              )
-            ]
-          )
-        ] 
-      ]
+                ),
+              ),
+            ],
+          ),
+        ],
+      ],
     );
   }
 
   Future<void> callHomeService() async {
     await _homeService.controlCuriosity();
 
-    if (!mounted) { return; }
+    if (!mounted) {
+      return;
+    }
     setState(() {
-      if (_homeService.internet.checkInternet && _homeService.internet.checkAPI) {
+      if (_homeService.internet.checkInternet &&
+          _homeService.internet.checkAPI) {
         showKnowMoreButton = true;
       }
       isLoading = false;
@@ -149,9 +159,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   void goNextPage({required Widget page}) {
-    Navigator.push(
-      context,
-      AppRoutes.getRoute(page: page)
-    );
+    Navigator.push(context, AppRoutes.getRoute(page: page));
   }
 }

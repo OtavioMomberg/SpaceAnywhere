@@ -1,13 +1,10 @@
 import 'package:space_anywhere/controllers/curiosity_controller.dart';
 import 'package:space_anywhere/services/db_service.dart';
-import 'package:space_anywhere/core/di/app_dependencies.dart';
 import 'package:space_anywhere/services/internet_service.dart';
 import 'package:space_anywhere/models/database_models/curiosity_db_model.dart';
 
 class HomeService {
-  final int _curiosityId = 1;
-  final _db = DatabaseService.instance();
-  final CuriosityController _curiosityController = AppDependencies.curiosityController;
+  static const int _curiosityId = 1;
   late InternetService _internet;
   String _text = "";
   String _extraText = "";
@@ -18,7 +15,15 @@ class HomeService {
   List<FontDbModel> _selectFonts = [];
   Future<void> Function()? _function;
 
-  CuriosityController get curiosityController => _curiosityController;
+  final DatabaseService db;
+  final CuriosityController curiosityController;
+
+  HomeService({
+    required this.db,
+    required this.curiosityController
+  });
+
+  //CuriosityController get curiosityController => curiosityController;
   InternetService get internet => _internet;
   String get text => _text;
   String get extraText => _extraText;
@@ -28,8 +33,8 @@ class HomeService {
 
   set generalError(String value) => _error = value;
 
-  Future<void> getFunction({required Future<void> Function() func}) async {
-    _function = func;
+  Future<void> getFunction({required Future<void> Function() function}) async {
+    _function = function;
   }
 
   Future<void> initializeInternetInstance() async {
@@ -40,8 +45,8 @@ class HomeService {
   }
 
   Future<bool> checkDatabaseIsNull() async {
-    _selectCuriosity = await _db.selectCuriosity();
-    _selectFonts = await _db.selectFonts();
+    _selectCuriosity = await db.selectCuriosity();
+    _selectFonts = await db.selectFonts();
 
     return _selectCuriosity == null;
   }
@@ -53,38 +58,31 @@ class HomeService {
       .replaceAll('\\"', '"');
   }
 
-  Future<void> getCuriosity({
-    required int curiosityId,
-    required DatabaseActions action,
-  }) async {
+  Future<void> getCuriosity({required int curiosityId, required DatabaseActions action}) async {
     await _internet.hasInternet();
 
-    if (!_internet.checkInternet) {
-      return;
-    }
+    if (!_internet.checkInternet) { return; }
 
     await _internet.isApiAwake();
 
-    if (!_internet.checkAPI) {
-      return;
-    }
+    if (!_internet.checkAPI) { return; }
 
-    await _curiosityController.onGetCuriosity(id: curiosityId);
+    await curiosityController.onGetCuriosity(id: curiosityId);
 
-    if (_curiosityController.getErrorCuriosity == null) {
+    if (curiosityController.getErrorCuriosity == null) {
       _text = cleanText(
-        text: _curiosityController.getCuriosityModel!.shortAnswer,
+        text: curiosityController.getCuriosityModel!.shortAnswer,
       );
       _extraText = cleanText(
-        text: _curiosityController.getCuriosityModel!.longAnswer,
+        text: curiosityController.getCuriosityModel!.longAnswer,
       );
-      _title = _curiosityController.getCuriosityModel!.title;
-      _fonts = _curiosityController.getCuriosityModel!.contentFont;
+      _title = curiosityController.getCuriosityModel!.title;
+      _fonts = curiosityController.getCuriosityModel!.contentFont;
       action == DatabaseActions.add
         ? await addCuriosity()
         : await updateCuriosity();
     } else {
-      _error = _curiosityController.getErrorCuriosity!;
+      _error = curiosityController.getErrorCuriosity!;
     }
   }
 
@@ -92,7 +90,10 @@ class HomeService {
     bool checkDatabaseEmpty = await checkDatabaseIsNull();
 
     if (!checkDatabaseEmpty) {
-      if (DateTime.now().difference(DateTime.parse(_selectCuriosity!.time)).inHours >= 24) {
+      final DateTime currentDate = DateTime.now();
+      final DateTime date = DateTime.parse(_selectCuriosity!.time);
+
+      if (currentDate.difference(date).inHours >= 24) {
         await getCuriosity(
           curiosityId: _selectCuriosity!.curiosityId + 1,
           action: DatabaseActions.update,
@@ -111,62 +112,59 @@ class HomeService {
     } else {
       await getCuriosity(
         curiosityId: _curiosityId,
-        action: DatabaseActions.add
+        action: DatabaseActions.add,
       );
     }
   }
 
   Future<void> addCuriosity() async {
     final curiosityModel = CuriosityDbModel(
-      curiosityId: _curiosityController.getCuriosityModel!.id,
+      curiosityId: curiosityController.getCuriosityModel!.id,
       shortAnswer: cleanText(
-        text: _curiosityController.getCuriosityModel!.shortAnswer,
+        text: curiosityController.getCuriosityModel!.shortAnswer,
       ),
       longAnswer: cleanText(
-        text: _curiosityController.getCuriosityModel!.longAnswer,
+        text: curiosityController.getCuriosityModel!.longAnswer,
       ),
-      title: _curiosityController.getCuriosityModel!.title,
+      title: curiosityController.getCuriosityModel!.title,
       time: DateTime.now().toIso8601String(),
     );
 
-    await _db.addCuriosity(curiosityModel: curiosityModel);
+    await db.addCuriosity(curiosityModel: curiosityModel);
 
     await addFonts();
   }
 
   Future<void> addFonts() async {
-    int len = _curiosityController.getCuriosityModel!.contentFont.length;
-    List<String> fonts = _curiosityController.getCuriosityModel!.contentFont;
+    int len = curiosityController.getCuriosityModel!.contentFont.length;
+    List<String> fonts = curiosityController.getCuriosityModel!.contentFont;
 
-    final List<FontDbModel> fontModel = List.generate(
-      len,
-      (index) => FontDbModel(font: fonts[index]),
-    );
+    final List<FontDbModel> fontModel = List.generate(len, (index) => FontDbModel(font: fonts[index]));
 
     for (var font in fontModel) {
-      await _db.addFonts(fontModel: font);
+      await db.addFonts(fontModel: font);
     }
   }
 
   Future<void> updateCuriosity() async {
     final curiosityModel = CuriosityDbModel(
-      curiosityId: _curiosityController.getCuriosityModel!.id,
+      curiosityId: curiosityController.getCuriosityModel!.id,
       shortAnswer: cleanText(
-        text: _curiosityController.getCuriosityModel!.shortAnswer,
+        text: curiosityController.getCuriosityModel!.shortAnswer,
       ),
       longAnswer: cleanText(
-        text: _curiosityController.getCuriosityModel!.longAnswer,
+        text: curiosityController.getCuriosityModel!.longAnswer,
       ),
-      title: _curiosityController.getCuriosityModel!.title,
+      title: curiosityController.getCuriosityModel!.title,
       time: DateTime.now().toIso8601String(),
     );
 
-    await _db.updateCuriosity(
+    await db.updateCuriosity(
       curiosityModel: curiosityModel,
-      previousCuriosityId: _selectCuriosity!.curiosityId
+      previousCuriosityId: _selectCuriosity!.curiosityId,
     );
 
-    await _db.deleteFonts();
+    await db.deleteFonts();
 
     await addFonts();
   }

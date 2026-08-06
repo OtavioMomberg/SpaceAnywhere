@@ -2,24 +2,26 @@ import 'package:space_anywhere/models/local_data_models/object_information.dart'
 import 'package:space_anywhere/models/local_data_models/objects_gravity.dart';
 
 class CalculatorService {
-  String _text = "Escolha um objeto";
+  static const String defaultOptionText = "Escolha um objeto";
+  String _text = defaultOptionText;
   double? _result = 0.0;
   int _index = 0;
-  final List<ObjectInformation> planetsGravity = ObjectsGravity.planetsGravity;
+  final List<ObjectInformation> _planetsGravity = ObjectsGravity.planetsGravity;
 
   static final _instance = CalculatorService._();
   CalculatorService._();
   factory CalculatorService.instance() => _instance;
 
+  List<ObjectInformation> get planetsGravity => List.unmodifiable(_planetsGravity); 
   String get defaultText => _text;
   double? get result => _result;
 
   void defineNewText({required int index}) {
-    _text = planetsGravity[index].name;
+    _text = _planetsGravity[index].name;
     _index = index;
   }
 
-  void setDefaultText() => _text = "Escolha um objeto";
+  void setDefaultText() => _text = defaultOptionText;
 
   void initializeResult() => _result = 0.0;
 
@@ -36,6 +38,6 @@ class CalculatorService {
       _result = null;
       return;
     }
-    _result = (checkWeight * planetsGravity[_index].gravityOverEarth!) / 100;
+    _result = (checkWeight * _planetsGravity[_index].gravityOverEarth!) / 100;
   }
 }

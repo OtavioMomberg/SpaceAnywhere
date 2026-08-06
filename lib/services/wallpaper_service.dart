@@ -1,16 +1,20 @@
 import 'package:space_anywhere/controllers/wallpaper_controller.dart';
-import 'package:space_anywhere/core/di/app_dependencies.dart';
 import 'package:space_anywhere/services/internet_service.dart';
 import 'package:space_anywhere/core/utils/image_cache_service.dart';
 
 class WallpaperService {
-  final WallpaperController _wallpaperController = AppDependencies.wallpaperController;
   late InternetService _internet;
   int _offset = 0;
   String _error = "";
   Future<void> Function()? _function;
 
-  WallpaperController get wallpaperController => _wallpaperController;
+  final WallpaperController wallpaperController;
+
+  WallpaperService({
+    required this.wallpaperController
+  });
+
+  //WallpaperController get wallpaperController => _wallpaperController;
   InternetService get internet => _internet;
   int get offset => _offset;
   String get error => _error;
@@ -53,12 +57,12 @@ class WallpaperService {
       return;
     }
 
-    await _wallpaperController.onGetWallpaper(offset: _offset);
+    await wallpaperController.onGetWallpaper(offset: _offset);
 
-    if (_wallpaperController.getErrorWallpaper == null) {
-      ImageCacheService.wallpapers = _wallpaperController.getWallpaperModel;
+    if (wallpaperController.getErrorWallpaper == null) {
+      ImageCacheService.wallpapers = wallpaperController.getWallpaperModel;
     } else {
-      _error = _wallpaperController.getErrorWallpaper!;
+      _error = wallpaperController.getErrorWallpaper!;
     }
   }
 }

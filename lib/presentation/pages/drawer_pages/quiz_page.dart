@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:space_anywhere/core/di/app_dependencies.dart';
 import 'dart:ui';
 import 'package:space_anywhere/presentation/pages/additional_pages/result_page.dart';
 import 'package:space_anywhere/core/routes/app_routes.dart';
@@ -18,7 +19,9 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> with StylizedSnackBar {
-  final QuizService _quizService = QuizService();
+  final QuizService _quizService = QuizService(
+    questionController: AppDependencies.questionController
+  );
   bool isLoading = true;
   bool retrySucced = false;
 

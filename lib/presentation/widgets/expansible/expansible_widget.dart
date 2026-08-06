@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:space_anywhere/presentation/widgets/expansible/expansible_body.dart';
-import 'package:space_anywhere/presentation/widgets/expansible/expansible_header.dart';
 
 class ExpansibleWidget extends StatelessWidget {
+  final Widget header;
+  final Widget body;
   final ExpansibleController controller;
-  final VoidCallback setStateCallback;
 
   const ExpansibleWidget({
+    required this.header,
+    required this.body,
     required this.controller,
-    required this.setStateCallback,
     super.key
   });
 
@@ -16,8 +16,8 @@ class ExpansibleWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expansible(
       controller: controller,
-      headerBuilder: (context, _) => ExpansibleHeader(controller: controller),
-      bodyBuilder: (context, _) => ExpansibleBody(controller: controller, setStateCallback: setStateCallback)
+      headerBuilder: (context, _) => header,
+      bodyBuilder: (context, _) => body
     );
   }
 }

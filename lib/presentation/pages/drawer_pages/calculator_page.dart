@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:space_anywhere/presentation/widgets/expansible/expansible_body.dart';
+import 'package:space_anywhere/presentation/widgets/expansible/expansible_header.dart';
 import 'package:space_anywhere/services/calculator_service.dart';
 import 'package:space_anywhere/presentation/themes/app_theme.dart';
 import 'package:space_anywhere/presentation/widgets/button.dart';
@@ -42,10 +44,18 @@ class _CalculatorPageState extends State<CalculatorPage> {
           const SizedBox(height: 30),
           InputNumber(controller: _textController, label: "Insira seu peso"),
           ExpansibleWidget(
-            controller: _expansibleController, 
-            setStateCallback: () => setState((){})
+            header: ExpansibleHeader(
+              controller: _expansibleController,
+              calculatorService: _calculatorService,
+            ),
+            body: ExpansibleBody(
+              controller: _expansibleController, 
+              calculatorService: _calculatorService,
+              setStateCallback: () => setState((){})
+            ),
+            controller: _expansibleController
           ),
-          if (_calculatorService.defaultText != "Escolha um objeto")...[
+          if (_calculatorService.defaultText != CalculatorService.defaultOptionText)...[
             const SizedBox(height: 20),
             Button(
               label: "Calcular", 

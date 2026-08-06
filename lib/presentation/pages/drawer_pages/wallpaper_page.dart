@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:space_anywhere/core/di/app_dependencies.dart';
 import 'package:space_anywhere/presentation/pages/additional_pages/expanded_image_page.dart';
 import 'package:space_anywhere/core/routes/app_routes.dart';
 import 'package:space_anywhere/services/wallpaper_service.dart';
@@ -16,7 +17,9 @@ class WallpaperPage extends StatefulWidget {
 }
 
 class _WallpaperPageState extends State<WallpaperPage> {
-  final WallpaperService _wallpaperService = WallpaperService();
+  final WallpaperService _wallpaperService = WallpaperService(
+    wallpaperController: AppDependencies.wallpaperController
+  );
   bool isLoading = true;
 
   @override

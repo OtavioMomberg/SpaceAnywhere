@@ -1,10 +1,8 @@
 import 'package:space_anywhere/controllers/question_controller.dart';
-import 'package:space_anywhere/core/di/app_dependencies.dart';
 import 'package:space_anywhere/services/internet_service.dart';
 
 class QuizService {
-  final int _id = 0;
-  final QuestionController _questionController = AppDependencies.questionController;
+  static const int _id = 0;
   late InternetService _internet;
   String _error = "";
   bool _quizStarted = false;
@@ -12,7 +10,13 @@ class QuizService {
   void Function({required bool isCorrect, String? correctAnswer})? _showResponse;
   Future<void> Function()? _closeAnswerPage;
 
-  QuestionController get questionController => _questionController;
+  final QuestionController questionController;
+
+  QuizService({
+    required this.questionController
+  });
+
+  //QuestionController get questionController => _questionController;
   InternetService get internet => _internet;
   bool get quizStarted => _quizStarted;
   String get error => _error;
@@ -62,10 +66,10 @@ class QuizService {
       return;
     }
 
-    await _questionController.onGetQuestion(id: questionId ?? _id);
+    await questionController.onGetQuestion(id: questionId ?? _id);
 
-    if (_questionController.getErrorQuestion != null) {
-      _error = _questionController.getErrorQuestion!;
+    if (questionController.getErrorQuestion != null) {
+      _error = questionController.getErrorQuestion!;
     }
   }
 
