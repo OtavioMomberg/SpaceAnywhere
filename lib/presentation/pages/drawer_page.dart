@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:space_anywhere/core/routes/app_routes.dart';
 import 'package:space_anywhere/presentation/themes/app_theme.dart';
 
@@ -28,10 +29,17 @@ class _DrawerPageState extends State<DrawerPage> {
         surfaceTintColor: Colors.transparent,
         backgroundColor: AppTheme.color2,
         foregroundColor: AppTheme.color1,
-        elevation: 0,
-        scrolledUnderElevation: 0,
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          systemNavigationBarContrastEnforced: false,
+          systemNavigationBarIconBrightness: Brightness.light
+        ),
+
+        // Gambiarra enquanto não descubro a real causa do espaço entre AppBar e Container
+        shape: const BeveledRectangleBorder(
+          side: BorderSide(color: AppTheme.color2, width: 2)
+        ),
       ),
-      backgroundColor: AppTheme.color2,
+      backgroundColor: AppTheme.color4,
       drawer: Drawer(
         backgroundColor: AppTheme.color2,
         child: ListView(
@@ -87,19 +95,16 @@ class _DrawerPageState extends State<DrawerPage> {
           ]
         )
       ),
-      body: SafeArea(
-        top: false,
-        child: Container(
-          width: double.infinity,
-          height: double.infinity,
-          padding: selectedPage == 2
-            ? const EdgeInsets.only(bottom: 15)
-            : const EdgeInsets.fromLTRB(15, 0, 15, 15),
-          decoration: const BoxDecoration(
-            gradient: AppTheme.mainGradient,
-          ),
-          child: AppRoutes.pages[selectedPage]
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        padding: selectedPage == 2
+          ? const EdgeInsets.only(bottom: 15)
+          : const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+        decoration: const BoxDecoration(
+          gradient: AppTheme.mainGradient,
         ),
+        child: SafeArea(child: AppRoutes.pages[selectedPage])
       ),
       resizeToAvoidBottomInset: false
     );

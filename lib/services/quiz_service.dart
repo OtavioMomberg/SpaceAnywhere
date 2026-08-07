@@ -16,7 +16,6 @@ class QuizService {
     required this.questionController
   });
 
-  //QuestionController get questionController => _questionController;
   InternetService get internet => _internet;
   bool get quizStarted => _quizStarted;
   String get error => _error;
@@ -27,8 +26,7 @@ class QuizService {
 
   Future<void> getFunctions({
     required Future<void> Function({int? questionId}) callQuizService,
-    required void Function({required bool isCorrect, String? correctAnswer})
-    showResponse,
+    required void Function({required bool isCorrect, String? correctAnswer}) showResponse,
     required Future<void> Function() closeAnswerPage,
   }) async {
     _callQuizService = callQuizService;
@@ -55,14 +53,14 @@ class QuizService {
       await Future.delayed(Duration(seconds: 3));
     }
     if (!_internet.checkInternet) {
-      _quizStarted = true;
+      //_quizStarted = true;
       return;
     }
 
     await _internet.isApiAwake();
 
     if (!_internet.checkAPI) {
-      _quizStarted = true;
+      //_quizStarted = true;
       return;
     }
 

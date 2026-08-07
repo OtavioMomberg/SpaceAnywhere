@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:space_anywhere/services/open_links_service.dart';
 import 'package:space_anywhere/presentation/themes/app_theme.dart';
 
@@ -15,8 +16,17 @@ class FontsPage extends StatelessWidget {
         surfaceTintColor: Colors.transparent,
         backgroundColor: AppTheme.color2,
         foregroundColor: AppTheme.color1,
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          systemNavigationBarContrastEnforced: false,
+          systemNavigationBarIconBrightness: Brightness.light
+        ),
+
+        // Gambiarra enquanto não descubro a real causa do espaço entre AppBar e Container
+        shape: const BeveledRectangleBorder(
+          side: BorderSide(color: AppTheme.color2, width: 2)
+        ),
       ),
-      backgroundColor: AppTheme.color2,
+      backgroundColor: AppTheme.color4,
       body: SafeArea(
         top: false,
         child: Container(

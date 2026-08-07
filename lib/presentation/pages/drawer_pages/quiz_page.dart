@@ -202,7 +202,12 @@ class _QuizPageState extends State<QuizPage> with StylizedSnackBar {
     if (!mounted) return;
     Navigator.push(
       context,
-      AppRoutes.getRoute(page: ResultPage(isCorrect: isCorrect, correctAnswer: correctAnswer))
+      AppRoutes.getRoute(
+        page: ResultPage(
+          isCorrect: isCorrect, 
+          correctAnswer: correctAnswer
+        )
+      )
     );
   }
 
